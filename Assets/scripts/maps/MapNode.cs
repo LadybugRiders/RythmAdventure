@@ -1,0 +1,38 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public class MapNode : MonoBehaviour {
+
+    [SerializeField] List<MapNode> m_parents;
+    [SerializeField] List<MapNode> m_children;
+    
+    // Use this for initialization
+    void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
+	}
+
+    #region GETTERS-SETTERS
+
+    public List<MapNode> Parents
+    {
+        get
+        {
+            return m_parents;
+        }        
+    }
+
+    public List<MapNode> Children
+    {
+        get
+        {
+            return m_children;
+        }        
+    }
+    #endregion
+}

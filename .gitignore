@@ -1,0 +1,9 @@
+Assembly-CSharp-Editor-vs.csproj
+*.csproj
+*.sln
+/Library
+/Library/metadata
+/Temp
+/Versions
+/RythmAdventure - Wndows_Data
+/obj
