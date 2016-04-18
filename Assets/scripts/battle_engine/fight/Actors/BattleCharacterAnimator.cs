@@ -79,12 +79,15 @@ public class BattleCharacterAnimator : MonoBehaviour {
 		}
 		//change color
 		JSONObject colorObject = DataManager.instance.GameData.GetField ("playerColor");
-		Color c = new Color();
-		c.r = colorObject[0].n;
-		c.g = colorObject[1].n;
-		c.b = colorObject[2].n;
-		c.a = 1;
-		SetColor(c);
+        if( colorObject != null)
+        {
+            Color c = new Color();
+            c.r = colorObject[0].n;
+            c.g = colorObject[1].n;
+            c.b = colorObject[2].n;
+            c.a = 1;
+            SetColor(c);
+        }
 	}
 
 	#endregion

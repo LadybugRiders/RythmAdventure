@@ -102,14 +102,12 @@ public class BattleNote : MonoBehaviour {
 		//set sprite & color
 		if (m_track.TracksManager.IsAttacking) {
 			m_renderer.sprite = m_attackSprite;
-			m_renderer.color = m_track.TracksManager.attackColor;
 		} else {
 			m_renderer.sprite = m_defendSprite;
-			m_renderer.color = m_track.TracksManager.defendColor;
 		}
 		//magic note
 		if (m_data.Subtype == NoteData.NoteSubtype.MAGIC) {
-			//m_renderer.color = Color.yellow;
+			//
 		}
 
 		Utils.SetAlpha (m_renderer, 0.0f);
