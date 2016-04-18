@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class UIBattlePhaseTitle : MonoBehaviour {
 
-	[SerializeField] SpriteRenderer m_titleRenderer;
+	[SerializeField] Text m_titleRenderer;
 
-	[SerializeField] Sprite m_attackSprite;
-	[SerializeField] Sprite m_defenseSprite;
+	[SerializeField] string m_attackString;
+	[SerializeField] string m_defenseString;
 
+    float leftPositionX = -305.0f;
+    float rightPositionX = 305.0f;
 	Vector3 m_centerPosition;
 
 	bool m_attack = false;
@@ -19,7 +22,7 @@ public class UIBattlePhaseTitle : MonoBehaviour {
 	void Start () {		
 		m_centerPosition = transform.localPosition;
 		//Utils.SetAlpha (m_titleRenderer, 0.0f);
-		Utils.SetLocalPositionX (transform, -35.0f);
+		Utils.SetLocalPositionX (transform, leftPositionX);
 	}
 
 	public void Switch( bool _attack ){
@@ -34,18 +37,18 @@ public class UIBattlePhaseTitle : MonoBehaviour {
 	void Leave(){
 		m_state = State.LEAVING;
 		Vector3 pos = transform.localPosition;
-		pos.x = 30.0f;
+		pos.x = rightPositionX;
 		TweenEngine.instance.PositionTo (transform, pos, 0.5f, "ComeBack");
 	}
 
 	void ComeBack(){
 		m_state = State.COMING;
 		if (m_attack) {
-			m_titleRenderer.sprite = m_attackSprite;
+			m_titleRenderer.text = m_attackString;            
 		} else {
-			m_titleRenderer.sprite = m_defenseSprite;
+			m_titleRenderer.text = m_defenseString;
 		}
-		Utils.SetLocalPositionX (transform, -35.0f);
+		Utils.SetLocalPositionX (transform, leftPositionX);
 		TweenEngine.instance.PositionTo (transform, m_centerPosition, 0.5f, "OnCentered");
 	}
 
