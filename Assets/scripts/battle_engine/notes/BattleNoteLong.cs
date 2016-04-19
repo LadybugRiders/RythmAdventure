@@ -105,16 +105,27 @@ public class BattleNoteLong : BattleNote {
 		this.CurrentState = State.LAUNCHED;
 		Utils.SetLocalPositionY (m_bodyTransform, m_transform.localPosition.y);
 
-		//set sprite
-		if ( m_isHead ) {
+        //color
+        string colorName = m_track.TracksManager.IsAttacking ? "red_attack_bright" : "green_defense_bright";
+        Color color = ColorManager.instance.GetColor(colorName);
+
+        //set sprite
+        if ( m_isHead ) {
 			if( m_track.TracksManager.IsAttacking ){
 				m_renderer.sprite = m_attackSprite;
-			}else{
+                //change body color
+                m_bodySprite.color = color;
+            }
+            else{
 				m_renderer.sprite = m_defendSprite;
-			}
+                //change body color
+                m_bodySprite.color = color;
+            }
 		} else {
 			m_renderer.sprite = m_blankSprite;
-		}
+            m_renderer.color = color;
+
+        }
 		Utils.SetAlpha (m_renderer, 0.0f);
 
 		return true;

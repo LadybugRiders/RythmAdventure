@@ -44,13 +44,15 @@ public class UIBattlePhaseTitle : MonoBehaviour {
 	void ComeBack(){
 		m_state = State.COMING;
 		if (m_attack) {
-			m_titleRenderer.text = m_attackString;            
+			m_titleRenderer.text = m_attackString;
+            m_titleRenderer.color = ColorManager.instance.GetColor("red_attack_bright");        
 		} else {
 			m_titleRenderer.text = m_defenseString;
-		}
+            m_titleRenderer.color = ColorManager.instance.GetColor("green_defense_bright");
+        }
 		Utils.SetLocalPositionX (transform, leftPositionX);
 		TweenEngine.instance.PositionTo (transform, m_centerPosition, 0.5f, "OnCentered");
-	}
+    }
 
 	void OnCentered(){
 		m_state = State.IDLE;

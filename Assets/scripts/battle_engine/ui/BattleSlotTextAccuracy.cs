@@ -43,7 +43,7 @@ public class BattleSlotTextAccuracy : MonoBehaviour {
 
 		//Tween text
 		Vector3 destination = transform.localPosition;
-		destination.y += 0.45f;
+		destination.y += 1f;
 		TweenEngine.instance.PositionTo (transform, destination, 0.3f, "OnTweenEnded");
 	}
 
@@ -55,7 +55,7 @@ public class BattleSlotTextAccuracy : MonoBehaviour {
 		
 		//Tween text
 		Vector3 destination = transform.localPosition;
-		destination.y -= 0.15f;
+		destination.y -= 0.25f;
 		TweenEngine.instance.PositionTo (transform, destination, 0.3f, "OnTweenEnded");
 	}
 
