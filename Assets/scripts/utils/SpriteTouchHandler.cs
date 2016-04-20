@@ -24,17 +24,19 @@ public class SpriteTouchHandler : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if( m_pressed)
+        {
+
+        }
         //Check press
         if (m_pressed == false && IsPressed())
         {
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(CustomGetTouchPosition());
-            Vector2 touchPos = new Vector2(worldPoint.x, worldPoint.y);
-            Collider2D coll = Physics2D.OverlapPoint(touchPos);
+            SpriteTouchData touchData = ComputeTouch();
             //check attack 
-            if (m_collider == coll)
+            if (m_collider == touchData.colliderTouched)
             {
                 m_pressed = true;
-                SendCallbacks(m_onInputDownCallback);
+                SendCallbacks(m_onInputDownCallback,touchData);
             }
         }
 
@@ -42,14 +44,22 @@ public class SpriteTouchHandler : MonoBehaviour {
         if (m_pressed && IsReleased())
         {
             m_pressed = false;
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(CustomGetTouchPosition());
-            Vector2 touchPos = new Vector2(worldPoint.x, worldPoint.y);
-            Collider2D coll = Physics2D.OverlapPoint(touchPos);
-            if (m_collider == coll)
+            SpriteTouchData touchData = ComputeTouch();
+            if (m_collider == touchData.colliderTouched)
             {
-                SendCallbacks(m_onInputUpCallback);
+                SendCallbacks(m_onInputUpCallback,touchData);
             }
         }
+    }
+
+    SpriteTouchData ComputeTouch()
+    {
+        SpriteTouchData touchData = new SpriteTouchData();
+        Vector3 worldPoint = Camera.main.ScreenToWorldPoint(CustomGetTouchPosition());
+        touchData.touchPosition = new Vector2(worldPoint.x, worldPoint.y);
+        touchData.colliderTouched = Physics2D.OverlapPoint(touchData.touchPosition);
+        touchData.sourceComponent = this;
+        return touchData;
     }
 
     Vector2 CustomGetTouchPosition()
@@ -79,11 +89,18 @@ public class SpriteTouchHandler : MonoBehaviour {
 #endif
     }
 
-    void SendCallbacks(string callback)
+    void SendCallbacks(string callback, SpriteTouchData data)
     {
         foreach( var go in m_targetsCallback)
         {
-            go.SendMessage(callback, this, SendMessageOptions.DontRequireReceiver);
+            go.SendMessage(callback, data, SendMessageOptions.DontRequireReceiver);
         }
+    }
+
+    public class SpriteTouchData
+    {
+        public Vector2 touchPosition;
+        public Collider2D colliderTouched;
+        public Component sourceComponent;        
     }
 }
