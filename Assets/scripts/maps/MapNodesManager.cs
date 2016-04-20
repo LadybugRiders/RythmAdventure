@@ -9,18 +9,35 @@ public class MapNodesManager : MonoBehaviour {
 
     [SerializeField] GameObject m_pathsContainerObject;
     [SerializeField] GameObject m_pathTemplate;
+    [SerializeField] float m_bodyScaleMult = 1.0f;
+
+    [SerializeField] MapNode m_starterNode;
+    MapNode m_currentNode;
+    [SerializeField] MapCharacter m_player;
+
     
-	// Use this for initialization
 	void Start () {
         ListNodes();
         BuildPaths();
+        //place the player at start
+        Utils.Set2DPosition( m_player.transform, m_starterNode.transform.position);
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    void OnNodeTouchDown()
+    {
+        Debug.Log("NODE DOWN");
+    }
+
+    void OnNodeTouchRelease()
+    {
+        Debug.Log("NODE RELEASe");
+    }
+
+    void Update () {
 	
 	}
 
+    #region NODES_BUILDING
     /// <summary>
     /// Search for nodes components and store them in the list
     /// </summary>
@@ -53,6 +70,7 @@ public class MapNodesManager : MonoBehaviour {
         Vector3 toNode2 = node2.transform.position - node1.transform.position ;
         float mag = toNode2.magnitude;
         Vector3 mid = node1.transform.position + toNode2.normalized * mag *0.5f;
+        mid.z = 1;
 
         //Instantiate template in scene
         var go = Instantiate(m_pathTemplate);
@@ -62,10 +80,11 @@ public class MapNodesManager : MonoBehaviour {
         pathTransform.parent = m_pathsContainerObject.transform;
         pathTransform.position = mid;
         //Scale
-        Utils.SetLocalScaleX(pathTransform, mag);
+        Utils.SetLocalScaleX(pathTransform, mag * m_bodyScaleMult);
         //Rotation
         float angle = Utils.AngleBetweenVectors(Vector3.right, toNode2 );
         Utils.SetLocalAngleZ(pathTransform, angle);
 
     }
+    #endregion
 }

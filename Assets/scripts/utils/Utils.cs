@@ -24,10 +24,22 @@ public class Utils  {
 		_t.localPosition = tmpVector;
 		return _t.localPosition;
 	}
-	#endregion
 
-	#region POSITION
-	public static Vector3 SetPositionX(Transform _t, float _newValue){
+    /// <summary>
+    /// Sets the local position without the Z axis
+    /// </summary>
+    public static Vector3 Set2DLocalPosition(Transform _t, Vector3 position)
+    {
+        Vector3 tmpVector = _t.localPosition;
+        tmpVector.x = position.x;
+        tmpVector.y = position.y;
+        _t.localPosition = tmpVector;
+        return _t.localPosition;
+    }
+    #endregion
+
+    #region POSITION
+    public static Vector3 SetPositionX(Transform _t, float _newValue){
 		Vector3 tmpVector = _t.position;
 		tmpVector.x = _newValue;
 		_t.position = tmpVector;
@@ -47,10 +59,22 @@ public class Utils  {
 		_t.position = tmpVector;
 		return _t.position;
 	}
-	#endregion
 
-	#region LOCALSCALE
-	public static Vector3 SetLocalScaleX(Transform _t, float _newValue){
+    /// <summary>
+    /// Sets the position without the Z axis
+    /// </summary>
+    public static Vector3 Set2DPosition(Transform _t, Vector3 position)
+    {
+        Vector3 tmpVector = _t.position;
+        tmpVector.x = position.x;
+        tmpVector.y = position.y;
+        _t.position = tmpVector;
+        return _t.position;
+    }
+    #endregion
+
+    #region LOCALSCALE
+    public static Vector3 SetLocalScaleX(Transform _t, float _newValue){
 		Vector3 tmpVector = _t.localScale;
 		tmpVector.x = _newValue;
 		_t.localScale = tmpVector;

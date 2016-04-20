@@ -10,6 +10,9 @@ public class BattleInputTouchManager : MonoBehaviour {
 	[SerializeField] private BoxCollider2D m_defendCollider;
 
 	bool m_pressed = false;
+    /// <summary>
+    /// The id of the button pressed
+    /// </summary>
 	int m_inputDown = -1;
 
 	// Use this for initialization
