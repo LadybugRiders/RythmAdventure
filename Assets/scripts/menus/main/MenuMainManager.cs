@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class MenuMainManager : MonoBehaviour {
@@ -16,14 +17,14 @@ public class MenuMainManager : MonoBehaviour {
 	}
 
 	public void OnPlayButtonClick(){
-		Application.LoadLevel (playSceneName);
+        SceneManager.LoadScene(playSceneName);
 	}
 
 	public void OnSelectionButtonClick(){
-		Application.LoadLevel ("music_select_menu");
+        SceneManager.LoadScene("music_select_menu");
 	}
 
 	public void OnLockerRoomClick(){
-		Application.LoadLevel ("locker_room");
+        SceneManager.LoadScene("locker_room");
 	}
 }

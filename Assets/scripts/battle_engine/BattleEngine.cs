@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class BattleEngine : MonoBehaviour {
 
@@ -81,7 +82,7 @@ public class BattleEngine : MonoBehaviour {
 	}
 
 	public void OnQuitBattle(){
-		Application.LoadLevel ("main_menu");
+        SceneManager.LoadScene("main_menu");
 	}
 	
 	// Update is called once per frame
@@ -135,7 +136,7 @@ public class BattleEngine : MonoBehaviour {
 	}
 
 	public void OnFightEnded(bool _win){
-		Application.LoadLevel ("battle_end");
+        SceneManager.LoadScene("battle_end");
 	}
 
 	#endregion

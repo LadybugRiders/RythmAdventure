@@ -12,7 +12,6 @@ public class SpriteTouchHandler : MonoBehaviour {
     [SerializeField] string m_onInputUpCallback;
 
     bool m_pressed = false;
-    int m_inputDown = -1;
 
     // Use this for initialization
     void Start()

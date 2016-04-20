@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class DebugFirstScene : MonoBehaviour {
@@ -69,12 +70,12 @@ public class DebugFirstScene : MonoBehaviour {
 
 	void LaunchScene(){
 		m_launched = true;
-		Application.LoadLevel ("test");
+        SceneManager.LoadScene("test");
 	}
 
 	public void Reboot(){
 		m_launched = false;
 		m_generatorFound = false;
-		Application.LoadLevel ("debugFirstScene");
+        SceneManager.LoadScene("debugFirstScene");
 	}
 }

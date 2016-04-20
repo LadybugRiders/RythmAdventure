@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 [ExecuteInEditMode]
@@ -19,7 +20,7 @@ public class SongEditorTestLauncher : MonoBehaviour {
 	public void LaunchTest(string _songName, BattleEngine.Difficulty _difficulty){
 		songName = _songName;
 		difficulty = _difficulty;
-		Application.LoadLevel ("test");
+        SceneManager.LoadScene("test");
 	}
 
 }

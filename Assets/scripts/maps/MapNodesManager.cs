@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MapNodesManager : MonoBehaviour {
+public partial class MapNodesManager : MonoBehaviour {
 
     [SerializeField] Transform poolNodesObject;
     List<MapNode> nodes;
@@ -23,7 +23,7 @@ public class MapNodesManager : MonoBehaviour {
         Utils.Set2DPosition( m_player.transform, m_starterNode.transform.position);
 	}
 
-    void OnNodeTouchDown()
+    void OnNodeTouchDown(object data)
     {
         Debug.Log("NODE DOWN");
     }
