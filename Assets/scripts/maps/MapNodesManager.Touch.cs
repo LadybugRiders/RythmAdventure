@@ -31,11 +31,11 @@ public partial class MapNodesManager {
             if (IsPressed())
             {
                 m_pressedNode = node;
-                OnNodeTouchDown(null);
+                OnNodeTouchDown(node);
             }else
             {
                 if( m_pressedNode == node)
-                    OnNodeTouchRelease();
+                    OnNodeTouchRelease(node);
                 m_pressedNode = null;
             }
         }

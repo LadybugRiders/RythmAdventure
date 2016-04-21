@@ -8,9 +8,9 @@ public class MapCharacter : MonoBehaviour {
 
     MapNode m_targetNode;
     [SerializeField] float m_speed = 3.0f;
-
-	// Use this for initialization
-	void Start () {
+    
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -33,21 +33,28 @@ public class MapCharacter : MonoBehaviour {
     {
         Vector3 toTarget = m_targetNode.transform.position - transform.position;
         toTarget.z = 0; // we don't want to move along the Z axis
+
+        float speed = Time.deltaTime * m_speed;
         //if the target is reached
-        if(toTarget.magnitude <= m_speed * 1.5f)
+        if(toTarget.magnitude <= speed * 1.5f)
         {
             m_state = State.IDLE;
-            transform.position = m_targetNode.transform.position;
+            Utils.Set2DPosition(transform, m_targetNode.transform.position);
         }
         //else move to target
         else
         {
-            transform.position += toTarget.normalized * m_speed;
+            Utils.Set2DPosition(transform, transform.position + toTarget.normalized * speed);           ;
         }
     }
 
     void Idling()
     {
 
+    }
+
+    public bool IsMoving()
+    {
+        return m_state == State.MOVING;
     }
 }
