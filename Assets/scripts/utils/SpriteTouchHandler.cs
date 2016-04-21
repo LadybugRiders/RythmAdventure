@@ -23,10 +23,6 @@ public class SpriteTouchHandler : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if( m_pressed)
-        {
-
-        }
         //Check press
         if (m_pressed == false && IsPressed())
         {

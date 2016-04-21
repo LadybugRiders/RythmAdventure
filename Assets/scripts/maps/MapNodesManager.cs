@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public partial class MapNodesManager : MonoBehaviour {
 
-    [SerializeField] Transform poolNodesObject;
-    List<MapNode> nodes;
+    [SerializeField] Transform m_poolNodesObject;
+    List<MapNode> m_nodes;
 
     [SerializeField] GameObject m_pathsContainerObject;
     [SerializeField] GameObject m_pathTemplate;
@@ -21,6 +21,7 @@ public partial class MapNodesManager : MonoBehaviour {
         BuildPaths();
         //place the player at start
         Utils.Set2DPosition( m_player.transform, m_starterNode.transform.position);
+        StartTouch();
 	}
 
     void OnNodeTouchDown(object data)
@@ -34,7 +35,7 @@ public partial class MapNodesManager : MonoBehaviour {
     }
 
     void Update () {
-	
+        UpdateTouch();
 	}
 
     #region NODES_BUILDING
@@ -43,18 +44,18 @@ public partial class MapNodesManager : MonoBehaviour {
     /// </summary>
     void ListNodes()
     {
-        if (nodes == null)
-            nodes = new List<MapNode>();
-        foreach(Transform t in poolNodesObject)
+        if (m_nodes == null)
+            m_nodes = new List<MapNode>();
+        foreach(Transform t in m_poolNodesObject)
         {
             MapNode node = t.GetComponent<MapNode>();
-            nodes.Add(node);
+            m_nodes.Add(node);
         }
     }
 
     void BuildPaths()
     {
-        foreach( var node in nodes)
+        foreach( var node in m_nodes)
         {
             foreach (var nodeChild in node.Children)
             {
