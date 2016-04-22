@@ -60,9 +60,11 @@ public partial class MapNodesManager : MonoBehaviour {
         if (m_currentNode == m_targetNode || m_nodesPath.Count == 0)
         {
             m_state = State.IDLE;
+            m_currentNode = m_targetNode;
         }
         else if(m_player.IsMoving() == false)
         {
+            m_currentNode = m_player.CurrentNode;
             MapNode nextNode = m_nodesPath[0];
             m_nodesPath.RemoveAt(0);
             m_player.GoTo(nextNode);
@@ -72,22 +74,24 @@ public partial class MapNodesManager : MonoBehaviour {
     List<MapNode> CreatePathProcess(MapNode _targetNode)
     {
         List<MapNode> nodes = new List<MapNode>();
-        CreatePath(_targetNode, ref nodes);
+        CreatePath(_targetNode, null, ref nodes);
         return nodes;    
     }
 
-    bool CreatePath(MapNode processedNode, ref List<MapNode> path)
+    bool CreatePath(MapNode processedNode, MapNode caller, ref List<MapNode> path)
     {
+        Debug.Log(processedNode.name);
         if( processedNode == m_currentNode)
         {
             path.Add(processedNode);
             return true;
         }
+
         foreach (var child in processedNode.Children)
         {
-            if (child == null)
+            if (child == null || child == caller)
                 continue;
-            if( CreatePath(child, ref path))
+            if( CreatePath(child, processedNode, ref path))
             {
                 path.Add(processedNode);
                 return true;
@@ -95,9 +99,9 @@ public partial class MapNodesManager : MonoBehaviour {
         }
         foreach (var parent in processedNode.Parents)
         {
-            if (parent == null)
+            if (parent == null || parent == caller )
                 continue;
-            if (CreatePath(parent, ref path))
+            if (CreatePath(parent, processedNode, ref path))
             {
                 path.Add(processedNode);
                 return true;

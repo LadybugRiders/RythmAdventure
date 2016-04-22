@@ -19,7 +19,7 @@ public class SongEditor : Editor {
 		//EXPORT
 		GUILayout.Box("", new GUILayoutOption[]{GUILayout.ExpandWidth(true), GUILayout.Height(1)});
 
-		m_target.music =(AudioClip) EditorGUILayout.ObjectField ("Music", m_target.music, typeof (AudioClip));
+		m_target.music =(AudioClip) EditorGUILayout.ObjectField ("Music", m_target.music, typeof (AudioClip), true);
 		if( m_target.music == null)
 			m_target.songName = EditorGUILayout.TextField ("DebugName", m_target.songName);
 		m_target.difficulty = (BattleEngine.Difficulty) EditorGUILayout.EnumPopup ("Diff",m_target.difficulty);

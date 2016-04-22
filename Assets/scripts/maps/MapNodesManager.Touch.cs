@@ -3,7 +3,6 @@ using System.Collections;
 
 public partial class MapNodesManager {
     
-    bool m_pressed = false;
     MapNode m_pressedNode = null;
 
     // Use this for initialization

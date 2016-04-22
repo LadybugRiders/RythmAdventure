@@ -57,4 +57,9 @@ public class MapCharacter : MonoBehaviour {
     {
         return m_state == State.MOVING;
     }
+
+    public MapNode CurrentNode
+    {
+        get { return m_targetNode; }        
+    }
 }

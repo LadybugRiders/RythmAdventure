@@ -6,6 +6,8 @@ public class MapNode : MonoBehaviour {
 
     [SerializeField] List<MapNode> m_parents;
     [SerializeField] List<MapNode> m_children;
+
+    [SerializeField] BattleDataAsset m_battleData;
     
     // Use this for initialization
     void Start () {
