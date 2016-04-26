@@ -11,10 +11,20 @@ public class SongExporter {
 	JSONObject m_json = new JSONObject();
 
 	public void SetUp(SongEditorManager _manager){
-		if( _manager.music != null)
-			m_json.AddField ("clipName", _manager.music.name);
-		else
-			m_json.AddField ("clipName", _manager.songName);
+        if (_manager.music != null)
+        {
+            m_json.AddField("clipName", _manager.music.name);
+            //Get path
+            string path = AssetDatabase.GetAssetPath(_manager.music);
+            int indexCut = path.LastIndexOf("Resources") + "Resources".Length;
+            path = path.Substring(indexCut+1);
+            m_json.AddField("clipPath", path);
+        }
+        else
+        {
+            m_json.AddField("clipName", _manager.songName);
+        }
+        
 
 		m_json.AddField ("timeSpeed", _manager.timeSpeed);
 	}

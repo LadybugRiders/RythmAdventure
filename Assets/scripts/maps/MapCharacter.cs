@@ -3,6 +3,8 @@ using System.Collections;
 
 public class MapCharacter : MonoBehaviour {
 
+    [SerializeField] MapNodesManager m_nodesManager;
+
     enum State { IDLE, MOVING };
     State m_state;
 
@@ -40,8 +42,8 @@ public class MapCharacter : MonoBehaviour {
         {
             m_state = State.IDLE;
             Utils.Set2DPosition(transform, m_targetNode.transform.position);
-        }
-        //else move to target
+            m_nodesManager.OnPlayerReachedNode(m_targetNode);
+        }        //else move to target
         else
         {
             Utils.Set2DPosition(transform, transform.position + toTarget.normalized * speed);           ;

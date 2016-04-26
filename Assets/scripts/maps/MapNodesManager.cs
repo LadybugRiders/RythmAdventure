@@ -19,26 +19,24 @@ public partial class MapNodesManager : MonoBehaviour {
 
     [SerializeField] MapCharacter m_player;
 
-    public enum State    { IDLE,MOVING }
+    public enum State { IDLE, MOVING }
     private State m_state;
-        
-	void Start () {
+
+    void Start() {
         ListNodes();
         BuildPaths();
         //place the player at start
-        Utils.Set2DPosition( m_player.transform, m_starterNode.transform.position);
+        Utils.Set2DPosition(m_player.transform, m_starterNode.transform.position);
         StartTouch();
         m_currentNode = m_nodes[0];
-	}
+    }
 
     void OnNodeTouchDown(MapNode node)
     {
-        Debug.Log("NODE DOWN");
     }
 
     void OnNodeTouchRelease(MapNode node)
     {
-        Debug.Log("NODE RELEASe");
         //build the path of nodes
         m_nodesPath = new List<MapNode>();
         //Launch the walking
@@ -47,13 +45,13 @@ public partial class MapNodesManager : MonoBehaviour {
         m_targetNode = node;
     }
 
-    void Update () {
+    void Update() {
         UpdateTouch();
         switch (m_state)
         {
             case State.MOVING: Moving(); break;
         }
-	}
+    }
 
     void Moving()
     {
@@ -62,7 +60,7 @@ public partial class MapNodesManager : MonoBehaviour {
             m_state = State.IDLE;
             m_currentNode = m_targetNode;
         }
-        else if(m_player.IsMoving() == false)
+        else if (m_player.IsMoving() == false)
         {
             m_currentNode = m_player.CurrentNode;
             MapNode nextNode = m_nodesPath[0];
@@ -71,35 +69,53 @@ public partial class MapNodesManager : MonoBehaviour {
         }
     }
 
+    public void OnPlayerReachedNode(MapNode node)
+    {
+        if (node == m_targetNode)
+        {
+            m_state = State.IDLE;
+            UIManager.instance.Popup().Open();
+        }
+    }
+
+    #region PATH
+
+    /// <summary>
+    /// Create the path that the character has to take to reach the target node
+    /// </summary>
     List<MapNode> CreatePathProcess(MapNode _targetNode)
     {
         List<MapNode> nodes = new List<MapNode>();
         CreatePath(_targetNode, null, ref nodes);
-        return nodes;    
+        return nodes;
     }
 
+    /// <summary>
+    /// Recusively create the path to take
+    /// </summary>
     bool CreatePath(MapNode processedNode, MapNode caller, ref List<MapNode> path)
     {
-        Debug.Log(processedNode.name);
-        if( processedNode == m_currentNode)
+        //Debug.Log(processedNode.name);
+        if (processedNode == m_currentNode)
         {
             path.Add(processedNode);
             return true;
         }
-
+        //search from child
         foreach (var child in processedNode.Children)
         {
             if (child == null || child == caller)
                 continue;
-            if( CreatePath(child, processedNode, ref path))
+            if (CreatePath(child, processedNode, ref path))
             {
                 path.Add(processedNode);
                 return true;
             }
         }
+        //search from parent
         foreach (var parent in processedNode.Parents)
         {
-            if (parent == null || parent == caller )
+            if (parent == null || parent == caller)
                 continue;
             if (CreatePath(parent, processedNode, ref path))
             {
@@ -109,6 +125,8 @@ public partial class MapNodesManager : MonoBehaviour {
         }
         return false;
     }
+
+    #endregion
 
     #region NODES_BUILDING
     /// <summary>

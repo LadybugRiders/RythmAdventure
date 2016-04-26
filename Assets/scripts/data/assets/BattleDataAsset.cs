@@ -6,6 +6,8 @@ using System.IO;
 
 public class BattleDataAsset : ScriptableObject  {
 
+    public SceneAsset scene;
+
     public string Name;
 
     public TextAsset Song;
