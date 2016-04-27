@@ -99,10 +99,10 @@ public class UIGauge : MonoBehaviour {
         var offset = (m_maxScale - newScale);
         if (m_align == ALIGN.UP)
         {
-            Utils.SetLocalPositionY(m_gaugeTransform, m_initPos + offset);
+            Utils.SetLocalPositionY(m_gaugeTransform, m_initPos + offset *0.5f);
         }else if (m_align == ALIGN.DOWN )
         {
-            Utils.SetLocalPositionY(m_gaugeTransform, m_initPos + offset);
+            Utils.SetLocalPositionY(m_gaugeTransform, m_initPos + offset *0.5f);
         }
     }
 }
