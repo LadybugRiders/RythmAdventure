@@ -36,5 +36,13 @@ public class MapNode : MonoBehaviour {
             return m_children;
         }        
     }
+
+    public BattleDataAsset BattleData
+    {
+        get
+        {
+            return m_battleData;
+        }        
+    }
     #endregion
 }

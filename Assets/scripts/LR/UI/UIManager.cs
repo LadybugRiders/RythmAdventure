@@ -35,7 +35,7 @@ public class UIManager : MonoBehaviour {
         {
             if (_instance == null)
             {
-                GameObject prefab = Resources.Load("prefabs/ui/UIManager") as GameObject;
+                GameObject prefab = Resources.Load("LR/UI/UIManager") as GameObject;
                 GameObject newGO = Instantiate(prefab) as GameObject;
                 _instance = newGO.GetComponent<UIManager>();
                 //Search for a canvas

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -83,6 +84,8 @@ public partial class MapNodesManager : MonoBehaviour {
     public void OnBeginFight()
     {
         Debug.Log("FIGHT");
+        BattleDataAsset data = m_targetNode.BattleData;
+        SceneManager.LoadScene(data.scene.name);
     }
 
     #region PATH
