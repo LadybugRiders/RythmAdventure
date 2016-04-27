@@ -74,8 +74,15 @@ public partial class MapNodesManager : MonoBehaviour {
         if (node == m_targetNode)
         {
             m_state = State.IDLE;
-            UIManager.instance.Popup().Open();
+            var uiPopup = UIManager.instance.Popup();
+            uiPopup.GetButton("ConfirmButton").Set("Fight", "OnBeginFight", gameObject, false);
+            uiPopup.Open();
         }
+    }
+
+    public void OnBeginFight()
+    {
+        Debug.Log("FIGHT");
     }
 
     #region PATH

@@ -95,5 +95,21 @@ public class UIPopup : MonoBehaviour {
             set { if(button != null) button.name = value ; }
         }
 
+        public void Set(string _text, string _callback, GameObject _callbackTarget, bool _autoClose = false)
+        {
+            SetText(_text);
+            callback = _callback;
+            callbackTarget = _callbackTarget;
+            autoClose = _autoClose;
+        }
+
+        public void SetText(string _text)
+        {
+            if (button != null)
+            {
+                var textComp = button.GetComponentInChildren<Text>();
+                if (textComp != null) textComp.text = _text;
+            }
+        }
     }
 }
