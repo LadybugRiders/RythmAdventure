@@ -9,7 +9,9 @@ public class BattleCharacter : BattleActor {
 		base.Start ();
 		m_type = ActorType.CHARACTER;
 		m_currentStats.Attack = 12;
-	}
+        m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
+        m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
+    }
 
 	#region LOADING 
 	override public void Load(string _name){

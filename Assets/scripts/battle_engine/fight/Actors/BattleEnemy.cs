@@ -12,7 +12,9 @@ public class BattleEnemy : BattleActor {
 		base.Start ();
 		m_type = ActorType.ENEMY;
 		m_animator.Play("idle",0, Random.Range(0.0f,1.0f) );
-	}
+        m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
+        m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
+    }
 	
 	// Update is called once per frame
 	override protected void Update () {
