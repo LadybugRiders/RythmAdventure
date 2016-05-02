@@ -53,11 +53,11 @@ public class BattleEngine : MonoBehaviour {
 			if (gens [i].enabled)
 				m_notesGenerator = gens [i];
 		}
-		TimerEngine.instance.AddTimer (1.0f, "Begin", gameObject);
+		TimerEngine.instance.AddTimer (1.0f, "BeginBattle", gameObject);
 		LoadResources ();
 	}
 
-	void Begin(){		
+	void BeginBattle(){		
 		if (m_debug) {
 			LoadSong( m_testLauncher.songName, m_testLauncher.difficulty);
 			m_notesGenerator.BeginDebug(m_timeShift, m_testLauncher.timeBegin);
@@ -90,12 +90,13 @@ public class BattleEngine : MonoBehaviour {
 	
 	}
 
-	#region SWITCH
+	#region SWITCH_ATTACK_DEFENSE
 
-	/** Called from tracks manager when a note is launch.
+	/** Called from tracks manager when a note is launched.
 	 * Checks how many notes has been launched is the current phase and switch if necessary */
 	public void OnNoteLaunched(NoteData _data){
 		m_switchCount ++;
+        //Don't switch between a long note
 		if (_data.Type == NoteData.NoteType.LONG && _data.Head) {
 			return;
 		}
@@ -109,7 +110,7 @@ public class BattleEngine : MonoBehaviour {
 		m_tracksManager.SwitchPhase ();		
 	}
 
-	public void OnSwitchSuccesful(){
+	public void OnSwitchSuccessful(){
 		if (m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK)
 			m_nextSwitchCount = m_switchAttackBaseCount;
 		else

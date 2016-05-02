@@ -38,6 +38,7 @@ public class BattleTracksManager : MonoBehaviour {
 		m_simpleNotesGroup.transform.localPosition = new Vector3 ();
 		m_longNotesGroup.transform.localPosition = new Vector3 ();
 		FindNotesScripts ();
+        InitTracks();
 	}
 	
 	// Update is called once per frame
@@ -45,6 +46,14 @@ public class BattleTracksManager : MonoBehaviour {
 		if (m_state == BattleState.SWITCHING)
 			UpdateSwitching ();
 	}
+
+    void InitTracks()
+    {
+        for(int i=0; i < m_tracks.Count; i++)
+        {
+            m_tracks[i].Id = i;
+        }
+    }
 
 	#region PAUSE/RESUME
 
@@ -86,7 +95,7 @@ public class BattleTracksManager : MonoBehaviour {
 	public void ExecuteSwitch(){
 		m_state = m_switchState;
 		//notify engine
-		m_engine.OnSwitchSuccesful();
+		m_engine.OnSwitchSuccessful();
 		//notify tracks
 		for( int i=0; i < m_tracks.Count; i ++ ){
 			m_tracks[i].SwitchPhase();
@@ -183,7 +192,7 @@ public class BattleTracksManager : MonoBehaviour {
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote
 		_note.Data = _data;		
-		//Affect TrackID ( may vary if a track is disabled )
+		//Affect TrackID ( may vary if a track is disabled ) : The TrackID of a track may point to another when it is disabled
 		_data.TrackID = m_tracks[_data.TrackID].Id;
 		//Launch
 		m_tracks [_data.TrackID].Iteration = m_iteration;
@@ -283,7 +292,7 @@ public class BattleTracksManager : MonoBehaviour {
 		return m_engine.AddNote (_note.Data,_accuracy);
 	}
 
-	/** Search between all tracks to see the one which is the current one */
+	/** Search between all tracks to see the one which is the current one aka the one with the next not on it*/
 	void CheckCurrentTrack(){
 		float bestTime = float.MaxValue;
 		int minIteration = int.MaxValue;
