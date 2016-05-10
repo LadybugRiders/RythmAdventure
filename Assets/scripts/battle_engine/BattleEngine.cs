@@ -54,7 +54,6 @@ public class BattleEngine : MonoBehaviour {
 				m_notesGenerator = gens [i];
 		}
 		TimerEngine.instance.AddTimer (1.0f, "BeginBattle", gameObject);
-		LoadResources ();
 	}
 
 	void BeginBattle(){		
@@ -62,9 +61,17 @@ public class BattleEngine : MonoBehaviour {
 			LoadSong( m_testLauncher.songName, m_testLauncher.difficulty);
 			m_notesGenerator.BeginDebug(m_timeShift, m_testLauncher.timeBegin);
 		} else {
-			LoadSong(m_songName,m_difficulty);
-			//Start Generator
-			m_notesGenerator.Begin (m_timeShift);
+            if( DataManager.instance.BattleData != null)
+            {
+                BattleDataAsset battleData = DataManager.instance.BattleData;
+                LoadSong(battleData);
+            }
+            else
+            {
+                //LoadSong(m_songName,m_difficulty);
+            }
+            //Start Generator
+            m_notesGenerator.Begin (m_timeShift);
 		}
 		//Play song
 		m_audioSource.clip = m_audioClip;
@@ -77,8 +84,8 @@ public class BattleEngine : MonoBehaviour {
 			m_audioSource.time = m_testLauncher.timeBegin;
 	}
 
-	void LoadResources(){
-		m_fightManager.Load ();
+	void LoadResources(BattleDataAsset battleData){
+		m_fightManager.Load (battleData);
 	}
 
 	public void OnQuitBattle(){
@@ -89,12 +96,60 @@ public class BattleEngine : MonoBehaviour {
 	void Update () {
 	
 	}
+    
+    #region LOADING
 
-	#region SWITCH_ATTACK_DEFENSE
+    void LoadSong(string _songName, Difficulty _difficulty)
+    {
+        //Load Data
+        string dataSongName = _songName + "_" + _difficulty.ToString().ToLower();
+        TextAsset jsonFile = Resources.Load("song_data/" + _songName + "/" + dataSongName) as TextAsset;
 
-	/** Called from tracks manager when a note is launched.
+        JSONObject jsonData = new JSONObject(jsonFile.text);
+
+        //Load Note Generator
+        m_notesGenerator.LoadData(jsonData);
+
+        //Load song music
+        string clipName = jsonData.GetField("clipName").str;
+        m_audioClip = Resources.Load("songs/" + clipName) as AudioClip;
+        m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;
+
+        m_timeShift = jsonData.GetField("timeSpeed").n;
+        m_tracksManager.SetTimeShift(m_timeShift);
+
+        m_fightManager.Load(null);
+    }
+
+    void LoadSong(BattleDataAsset battleData)
+    {
+        m_songName = battleData.Song.name;
+        //Load Battle Data
+        TextAsset jsonFile = battleData.Song;
+        JSONObject jsonData = new JSONObject(jsonFile.text);
+        string clipPath = jsonData.GetField("clipPath").ToString();
+
+        //Load Note Generator
+        m_notesGenerator.LoadData(jsonData);
+
+        //Load song music
+        string clipName = jsonData.GetField("clipName").str;
+        m_audioClip = Resources.Load("songs/" + clipName) as AudioClip;
+        m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;
+
+        m_timeShift = jsonData.GetField("timeSpeed").n;
+        m_tracksManager.SetTimeShift(m_timeShift);
+
+        LoadResources(battleData);
+    }
+
+    #endregion
+
+    #region SWITCH_ATTACK_DEFENSE
+
+    /** Called from tracks manager when a note is launched.
 	 * Checks how many notes has been launched is the current phase and switch if necessary */
-	public void OnNoteLaunched(NoteData _data){
+    public void OnNoteLaunched(NoteData _data){
 		m_switchCount ++;
         //Don't switch between a long note
 		if (_data.Type == NoteData.NoteType.LONG && _data.Head) {
@@ -148,29 +203,10 @@ public class BattleEngine : MonoBehaviour {
 		m_fightManager.AddNote(_note);
 		return _note.HitAccuracy;
 	}
+    
+    #region GETTERS
 
-	void LoadSong(string _songName, Difficulty _difficulty){
-		//Load Data
-		string dataSongName = _songName + "_" + _difficulty.ToString ().ToLower ();
-		TextAsset jsonFile = Resources.Load ("song_data/"+_songName+"/"+dataSongName) as TextAsset;
-		
-		JSONObject jsonData = new JSONObject (jsonFile.text);
-
-		//Load Note Generator
-		m_notesGenerator.LoadData (jsonData);
-
-		//Load song music
-		string clipName = jsonData.GetField ("clipName").str;
-		m_audioClip = Resources.Load ("songs/"+clipName) as AudioClip;
-		m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;
-
-		m_timeShift = jsonData.GetField("timeSpeed").n;
-		m_tracksManager.SetTimeShift (m_timeShift);
-	}
-
-	#region GETTERS
-
-	public static BattleEngine instance {
+    public static BattleEngine instance {
 		get{
 			return _instance;
 		}

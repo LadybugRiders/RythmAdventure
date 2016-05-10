@@ -8,6 +8,9 @@ public class DataManager : MonoBehaviour {
 	private bool m_allLoaded = false;
 	public string m_previousLevelName = "first_scene";
 
+    //Battle Data
+    [SerializeField] private BattleDataAsset m_battleData = null;
+
 	//Manages the characters data
 	private DataCharacterWrapper m_characterWrapper;
 
@@ -72,9 +75,9 @@ public class DataManager : MonoBehaviour {
 		return jsonData;
 	}
 
-	//============== GETTERS- SETTERS ==============================
+    #region PROPERTIES
 
-	public static DataManager instance {
+    public static DataManager instance {
 		get{
 			if( _instance == null ){
 				GameObject newGO = new GameObject("DataManager");
@@ -85,6 +88,12 @@ public class DataManager : MonoBehaviour {
 			return _instance;
 		}
 	}
+
+    public BattleDataAsset BattleData
+    {
+        get { return m_battleData; }
+        set { m_battleData = value; }
+    }
 
 
 	public DataActor GetCharacter(string _name){
@@ -111,5 +120,6 @@ public class DataManager : MonoBehaviour {
 			return m_allLoaded;
 		}
 	}
-	
+
+    #endregion
 }

@@ -36,10 +36,25 @@ public class BattleFightManager : MonoBehaviour {
 	/// <summary>
 	/// Called by battle engine at start of the scene. Loads all the actors
 	/// </summary>
-	public void Load(){
+	public void Load(BattleDataAsset battleData){
 		m_party [0].Load ("rodriguez");
 		m_party [1].Load ("player");
 		m_party [2].Load ("nidan");
+
+        //Loads enemies
+        if (battleData != null)
+        {
+            for(int i=0; i < battleData.Enemies.Count; i++)
+            {
+                if(m_enemies[i])
+                {
+                    Transform parent = m_enemies[i].transform.parent;
+                    Destroy(m_enemies[i].gameObject);
+                    m_enemies[i] = battleData.Enemies[i].GetComponent<BattleEnemy>();
+                    m_enemies[i].transform.parent = parent;
+                }
+            }
+        }
 	}
 	
 	// Update is called once per frame

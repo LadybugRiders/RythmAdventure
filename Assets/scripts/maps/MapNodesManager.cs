@@ -85,6 +85,7 @@ public partial class MapNodesManager : MonoBehaviour {
     {
         Debug.Log("FIGHT");
         BattleDataAsset data = m_targetNode.BattleData;
+        DataManager.instance.BattleData = data;
         SceneManager.LoadScene(data.scene.name);
     }
 
