@@ -12,6 +12,8 @@ public class BattleFightManager : MonoBehaviour {
 	[SerializeField] List<BattleEnemy> m_enemies;
 	List<FightDuel> m_duels;
 
+    [SerializeField] SpriteRenderer m_backgroundSprite;
+
 	/** used when a note is hit to determine the current actor action */
 	public enum ActorAttackAction { NONE, ATTACK, MAGIC, _COUNT };
 
@@ -28,9 +30,6 @@ public class BattleFightManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		for (int i=0; i<m_duels.Count; i ++) {
-			m_duels [i].Start (m_party [i], m_enemies [i]);
-		}
 	}
 
 	/// <summary>
@@ -49,12 +48,30 @@ public class BattleFightManager : MonoBehaviour {
                 if(m_enemies[i])
                 {
                     Transform parent = m_enemies[i].transform.parent;
+                    Vector3 position = m_enemies[i].transform.position;
                     Destroy(m_enemies[i].gameObject);
-                    m_enemies[i] = battleData.Enemies[i].GetComponent<BattleEnemy>();
-                    m_enemies[i].transform.parent = parent;
+                    var prefab = battleData.Enemies[i];
+                    if( prefab != null)
+                    {
+                        //instantiate enemy
+                        GameObject go = Instantiate(prefab) as GameObject;
+                        m_enemies[i] = go.GetComponent<BattleEnemy>();
+                        go.transform.SetParent(parent, true);
+                        go.transform.position = position;
+                    }
                 }
             }
         }
+
+        //Start duels
+        for (int i = 0; i < m_duels.Count; i++)
+        {
+            m_duels[i].Start(m_party[i], m_enemies[i]);
+        }
+
+        //Background
+        if (battleData.Background != null)
+            m_backgroundSprite.sprite = battleData.Background;
 	}
 	
 	// Update is called once per frame
@@ -156,8 +173,10 @@ public class BattleFightManager : MonoBehaviour {
 		}
 
 		public void Start(BattleCharacter _char, BattleEnemy _enemy){
+            m_characters.Clear();
 			m_characters.Add (_char);
 			_char.FightDuel = this;
+            m_enemies.Clear();
 			m_enemies.Add (_enemy);
 			_enemy.FightDuel = this;
 		}

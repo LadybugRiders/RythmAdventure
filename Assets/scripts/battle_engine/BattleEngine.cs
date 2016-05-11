@@ -21,12 +21,11 @@ public class BattleEngine : MonoBehaviour {
 	[SerializeField] int m_switchDefendBaseCount = 6;
 	int m_switchCount = 0;
 	int m_nextSwitchCount = 0;
-
-	//DEBuG
-	[SerializeField] string m_songName ="song";
-	[SerializeField] Difficulty m_difficulty;
+    
 	bool m_debug = false;
 	SongEditorTestLauncher m_testLauncher;
+
+    [SerializeField] BattleDataAsset m_defaultBattleData;
 
 	//Audio
 	protected AudioSource m_audioSource;
@@ -123,7 +122,6 @@ public class BattleEngine : MonoBehaviour {
 
     void LoadSong(BattleDataAsset battleData)
     {
-        m_songName = battleData.Song.name;
         //Load Battle Data
         TextAsset jsonFile = battleData.Song;
         JSONObject jsonData = new JSONObject(jsonFile.text);

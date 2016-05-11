@@ -12,5 +12,7 @@ public class BattleDataAsset : ScriptableObject  {
 
     public TextAsset Song;
 
+    public Sprite Background;
+
     public List<GameObject> Enemies;
 }
