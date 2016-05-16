@@ -208,20 +208,29 @@ public class BattleTracksManager : MonoBehaviour {
 	/** Called when a input is pressed. The id correspond to the phase state ( attack > 0, defense < 0) */
 	public void OnInputDown(int _id){
 		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputDown ();
+			m_tracks [m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.PRESS);
 		} else {	
-			m_tracks[m_currentTrackID].OnInputError(true);
+			m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.PRESS);
 		}
 	}
 
 	/** Called when a input is released. The id correspond to the phase state ( attack > 0, defense < 0) */
 	public void OnInputUp(int _id){
 		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputUp ();
+			m_tracks [m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.RELEASE);
 		} else {	
-			m_tracks[m_currentTrackID].OnInputError(false);
+			m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.RELEASE);
 		}
 	}
+
+    public void OnSlideBegin(int _id) {
+        if (CheckInputState(_id)) {
+            m_tracks[m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.SLIDE);
+        }
+        else {
+            m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.SLIDE);
+        }
+    }
 
 	bool CheckInputState(int _id){
 		if(m_state == BattleState.SWITCHING)

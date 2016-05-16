@@ -82,14 +82,11 @@ public class BattleTrack : MonoBehaviour {
 			m_notes.Add (_note);
 		return success;
 	}
-
-	public void OnInputDown(){
-		m_currentSlot.OnInputHit (true);
-	}
-
-	public void OnInputUp(){
-		m_currentSlot.OnInputHit (false);
-	}
+    
+    public void OnInputHit(BattleNote.HIT_METHOD method)
+    {
+        m_currentSlot.OnInputHit(method);
+    }
 
 	#region NOTE_EVENTS
 
@@ -126,10 +123,10 @@ public class BattleTrack : MonoBehaviour {
 
 	/** Called from a slot when the input is pressed but no note is hit
 	 * Param _down tells if the input is pressed down */
-	public void OnInputError(bool _down){
+	public void OnInputError(BattleNote.HIT_METHOD method){
 		bool noteMissed = false;
 		//input is released
-		if (_down == false) {
+		if (method == BattleNote.HIT_METHOD.RELEASE) {
 			//and a long note is ongoing ( but it didn't get hit )
 			if (m_currentLongNote) {
 				noteMissed = true;

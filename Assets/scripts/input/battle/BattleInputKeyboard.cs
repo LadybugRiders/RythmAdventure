@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// This class is a prototype, not to be used on device
+/// </summary>
 public class BattleInputKeyboard : MonoBehaviour {
 
 	[SerializeField] private BattleTracksManager m_tracksManager;
 
 	[SerializeField] string m_inputAttack = "right";
 	[SerializeField] string m_inputDefend = "left";
+    [SerializeField] string m_inputSlide = "up";
 	// Use this for initialization
 	void Start () {
 		if (Application.platform == RuntimePlatform.Android) {

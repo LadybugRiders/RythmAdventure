@@ -11,6 +11,11 @@ public class BattleSlot : MonoBehaviour {
 	[SerializeField] protected List<BattleSlotTextAccuracy> m_textsAcc;
 	[SerializeField] protected BattleSlotExplosion m_explosion;
 
+    [SerializeField] protected float m_slideErrorDelay = 0.6f;
+    bool m_errorPending = false;
+    BattleNote.HIT_METHOD m_errorInputMethod;
+    
+
 	protected float m_diameter;
 
 	/** Notes currently colliding with the slot */
@@ -30,7 +35,6 @@ public class BattleSlot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	public void Activate(){
@@ -42,24 +46,28 @@ public class BattleSlot : MonoBehaviour {
 		m_collidingNotes.Clear ();
 	}
 
-	public void OnInputHit( bool _down){
+	public void OnInputHit(BattleNote.HIT_METHOD _method){
 		if (m_active == false ) 
 			return;
 		//if no note is colliding, send an error to BattleTrack
 		if (m_collidingNotes.Count <= 0) {
-			m_track.OnInputError(_down);
-			m_explosion.Stop();
+            LaunchError(_method);
 			return;
 		}
 
 		//else we hit the first note that has collided
 		BattleNote note = m_collidingNotes [0];
-		//check input method of the note
-		if ( note.HitPress != _down) {
-			m_track.OnInputError(_down);
-			m_explosion.Stop();
-			return;
+        //check input method of the note
+        if ( note.HitMethod != _method ) {
+            LaunchError(_method);
+            return;
 		}
+
+        //Check slide, aborting an error if a hit is pending
+        if( m_errorPending && _method == BattleNote.HIT_METHOD.SLIDE)
+        {
+            AbortPendingError();
+        }
 
 		//hit note and compute accuracy
 		float accuracy = ComputeAccuracy (note);
@@ -70,9 +78,39 @@ public class BattleSlot : MonoBehaviour {
 		m_explosion.Play (note);
 	}
 
-	#region COLLISIONS
+    #region ERROR_HANDLING
 
-	void OnTriggerEnter2D(Collider2D _collider){
+    public void LaunchError(BattleNote.HIT_METHOD _method)
+    {
+        //clean just in case
+        TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
+        m_errorPending = true;
+        m_errorInputMethod = _method;
+        TimerEngine.instance.AddTimer(m_slideErrorDelay, "OnPendingErrorTimerOver", this.gameObject);
+    }
+    
+    public void AbortPendingError()
+    {
+        m_errorPending = false;
+        //clean timers
+        TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
+    }
+
+    public void OnPendingErrorTimerOver()
+    {
+        if (m_errorPending)
+        {
+            m_errorPending = false;
+            m_track.OnInputError(m_errorInputMethod);
+            m_explosion.Stop();
+        }
+    }
+
+    #endregion
+
+    #region COLLISIONS
+
+    void OnTriggerEnter2D(Collider2D _collider){
 		if (m_active == false ) 
 			return;
 		if( _collider.gameObject.layer == 8 ){

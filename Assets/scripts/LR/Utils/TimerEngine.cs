@@ -42,7 +42,37 @@ public class TimerEngine : MonoBehaviour {
 		return timer;
 	}
 
-	public class Timer{
+    /// <summary>
+    /// Stops the first timer corresponding with the callback. You can also specify the target gameobject
+    /// </summary>
+    public void StopFirst(string _callbackName, GameObject _callbackObject = null)
+    {
+        for (int i = m_timers.Count - 1; i > -1; i--) {
+            Timer timer = m_timers[i];
+            if( timer.CallbackName == _callbackName && (_callbackObject!=null && timer.CallbackObject == _callbackObject))
+            {
+                m_timers.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stops all the timers corresponding with the callback. You can also specify the target gameobject
+    /// </summary>
+    public void StopAll(string _callbackName, GameObject _callbackObject = null)
+    {
+        for (int i = m_timers.Count - 1; i > -1; i--)
+        {
+            Timer timer = m_timers[i];
+            if (timer.CallbackName == _callbackName && (_callbackObject != null && timer.CallbackObject == _callbackObject))
+            {
+                m_timers.RemoveAt(i);
+            }
+        }
+    }
+
+    public class Timer{
 		protected float m_time;
 		protected float m_targetTime;
 		protected bool m_finished = false;
@@ -74,5 +104,10 @@ public class TimerEngine : MonoBehaviour {
 			}
 			return false;
 		}
+
+        public float Time {get { return m_time; } }
+        public string CallbackName { get { return m_callbackName; } }
+        public GameObject CallbackObject { get { return m_callbackObject; } }
+        public bool Finished { get { return m_finished; } }
 	}
 }

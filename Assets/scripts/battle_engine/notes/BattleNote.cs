@@ -8,8 +8,9 @@ public class BattleNote : MonoBehaviour {
 	public enum State { LAUNCHED, HIT, MISS, DEAD };
 	protected State m_state = State.DEAD;
 
-	/** If set to false, the note is hit by releasing the input */
-	[SerializeField] protected bool m_hitPress = true;
+    public enum HIT_METHOD { PRESS, RELEASE, SLIDE };
+    
+	[SerializeField] protected HIT_METHOD m_hitMethod = HIT_METHOD.PRESS;
 
 	[SerializeField] protected NoteData.NoteType m_type = NoteData.NoteType.SIMPLE;
 
@@ -185,9 +186,9 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
-	public bool HitPress {
+	public HIT_METHOD HitMethod {
 		get {
-			return m_hitPress;
+			return m_hitMethod;
 		}
 	}
 
