@@ -151,6 +151,11 @@ public class BattleNote : MonoBehaviour {
 
 	}
 
+    public virtual void ChangeHitMethod(HIT_METHOD _method)
+    {
+        m_hitMethod = _method;
+    }
+
 	#region GETTERS_SETTERS
 
 	public NoteData.NoteType Type {

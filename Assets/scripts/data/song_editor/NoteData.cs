@@ -7,7 +7,7 @@ public class NoteData {
 	[SerializeField] protected float m_timeBegin;
 
 	
-	public enum NoteType{ SIMPLE, LONG };
+	public enum NoteType{ SIMPLE, LONG, SLIDE };
 	[SerializeField] protected NoteType m_type = NoteType.SIMPLE;
 
 	[SerializeField] protected int m_trackID= 0;

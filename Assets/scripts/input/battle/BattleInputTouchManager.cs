@@ -47,11 +47,11 @@ public class BattleInputTouchManager : MonoBehaviour {
             if ( m_attackCollider == coll ){				
 				m_pressed = true;
 				m_inputDown = 1;
-				m_tracksManager.OnInputDown(1);
+				m_tracksManager.OnInputTriggered(1,BattleNote.HIT_METHOD.PRESS);
 			}else if( m_defendCollider == coll){				
 				m_pressed = true;
 				m_inputDown = -1;
-				m_tracksManager.OnInputDown(-1);
+				m_tracksManager.OnInputTriggered(-1,BattleNote.HIT_METHOD.PRESS);
 			}
 		}
 
@@ -73,15 +73,14 @@ public class BattleInputTouchManager : MonoBehaviour {
                     //slide end
                 }
                 m_sliding = false;
-                m_tracksManager.OnInputUp(m_inputDown);
+                m_tracksManager.OnInputTriggered(m_inputDown,BattleNote.HIT_METHOD.RELEASE);
             }else
             {
                 //Still pressing
                 if (!m_sliding && m_deltaSlide.magnitude >= m_slideMinLength)
                 {
                     m_sliding = true;
-                    Debug.Log("OnSlide");
-                    m_tracksManager.OnSlideBegin(m_inputDown);
+                    m_tracksManager.OnInputTriggered(m_inputDown, BattleNote.HIT_METHOD.SLIDE);
                 }
             }
 		}

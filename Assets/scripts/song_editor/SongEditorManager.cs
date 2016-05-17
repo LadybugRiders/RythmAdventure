@@ -219,6 +219,7 @@ public class SongEditorManager : MonoBehaviour {
 			newNote.type = (NoteData.NoteType) ((int)noteJSON.GetField("type").n);
 			newNote.time = noteJSON.GetField("time").f;
 			newNote.head = noteJSON.GetField("head").b;
+            newNote.OnTypeChanged();
 		}
 
 		//try loading audioClip

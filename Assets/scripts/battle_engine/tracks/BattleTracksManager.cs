@@ -14,14 +14,16 @@ public class BattleTracksManager : MonoBehaviour {
 	private int m_currentTrackID = 0;
 
 	/** GameObject containing all simple notes */
-	public GameObject m_simpleNotesGroup;
-	public GameObject m_longNotesGroup;
-	/** List of simple notes scipts */
-	private List<BattleNote> m_simpleNotes;
+	[SerializeField] public GameObject m_simpleNotesGroup;
+    [SerializeField] public GameObject m_longNotesGroup;
+    [SerializeField] public GameObject m_slideNotesGroup;
+    /** List of notes scripts */
+    private List<BattleNote> m_simpleNotes;
 	private List<BattleNote> m_longNotes;
+    private List<BattleNote> m_slideNotes;
 
-	//COLOR
-	public Color attackColor;
+    //COLOR
+    public Color attackColor;
 	public Color defendColor;
 
 	[SerializeField] int m_magicNoteRate = 20;
@@ -123,19 +125,20 @@ public class BattleTracksManager : MonoBehaviour {
 		bool success = false;
 		switch (_data.Type) {
 			case NoteData.NoteType.SIMPLE : success = LaunchNote(_data, m_simpleNotes); break;
-			case NoteData.NoteType.LONG : success = LaunchLongNote(_data);break;
+			case NoteData.NoteType.LONG : success = LaunchLongNote(_data); break;
+            case NoteData.NoteType.SLIDE: success = LaunchNote(_data, m_slideNotes); break;
 		}
 		if (success) {
 			m_engine.OnNoteLaunched (_data);
 		}
 	}
 
-	bool LaunchNote(NoteData _data, List<BattleNote> _inputArray){
+	bool LaunchNote(NoteData _data, List<BattleNote> _notes){
 		BattleNote note = null;
 		//Search for a available note
-		for (int i=0; i < _inputArray.Count; i ++) {
-			if( _inputArray[i].CurrentState == BattleNote.State.DEAD ){
-				note = _inputArray[i];
+		for (int i=0; i < _notes.Count; i ++) {
+			if(_notes[i].CurrentState == BattleNote.State.DEAD ){
+				note = _notes[i];
 				break;
 			}
 		}
@@ -185,7 +188,7 @@ public class BattleTracksManager : MonoBehaviour {
 			return LaunchNoteOnTrack (note, _data);
 		}
 	}
-
+    
 	/** Every BattleNote added to the track pass in there */
 	bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
 		//keep track of launched notes
@@ -201,34 +204,22 @@ public class BattleTracksManager : MonoBehaviour {
 		return success;
 	}
 
-	#endregion
+    #endregion
 
-	#region INPUT
-
-	/** Called when a input is pressed. The id correspond to the phase state ( attack > 0, defense < 0) */
-	public void OnInputDown(int _id){
-		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.PRESS);
-		} else {	
-			m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.PRESS);
-		}
-	}
-
-	/** Called when a input is released. The id correspond to the phase state ( attack > 0, defense < 0) */
-	public void OnInputUp(int _id){
-		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.RELEASE);
-		} else {	
-			m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.RELEASE);
-		}
-	}
-
-    public void OnSlideBegin(int _id) {
-        if (CheckInputState(_id)) {
-            m_tracks[m_currentTrackID].OnInputHit(BattleNote.HIT_METHOD.SLIDE);
+    #region INPUT
+    /// <summary>
+    /// Called when a input is pressed. The id correspond to the phase state ( attack =1 , defense = -1)
+    /// methode is PRESS, RELEASE, SLIDE
+    /// </summary>
+    public void OnInputTriggered(int _id, BattleNote.HIT_METHOD _method)
+    {
+        if (CheckInputState(_id))
+        {
+            m_tracks[m_currentTrackID].OnInputHit(_method);
         }
-        else {
-            m_tracks[m_currentTrackID].OnInputError(BattleNote.HIT_METHOD.SLIDE);
+        else
+        {
+            m_tracks[m_currentTrackID].OnInputError(_method);
         }
     }
 
@@ -242,20 +233,16 @@ public class BattleTracksManager : MonoBehaviour {
 
 	#region FIND_NOTES
 	void FindNotesScripts(){
-		FindSimpleNotes ();
-		FindLongNotes ();
-	}
-
-	void FindSimpleNotes(){		
 		//Create list of simples notes scripts
 		BattleNote[] notes = m_simpleNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_simpleNotes = new List<BattleNote> (notes);
-	}
-
-	void FindLongNotes(){		
-		BattleNote[] notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
+        //Long notes
+		notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_longNotes = new List<BattleNote> (notes);
-	}
+        //Slide notes
+        notes = m_slideNotesGroup.GetComponentsInChildren<BattleNote>(true);
+        m_slideNotes = new List<BattleNote>(notes);
+    }
 
 	#endregion
 

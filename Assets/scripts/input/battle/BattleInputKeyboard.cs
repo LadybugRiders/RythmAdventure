@@ -29,10 +29,11 @@ public class BattleInputKeyboard : MonoBehaviour {
 
 	bool CheckInput( string _input, int _index){
 		if (Input.GetKeyDown (_input)) {
-			m_tracksManager.OnInputDown (_index);
+            m_tracksManager.OnInputTriggered(_index, BattleNote.HIT_METHOD.PRESS);
 			return true;
-		} else if( Input.GetKeyUp(_input) ){
-			m_tracksManager.OnInputUp(_index);
+		} else if( Input.GetKeyUp(_input) )
+        {
+            m_tracksManager.OnInputTriggered(_index, BattleNote.HIT_METHOD.RELEASE);
 			return true;
 		}
 		return false;
