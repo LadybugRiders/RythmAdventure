@@ -30,7 +30,7 @@ public class BattleInputTouchManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+        m_tracksManager.noteEventHandler += OnNoteHit;
 	}
 	
 	// Update is called once per frame
@@ -85,6 +85,16 @@ public class BattleInputTouchManager : MonoBehaviour {
             }
 		}
 	}
+
+    void OnNoteHit(object sender, BattleTracksManager.NoteEventInfo eventInfo) {
+        if (eventInfo.NextNote == null)
+            return;
+        switch (eventInfo.NextNote.Type)
+        {
+            case NoteData.NoteType.SLIDE:
+                break;
+        }
+    }
 
 	Vector2 CustomGetTouchPosition(){
 #if UNITY_STANDALONE || UNITY_EDITOR

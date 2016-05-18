@@ -98,6 +98,9 @@ public class BattleEngine : MonoBehaviour {
     
     #region LOADING
 
+    /// <summary>
+    /// Debug loading 
+    /// </summary>
     void LoadSong(string _songName, Difficulty _difficulty)
     {
         //Load Data

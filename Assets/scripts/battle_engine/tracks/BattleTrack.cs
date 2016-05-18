@@ -103,7 +103,9 @@ public class BattleTrack : MonoBehaviour {
 
 		//Audio
 		PlayAudio (_note);
-	}
+
+        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, acc));
+    }
 
 	/** Called directly by BattleSlot if a note is missed ( went past the slot )
 	 * Or from BattleTrack.OnInputError ( before the note hits the slot) */
@@ -119,10 +121,12 @@ public class BattleTrack : MonoBehaviour {
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (acc);
 		m_currentLongNote = null;
-	}
 
-	/** Called from a slot when the input is pressed but no note is hit
-	 * Param _down tells if the input is pressed down */
+	}
+    
+    ///<summary>
+	/// Called from a slot when the input is pressed but no note is hit
+	///</summary>
 	public void OnInputError(BattleNote.HIT_METHOD method){
 		bool noteMissed = false;
 		//input is released
@@ -139,8 +143,9 @@ public class BattleTrack : MonoBehaviour {
 		//Delete if needed
 		if (noteMissed && m_notes.Count > 0) {
 			OnNoteMiss (m_notes [0]);
-		}
-	}
+        }
+        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+    }
 
 	#endregion
 
@@ -222,12 +227,18 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// The current Note of the track. This note cannot be Dead (hit).
+    /// </summary>
 	public BattleNote CurrentNote{
 		get{
 			if( m_notes == null || m_notes.Count <= 0 )
 				return null;
-			return m_notes[0];
-		}
+            foreach (var note in m_notes)
+                if (!note.IsDead)
+                    return note;
+            return null;
+        }
 	}
 
 	public int Id {

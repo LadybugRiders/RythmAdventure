@@ -75,7 +75,7 @@ public class BattleNotesGenerator : MonoBehaviour {
 		//if the current note time has been reached
 		//we also check that we are in the same iteration
 		if(m_notesIterations == m_iteration && m_currentNote.TimeBegin  <= m_timeElapsed) {
-			Debug.Log (m_currentNote.TimeBegin + " " + m_timeElapsed + " " + m_currentNote.Type.ToString());
+			//Debug.Log (m_currentNote.TimeBegin + " " + m_timeElapsed + " " + m_currentNote.Type.ToString());
 			//Send note
 			m_tracksManager.LaunchNote(m_currentNote.Clone(),m_iteration);
 			//go to next note or end

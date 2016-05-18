@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattleTracksManager : MonoBehaviour {
+
 	[SerializeField] BattleEngine m_engine;
 	//State
 	public enum BattleState { ATTACK, DEFEND, SWITCHING };
@@ -33,6 +34,21 @@ public class BattleTracksManager : MonoBehaviour {
 	private int m_iteration = 1;
 
 	private float m_currentSpeed = 5.0f;
+
+    //EVENTS
+    public event System.EventHandler<NoteEventInfo> noteEventHandler;
+    public class NoteEventInfo : System.EventArgs{
+        public NoteData NoteHit { get; private set; }
+        public NoteData NextNote { get; set; }
+        public bool Success { get; private set; }
+        public BattleScoreManager.Accuracy Accuracy { get; private set; }
+        public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.BAD)
+        {
+            NoteHit = _notehit;
+            Success = _success;
+            Accuracy = _acc;
+        }
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -229,6 +245,16 @@ public class BattleTracksManager : MonoBehaviour {
 		return (_id < 0 && m_state == BattleState.DEFEND) || (_id > 0 && m_state == BattleState.ATTACK);
 	}
 
+    public void RaiseNoteEvent(NoteEventInfo _eventNote)
+    {
+        if (noteEventHandler != null)
+        {
+            CheckCurrentTrack();
+            _eventNote.NextNote = m_tracks[m_currentTrackID].CurrentNote.Data; // the note being hit/missed cannot be the current
+            noteEventHandler.Invoke(this, _eventNote);
+        }
+    }
+
 	#endregion
 
 	#region FIND_NOTES
@@ -294,7 +320,7 @@ public class BattleTracksManager : MonoBehaviour {
 		int minIteration = int.MaxValue;
 		for(int i=0; i < m_tracks.Count; i ++){
 			BattleNote n = m_tracks[i].CurrentNote;
-			if( n==null)
+			if( n==null )
 				continue;
 			if( m_tracks[i].Iteration < minIteration || n.Data.TimeBegin < bestTime ){
 				bestTime = n.Data.TimeBegin ;
