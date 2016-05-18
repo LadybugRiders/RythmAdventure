@@ -17,4 +17,8 @@ public class BattleDataAsset : ScriptableObject  {
     public List<GameObject> Enemies;
 
     public float TimeBegin = 0.0f;
+
+    //For switching
+    public int AttackNotesCount = 10;
+    public int DefenseNotesCount = 5;
 }

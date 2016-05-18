@@ -15,10 +15,7 @@ public class BattleEngine : MonoBehaviour {
 	protected BattleNotesGenerator m_notesGenerator;
 
 	[SerializeField] protected UIBattleManager m_ui;
-
-	//phase switch variables
-	[SerializeField] int m_switchAttackBaseCount = 10;
-	[SerializeField] int m_switchDefendBaseCount = 6;
+    
 	int m_switchCount = 0;
 	int m_nextSwitchCount = 0;
     
@@ -64,7 +61,7 @@ public class BattleEngine : MonoBehaviour {
         m_audioSource.time = m_battleData.TimeBegin;
 
         SwitchPhase ();
-		m_nextSwitchCount = m_switchDefendBaseCount;        
+		m_nextSwitchCount = m_battleData.AttackNotesCount;        
 	}
 
 	void LoadResources(BattleDataAsset battleData){
@@ -128,9 +125,9 @@ public class BattleEngine : MonoBehaviour {
 
 	public void OnSwitchSuccessful(){
 		if (m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK)
-			m_nextSwitchCount = m_switchAttackBaseCount;
+			m_nextSwitchCount = m_battleData.AttackNotesCount;
 		else
-			m_nextSwitchCount = m_switchDefendBaseCount;
+			m_nextSwitchCount = m_battleData.DefenseNotesCount;
 		m_switchCount = 0;
 		//UI
 		m_ui.SwitchPhase (m_tracksManager.IsAttacking);
