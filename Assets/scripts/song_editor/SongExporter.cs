@@ -65,6 +65,7 @@ public class SongExporter {
 
         File.WriteAllText( folderPath +"/"+fullName+ ".json", text);
 		AssetDatabase.Refresh();
+        return Resources.Load("song_data/" + _songName + "/" + fullName) as TextAsset;
 #else
         return null;
 #endif
