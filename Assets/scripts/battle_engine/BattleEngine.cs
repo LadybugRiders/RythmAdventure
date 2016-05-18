@@ -23,9 +23,8 @@ public class BattleEngine : MonoBehaviour {
 	int m_nextSwitchCount = 0;
     
 	bool m_debug = false;
-	SongEditorTestLauncher m_testLauncher;
 
-    [SerializeField] BattleDataAsset m_defaultBattleData;
+    [SerializeField] BattleDataAsset m_battleData;
 
 	//Audio
 	protected AudioSource m_audioSource;
@@ -43,9 +42,6 @@ public class BattleEngine : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		m_audioSource = GetComponent<AudioSource> ();
-		//Search for TestLauncher. If present, it's in debug mode
-		m_testLauncher = FindObjectOfType(typeof(SongEditorTestLauncher)) as SongEditorTestLauncher;
-		m_debug = m_testLauncher != null;
 
 		BattleNotesGenerator[] gens = m_notesGeneratorObject.GetComponents<BattleNotesGenerator> ();
 		for (int i=0; i < gens.Length; i++) {
@@ -55,32 +51,20 @@ public class BattleEngine : MonoBehaviour {
 		TimerEngine.instance.AddTimer (1.0f, "BeginBattle", gameObject);
 	}
 
-	void BeginBattle(){		
-		if (m_debug) {
-			LoadSong( m_testLauncher.songName, m_testLauncher.difficulty);
-			m_notesGenerator.BeginDebug(m_timeShift, m_testLauncher.timeBegin);
-		} else {
-            if( DataManager.instance.BattleData != null)
-            {
-                BattleDataAsset battleData = DataManager.instance.BattleData;
-                LoadSong(battleData);
-            }
-            else
-            {
-                //LoadSong(m_songName,m_difficulty);
-            }
-            //Start Generator
-            m_notesGenerator.Begin (m_timeShift);
-		}
-		//Play song
-		m_audioSource.clip = m_audioClip;
+	void BeginBattle(){
+        if (DataManager.instance.BattleData != null)
+        {
+            m_battleData = DataManager.instance.BattleData;
+        }
+        LoadSong(m_battleData);
+        m_notesGenerator.Begin(m_timeShift, m_battleData.TimeBegin);
+        //Play song
+        m_audioSource.clip = m_audioClip;
 		m_audioSource.Play ();
-		SwitchPhase ();
-		m_nextSwitchCount = m_switchDefendBaseCount;
+        m_audioSource.time = m_battleData.TimeBegin;
 
-		//debug 2
-		if( m_debug)
-			m_audioSource.time = m_testLauncher.timeBegin;
+        SwitchPhase ();
+		m_nextSwitchCount = m_switchDefendBaseCount;        
 	}
 
 	void LoadResources(BattleDataAsset battleData){
@@ -97,32 +81,7 @@ public class BattleEngine : MonoBehaviour {
 	}
     
     #region LOADING
-
-    /// <summary>
-    /// Debug loading 
-    /// </summary>
-    void LoadSong(string _songName, Difficulty _difficulty)
-    {
-        //Load Data
-        string dataSongName = _songName + "_" + _difficulty.ToString().ToLower();
-        TextAsset jsonFile = Resources.Load("song_data/" + _songName + "/" + dataSongName) as TextAsset;
-
-        JSONObject jsonData = new JSONObject(jsonFile.text);
-
-        //Load Note Generator
-        m_notesGenerator.LoadData(jsonData);
-
-        //Load song music
-        string clipName = jsonData.GetField("clipName").str;
-        m_audioClip = Resources.Load("songs/" + clipName) as AudioClip;
-        m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;
-
-        m_timeShift = jsonData.GetField("timeSpeed").n;
-        m_tracksManager.SetTimeShift(m_timeShift);
-
-        m_fightManager.Load(null);
-    }
-
+    
     void LoadSong(BattleDataAsset battleData)
     {
         //Load Battle Data
@@ -148,8 +107,9 @@ public class BattleEngine : MonoBehaviour {
 
     #region SWITCH_ATTACK_DEFENSE
 
-    /** Called from tracks manager when a note is launched.
-	 * Checks how many notes has been launched is the current phase and switch if necessary */
+    /// <summary>
+    ///  Called from tracks manager when a note is launched. Checks how many notes has been launched is the current phase and switch if necessary
+    /// </summary>
     public void OnNoteLaunched(NoteData _data){
 		m_switchCount ++;
         //Don't switch between a long note
@@ -196,10 +156,12 @@ public class BattleEngine : MonoBehaviour {
         SceneManager.LoadScene("battle_end");
 	}
 
-	#endregion
+    #endregion
 
-	/** Called by the TracksManager when a note is hit or missed */
-	public BattleScoreManager.Accuracy AddNote( NoteData _note, float _accuracy){
+    /// <summary>
+    /// Called by the TracksManager when a note is hit or missed
+    /// </summary>
+    public BattleScoreManager.Accuracy AddNote( NoteData _note, float _accuracy){
 		_note.HitAccuracy = m_scoreManager.AddNote (_accuracy);
 		m_fightManager.AddNote(_note);
 		return _note.HitAccuracy;

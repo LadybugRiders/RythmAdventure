@@ -40,17 +40,17 @@ public class BattleNotesGenerator : MonoBehaviour {
 #endif
 	}
 
-	public void Begin(float _timeShift){
-		if (m_notes.Count <= 0)
-			return;
-		m_paused = false;
-		m_timeShift = _timeShift;
-		m_index = GetFirstNoteIndex(_timeShift);
-		m_currentNote = m_notes [m_index];
-		//to ensure that notes & music are in the same iterations
-		m_iteration = 1;
-		m_notesIterations = 1;
-	}
+	public void Begin(float _timeShift, float _timeBegin){
+        if (m_notes.Count <= 0)
+            return;
+        m_paused = false;
+        m_timeShift = _timeShift;
+        m_index = GetFirstNoteIndex(_timeBegin + _timeShift);
+        m_currentNote = m_notes[m_index];
+        //to ensure that notes & music are in the same iterations
+        m_iteration = 1;
+        m_notesIterations = 1;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -111,18 +111,6 @@ public class BattleNotesGenerator : MonoBehaviour {
 				return i;
 		}
 		return m_notes.Count-1;
-	}
-
-	public void BeginDebug(float _timeShift, float _timeBegin){
-		if (m_notes.Count <= 0)
-			return;
-		m_paused = false;
-		m_timeShift = _timeShift;
-		m_index = GetFirstNoteIndex(_timeBegin + _timeShift);
-		m_currentNote = m_notes [m_index];
-		//to ensure that notes & music are in the same iterations
-		m_iteration = 1;
-		m_notesIterations = 1;
 	}
 
 	public float TimeSynchroDelta {

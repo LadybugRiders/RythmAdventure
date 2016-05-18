@@ -50,9 +50,10 @@ public class SongExporter {
 		m_json.AddField ("notes", allNotes);
 	}
 
-	public void Export(string _songName, BattleEngine.Difficulty _difficulty){
-		
-		string fullName = _songName + "_"+_difficulty.ToString().ToLower();
+	public TextAsset Export(string _songName, BattleEngine.Difficulty _difficulty){
+
+#if UNITY_EDITOR
+        string fullName = _songName + "_"+_difficulty.ToString().ToLower();
 		string folderPath = Application.dataPath + "/Resources/song_data/" + _songName;
 
 		//check folder and create if necessary
@@ -60,11 +61,12 @@ public class SongExporter {
 			Directory.CreateDirectory(folderPath);
 		}
 
-#if UNITY_EDITOR
         string text = m_json.Print();
 
         File.WriteAllText( folderPath +"/"+fullName+ ".json", text);
 		AssetDatabase.Refresh();
+#else
+        return null;
 #endif
-	}
+    }
 }

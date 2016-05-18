@@ -125,12 +125,14 @@ public class BattleTracksManager : MonoBehaviour {
 		CheckCurrentTrack ();
 	}
 
-	#endregion
+    #endregion
 
-	#region LAUNCH_NOTE
+    #region LAUNCH_NOTE
 
-	/** Called by the NoteGenerator. Only entry to create a note on a track */
-	public void LaunchNote( NoteData _data, int _iteration){
+    /// <summary>
+    ///  Called by the NoteGenerator. Only entry to create a note on a track
+    /// </summary>
+    public void LaunchNote( NoteData _data, int _iteration){
 		m_iteration = _iteration;
 		//don't throw notes while switchin'
 		if (m_state == BattleState.SWITCHING)
@@ -165,8 +167,7 @@ public class BattleTracksManager : MonoBehaviour {
 		//Launch the note on the right track
 		return LaunchNoteOnTrack (note,_data);
 	}
-
-	/** Laucnh a long note */
+    
 	bool LaunchLongNote( NoteData _data ){
 		BattleNoteLong note = null;
 		//TRYING TO ADD A TAIL
@@ -204,9 +205,11 @@ public class BattleTracksManager : MonoBehaviour {
 			return LaunchNoteOnTrack (note, _data);
 		}
 	}
-    
-	/** Every BattleNote added to the track pass in there */
-	bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
+
+    /// <summary>
+    /// Every BattleNote added to the track pass in there
+    /// </summary>
+    bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
 		//keep track of launched notes
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote
@@ -250,7 +253,8 @@ public class BattleTracksManager : MonoBehaviour {
         if (noteEventHandler != null)
         {
             CheckCurrentTrack();
-            _eventNote.NextNote = m_tracks[m_currentTrackID].CurrentNote.Data; // the note being hit/missed cannot be the current
+            var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+            _eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
             noteEventHandler.Invoke(this, _eventNote);
         }
     }
@@ -270,10 +274,12 @@ public class BattleTracksManager : MonoBehaviour {
         m_slideNotes = new List<BattleNote>(notes);
     }
 
-	#endregion
-
-	/** Give subtype to the note*/
-	void ApplySubtype(NoteData _note){
+    #endregion
+    
+    ///<summary>
+    /// Give subtype to the note (MAGIC / REGULAR ...)
+    ///</summary>
+    void ApplySubtype(NoteData _note){
 		if (_note.Type == NoteData.NoteType.LONG ) {
 			return;
 		}
@@ -306,16 +312,20 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	#endregion
-
-	/** Adds the performed note to the engine, even if missed */
-	public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
+    #endregion
+    
+    ///<summary>
+    /// Adds the performed note to the engine, even if missed, so that it can be processed
+    ///</summary>
+    public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
 		CheckCurrentTrack ();
 		return m_engine.AddNote (_note.Data,_accuracy);
 	}
 
-	/** Search between all tracks to see the one which is the current one aka the one with the next not on it*/
-	void CheckCurrentTrack(){
+    /// <summary>
+    /// Search between all tracks to see the one which is the current one aka the one with the next not on it
+    /// </summary>
+    void CheckCurrentTrack(){
 		float bestTime = float.MaxValue;
 		int minIteration = int.MaxValue;
 		for(int i=0; i < m_tracks.Count; i ++){
@@ -330,8 +340,11 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	/** Computes the speed of the notes according to the timeshift ( time for a note to arrive )*/
-	public void SetTimeShift(float _timeShift){
+    /// <summary>
+    /// Computes the speed of the notes according to the timeshift ( time for a note to arrive )
+    /// </summary>
+    /// <param name="_timeShift"></param>
+    public void SetTimeShift(float _timeShift){
 		m_currentSpeed = m_tracks [0].Length / _timeShift;
 	}
 

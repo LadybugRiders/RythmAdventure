@@ -49,7 +49,7 @@ public class BattleSlot : MonoBehaviour {
 	public void OnInputHit(BattleNote.HIT_METHOD _method){
 		if (m_active == false ) 
 			return;
-		//if no note is colliding, send an error to BattleTrack
+		//if no note is colliding (miss) , send an error to BattleTrack
 		if (m_collidingNotes.Count <= 0) {
             LaunchError(_method);
 			return;

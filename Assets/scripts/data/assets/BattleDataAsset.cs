@@ -15,4 +15,6 @@ public class BattleDataAsset : ScriptableObject  {
     public Sprite Background;
 
     public List<GameObject> Enemies;
+
+    public float TimeBegin = 0.0f;
 }

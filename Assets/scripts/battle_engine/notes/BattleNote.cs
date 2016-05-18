@@ -124,7 +124,8 @@ public class BattleNote : MonoBehaviour {
 	virtual public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
 		Die ();
-		return new BattleNote[]{ this };
+        //some notes (like long notes) needs to return several notes when then are missed
+        return new BattleNote[] { this };
 	}
 
 	/** Makes the note die if needs to be. If the note can be killed, return true */

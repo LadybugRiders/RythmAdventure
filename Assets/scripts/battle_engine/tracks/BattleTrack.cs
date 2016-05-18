@@ -111,17 +111,18 @@ public class BattleTrack : MonoBehaviour {
 	 * Or from BattleTrack.OnInputError ( before the note hits the slot) */
 	public void OnNoteMiss(BattleNote _note){
 		//miss note and gather notes to delete with it
-		BattleNote[] toDelete = _note.Miss ();
-		//remove notes induced by the miss
-		for(int i=0; i < toDelete.Length; i ++)
-			m_notes.Remove (toDelete[i]);
+		BattleNote[] notesToDelete = _note.Miss ();
+        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+
+        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
+        foreach(var note in notesToDelete)
+            m_notes.Remove (note);
 
 		//add note to the manager
 		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note, -100);
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (acc);
 		m_currentLongNote = null;
-
 	}
     
     ///<summary>
@@ -140,11 +141,19 @@ public class BattleTrack : MonoBehaviour {
 			noteMissed = true;
 		}
 
-		//Delete if needed
-		if (noteMissed && m_notes.Count > 0) {
-			OnNoteMiss (m_notes [0]);
-        }
-        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+        
+        if (m_notes.Count > 0)
+        {
+            if (noteMissed)
+            {
+                OnNoteMiss(m_notes[0]);
+            }
+            else
+            {
+                m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+            }
+        }            
+        
     }
 
 	#endregion
