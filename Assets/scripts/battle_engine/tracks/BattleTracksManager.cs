@@ -161,7 +161,7 @@ public class BattleTracksManager : MonoBehaviour {
 			}
 		}
 		if (note == null) {
-			Debug.LogError( "No Available Note found ");
+			Debug.LogError( "No Note Available Note found ");
 			return false;
 		}
 		//Launch the note on the right track
@@ -234,7 +234,7 @@ public class BattleTracksManager : MonoBehaviour {
     {
         if (CheckInputState(_id))
         {
-            m_tracks[m_currentTrackID].OnInputHit(_method);
+            m_tracks[m_currentTrackID].OnInputTriggered(_method);
         }
         else
         {

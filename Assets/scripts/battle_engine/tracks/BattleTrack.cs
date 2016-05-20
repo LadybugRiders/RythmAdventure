@@ -83,9 +83,9 @@ public class BattleTrack : MonoBehaviour {
 		return success;
 	}
     
-    public void OnInputHit(BattleNote.HIT_METHOD method)
+    public void OnInputTriggered(BattleNote.HIT_METHOD method)
     {
-        m_currentSlot.OnInputHit(method);
+        m_currentSlot.OnInputTriggered(method);
     }
 
 	#region NOTE_EVENTS
@@ -249,6 +249,11 @@ public class BattleTrack : MonoBehaviour {
             return null;
         }
 	}
+
+    public BattleNoteLong CurrentLongNote
+    {
+        get { return m_currentLongNote; }
+    }
 
 	public int Id {
 		get {
