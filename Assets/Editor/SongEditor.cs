@@ -7,14 +7,25 @@ using System.IO;
 public class SongEditor : Editor {
 
 	SongEditorManager m_target;
+
+    AudioClip m_lastSong;   
 	
 	void OnEnable(){
 		m_target = (SongEditorManager)target;
+        m_lastSong = m_target.music;
 	}
 
 	public override void OnInspectorGUI(){
 		
 		base.OnInspectorGUI ();
+
+        //Check if we loaded a new song
+        if( m_target.music != m_lastSong )
+        {
+            m_target.Reset();
+        }
+        m_lastSong = m_target.music;
+
 		GUILayout.Space (5.0f);
 		//EXPORT
 		GUILayout.Box("", new GUILayoutOption[]{GUILayout.ExpandWidth(true), GUILayout.Height(1)});

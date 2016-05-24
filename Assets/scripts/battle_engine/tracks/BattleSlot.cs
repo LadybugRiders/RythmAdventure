@@ -45,8 +45,6 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _method){
-        if( _method == BattleNote.HIT_METHOD.RELEASE)
-            Debug.Log(_method);
 
 		if (m_active == false ) 
 			return;

@@ -354,8 +354,12 @@ public class SongEditorManager : MonoBehaviour {
 		}
 	}
 
-	
-	public void ChangeMode(){
+    public void Reset()
+    {
+        m_camera.Reset();
+    }
+
+    public void ChangeMode(){
 		if (m_mode == Mode.PLAY)
 			return;
 		switch (m_mode) {
