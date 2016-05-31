@@ -6,7 +6,7 @@ public partial class MapNodesManager {
     MapNode m_pressedNode = null;
 
     // Use this for initialization
-    void StartTouch()
+    void OnStartTouch()
     {
     }
 

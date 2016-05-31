@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class BattleEndManager : MonoBehaviour {
 
@@ -12,4 +13,10 @@ public class BattleEndManager : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    void OnGoToMap()
+    {
+        string mapSceneName = PlayerPrefs.GetString("current_map_scene");
+        SceneManager.LoadScene(mapSceneName);
+    }
 }

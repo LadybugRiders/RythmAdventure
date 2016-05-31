@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class MapNode : MonoBehaviour {
 
+    [SerializeField] string m_id = "MapId";
+
     [SerializeField] List<MapNode> m_parents;
     [SerializeField] List<MapNode> m_children;
 
@@ -43,6 +45,14 @@ public class MapNode : MonoBehaviour {
         {
             return m_battleData;
         }        
+    }
+
+    public string Id
+    {
+        get
+        {
+            return m_id;
+        }
     }
     #endregion
 }

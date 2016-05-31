@@ -8,7 +8,7 @@ public class BattleCharacter : BattleActor {
 	override protected void Start () {
 		base.Start ();
 		m_type = ActorType.CHARACTER;
-		m_currentStats.Attack = 12;
+		m_currentStats.Attack = 156;
         m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
         m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
     }

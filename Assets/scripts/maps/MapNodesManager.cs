@@ -26,10 +26,25 @@ public partial class MapNodesManager : MonoBehaviour {
     void Start() {
         ListNodes();
         BuildPaths();
-        //place the player at start
-        Utils.Set2DPosition(m_player.transform, m_starterNode.transform.position);
-        StartTouch();
+        SetStartNode();
+        OnStartTouch();
+    }
+
+    void SetStartNode()
+    {
         m_currentNode = m_nodes[0];
+        string id = PlayerPrefs.GetString("current_map_node", m_nodes[0].Id);
+        //find node 
+        foreach(var node in m_nodes)
+        {
+            if(node.Id == id)
+            {
+                m_currentNode = node;
+                m_starterNode = m_currentNode;
+                break;
+            }
+        }
+        Utils.Set2DPosition(m_player.transform, m_starterNode.transform.position);
     }
 
     void OnNodeTouchDown(MapNode node)
@@ -86,6 +101,9 @@ public partial class MapNodesManager : MonoBehaviour {
         Debug.Log("FIGHT");
         BattleDataAsset data = m_targetNode.BattleData;
         DataManager.instance.BattleData = data;
+        //Save map
+        PlayerPrefs.SetString("current_map_scene", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetString("current_map_node", m_targetNode.Id);
         SceneManager.LoadScene(data.scene.name);
     }
 

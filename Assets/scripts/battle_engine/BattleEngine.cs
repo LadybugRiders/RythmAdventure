@@ -58,7 +58,12 @@ public class BattleEngine : MonoBehaviour {
         //Play song
         m_audioSource.clip = m_audioClip;
 		m_audioSource.Play ();
-        m_audioSource.time = m_battleData.TimeBegin;
+        //change begin time
+        if(m_battleData.TimeBegin > m_audioClip.length) {
+            Debug.LogError("Error with begin time setting (" + m_battleData.TimeBegin + ") . Total song length = " + m_audioClip.length);
+        }else {
+            m_audioSource.time = m_battleData.TimeBegin;
+        }
 
         SwitchPhase ();
 		m_nextSwitchCount = m_battleData.AttackNotesCount;        
