@@ -53,7 +53,7 @@ public class BattleEngine : MonoBehaviour {
         {
             m_battleData = DataManager.instance.BattleData;
         }
-        LoadSong(m_battleData);
+        Load(m_battleData);
         m_notesGenerator.Begin(m_timeShift, m_battleData.TimeBegin);
         //Play song
         m_audioSource.clip = m_audioClip;
@@ -68,11 +68,7 @@ public class BattleEngine : MonoBehaviour {
         SwitchPhase ();
 		m_nextSwitchCount = m_battleData.AttackNotesCount;        
 	}
-
-	void LoadResources(BattleDataAsset battleData){
-		m_fightManager.Load (battleData);
-	}
-
+    
 	public void OnQuitBattle(){
         SceneManager.LoadScene("main_menu");
 	}
@@ -84,7 +80,7 @@ public class BattleEngine : MonoBehaviour {
     
     #region LOADING
     
-    void LoadSong(BattleDataAsset battleData)
+    void Load(BattleDataAsset battleData)
     {
         //Load Battle Data
         TextAsset jsonFile = battleData.Song;
@@ -102,7 +98,7 @@ public class BattleEngine : MonoBehaviour {
         m_timeShift = jsonData.GetField("timeSpeed").n;
         m_tracksManager.SetTimeShift(m_timeShift);
 
-        LoadResources(battleData);
+        m_fightManager.Load(battleData);
     }
 
     #endregion

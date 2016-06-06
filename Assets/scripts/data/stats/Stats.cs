@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Reflection;
 
 public class Stats {
 
@@ -17,6 +18,13 @@ public class Stats {
 	public float blockGreatModifier = 0.6f;
 	public float blockGoodModifier = 0.3f;
 	public float blockBadModifier = -0.3f;
+
+    public Stats() { }
+
+    public Stats(Stats stats)
+    {
+        Utils.CopyProperties(stats, this);
+    }
 
 	public int Level {
 		get {
@@ -71,4 +79,5 @@ public class Stats {
 			m_magic = value;
 		}
 	}
+    
 }

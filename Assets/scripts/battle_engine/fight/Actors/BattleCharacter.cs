@@ -8,16 +8,19 @@ public class BattleCharacter : BattleActor {
 	override protected void Start () {
 		base.Start ();
 		m_type = ActorType.CHARACTER;
-		m_currentStats.Attack = 156;
         m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
         m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
     }
 
 	#region LOADING 
 	override public void Load(string _name){
-		if (_name == "player") {
-			m_charAnimator.LoadSprites(_name);
-		}
+		m_charAnimator.LoadSprites(_name);
+        DataCharManager.LevelUpData levelup = DataManager.instance.CharacterManager.GetFullStats(_name);
+        if(levelup != null)
+        {
+            m_maxStats = new Stats(levelup.Stats);
+            m_currentStats = new Stats(levelup.Stats);
+        }
 	}
 	#endregion
 
@@ -34,31 +37,31 @@ public class BattleCharacter : BattleActor {
 
 		this.AddMP (5);
 
-		return m_currentStats.Attack;
+		return CurrentStats.Attack;
 	}
 
 	override public int TakeDamage(int _damage, NoteData _note){
 		int damage = _damage;
-		damage -= m_currentStats.Defense ;
+		damage -= CurrentStats.Defense ;
 		//Reduce damage by blocking
 		switch(_note.HitAccuracy){
 			case BattleScoreManager.Accuracy.PERFECT :
-				damage = damage - (int) (damage * m_currentStats.blockPerfectModifier);
+				damage = damage - (int) (damage * CurrentStats.blockPerfectModifier);
 				break;
 			case BattleScoreManager.Accuracy.GREAT :
-				damage = damage - (int) (damage * m_currentStats.blockGreatModifier);
+				damage = damage - (int) (damage * CurrentStats.blockGreatModifier);
 				break;
 			case BattleScoreManager.Accuracy.GOOD :
-				damage = damage - (int) (damage * m_currentStats.blockGoodModifier);
+				damage = damage - (int) (damage * CurrentStats.blockGoodModifier);
 				break;
 			case BattleScoreManager.Accuracy.BAD :
-				damage = damage - (int) (damage * m_currentStats.blockBadModifier);
+				damage = damage - (int) (damage * CurrentStats.blockBadModifier);
 				break;
 		}
 
 		if (damage < 0)
 			damage = 0;
-		m_currentStats.HP -=  damage;
+		CurrentStats.HP -=  damage;
 
 		m_charAnimator.TakeHit ();
 

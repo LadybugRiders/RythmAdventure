@@ -38,7 +38,7 @@ public class BattleEnemy : BattleActor {
 			m_animator.SetTrigger ("attackTrigger");
 		}
 
-		return m_currentStats.Attack;
+		return CurrentStats.Attack;
 
 	}
 		

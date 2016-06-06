@@ -20,13 +20,11 @@ public class BattleActor : MonoBehaviour {
 	[SerializeField] protected UIBattleLifeBar m_lifeGauge;
 	[SerializeField] protected UIBattleLifeBar m_manaGauge;
 
-	//DATA
-	protected DataActor m_data;
-	//STATS
-	protected Stats m_currentStats;
-	protected Stats m_maxStats;
+    //STATS
+    protected Stats m_currentStats = new Stats();
+    protected Stats m_maxStats = new Stats();
 
-	[SerializeField] protected BattleFightMagic m_currentMagic = null;
+    [SerializeField] protected BattleFightMagic m_currentMagic = null;
 
 	protected bool m_dead = false;
 
@@ -34,12 +32,6 @@ public class BattleActor : MonoBehaviour {
 
 	// Use this for initialization
 	virtual protected void Start () {
-		m_data = new DataActor ();
-		m_data.Init ();
-		m_currentStats = m_data.CurrentStats;
-		m_maxStats = m_data.MaxStats;
-
-
 		RefreshLifeGauge ();
 		RefreshManaGauge ();
 		//Transform
@@ -53,7 +45,7 @@ public class BattleActor : MonoBehaviour {
 	// Update is called once per frame
 	virtual protected void Update () {
 		switch (m_state) {
-		case State.ATTACKING : UpdateAttacking(); break; 
+		    case State.ATTACKING : UpdateAttacking(); break; 
 		}
 	}
 
@@ -81,7 +73,7 @@ public class BattleActor : MonoBehaviour {
 	
 	virtual public int Attack( NoteData _noteData ){
 		m_state = State.ATTACKING;
-		return m_currentStats.Attack;
+		return CurrentStats.Attack;
 	}
 
 	virtual public void OnAttackEnded(){
@@ -90,17 +82,17 @@ public class BattleActor : MonoBehaviour {
 
 	virtual public int TakeDamage(int _damage, NoteData _note){
 		int damage = _damage;
-		damage -= m_currentStats.Defense ;
+		damage -= CurrentStats.Defense ;
 		if (damage < 0)
 			damage = 0;
-		m_currentStats.HP -=  damage;
+		CurrentStats.HP -=  damage;
 
 		//UI
 		RefreshLifeGauge ();
 
 		//Notify manager if dead
 //		bool dead = false;
-		if (m_currentStats.HP <= 0) {
+		if (CurrentStats.HP <= 0) {
 			Die ();
 		}
 
@@ -109,10 +101,10 @@ public class BattleActor : MonoBehaviour {
 
 	virtual public int TakeMagicDamage( int _damage, BattleFightMagic _magic){
 
-		_damage -= m_currentStats.Magic ;
+		_damage -= CurrentStats.Magic ;
 		if (_damage < 0)
 			_damage = 0;
-		m_currentStats.HP -=  _damage;
+		CurrentStats.HP -=  _damage;
 		
 		//UI
 		RefreshLifeGauge ();
@@ -129,9 +121,9 @@ public class BattleActor : MonoBehaviour {
 		if (isCasting)
 			return false;
 		bool full = false;
-		m_currentStats.MP += _mp;
-		if( m_currentStats.MP >= m_maxStats.MP){
-			m_currentStats.MP = m_maxStats.MP;
+		CurrentStats.MP += _mp;
+		if( CurrentStats.MP >= MaxStats.MP){
+			CurrentStats.MP = MaxStats.MP;
 			full = true;
 		}
 		RefreshManaGauge();
@@ -139,7 +131,7 @@ public class BattleActor : MonoBehaviour {
 	}
 
 	virtual protected void CheckDeath(){
-		if ( m_dead == false && m_currentStats.HP <= 0) {
+		if ( m_dead == false && CurrentStats.HP <= 0) {
 			Die ();
 		}
 	}
@@ -163,15 +155,15 @@ public class BattleActor : MonoBehaviour {
 	/** Called when a magic attack is cast */
 	virtual public void MagicAttack(NoteData _noteData){
 		m_currentMagic.Attack ();
-		m_currentStats.MP -= m_currentMagic.CostByUse;
-		if (m_currentStats.MP <= 0) {
+		CurrentStats.MP -= m_currentMagic.CostByUse;
+		if (CurrentStats.MP <= 0) {
 			OnDismissMagic();
 		}
 		RefreshManaGauge ();
 	}
 
 	virtual public void OnDismissMagic(){
-		m_currentStats.MP = 0;
+		CurrentStats.MP = 0;
 		RefreshManaGauge ();
 		m_currentMagic.Dismiss ();
 	}
@@ -182,7 +174,7 @@ public class BattleActor : MonoBehaviour {
 		if (m_lifeGauge == null)
 			return;
 		
-		float hpPercent = (float)m_currentStats.HP / (float)m_maxStats.HP;
+		float hpPercent = (float)CurrentStats.HP / (float)MaxStats.HP;
 		m_lifeGauge.SetValue( hpPercent );
 	}
 
@@ -190,7 +182,7 @@ public class BattleActor : MonoBehaviour {
 		if (m_manaGauge == null)
 			return;
 		
-		float mpPercent = (float)m_currentStats.MP / (float)m_maxStats.MP;
+		float mpPercent = (float)CurrentStats.MP / (float)MaxStats.MP;
 		m_manaGauge.SetValue( mpPercent );
 	}
 
@@ -235,4 +227,19 @@ public class BattleActor : MonoBehaviour {
 		}
 	}
 
+    protected Stats MaxStats
+    {
+        get
+        {
+            return m_maxStats;
+        }
+    }
+
+    protected Stats CurrentStats
+    {
+        get
+        {
+            return m_currentStats;
+        }        
+    }
 }

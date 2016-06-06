@@ -377,6 +377,12 @@ public class TweenEngine : MonoBehaviour {
 		}
 		
 		override public bool UpdateTween( float _deltaTime ){
+            if(m_target == null)
+            {
+                m_finished = true;
+                return true;
+            }
+
 			if (m_stopped) {
 				SendCallback( m_target.gameObject, (object) m_target);
 				return true;
