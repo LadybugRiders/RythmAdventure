@@ -36,9 +36,13 @@ public class BattleFightManager : MonoBehaviour {
 	/// Called by battle engine at start of the scene. Loads all the actors
 	/// </summary>
 	public void Load(BattleDataAsset battleData){
-		m_party [0].Load ("player1");
-		m_party [1].Load ("player1");
-		m_party [2].Load ("player1");
+
+        //load team
+        var teamCharsIds = ProfileManager.instance.GetProfile().CurrentTeam;
+        for(int i=0; i < teamCharsIds.Count; i++)
+        {
+            m_party[i].Load(teamCharsIds[i]);
+        }
 
         //Loads enemies
         if (battleData != null)

@@ -63,6 +63,11 @@ public class ProfileManager : MonoBehaviour {
         Debug.Log("[Saved Profile] " + json);
     }
 
+    public Profile GetProfile()
+    {
+        return profile;
+    }
+
     [System.Serializable]
     public class Profile
     {
@@ -72,12 +77,22 @@ public class ProfileManager : MonoBehaviour {
 
         [SerializeField] public List<CharacterData> Characters;
 
+        [SerializeField] public List<string> CurrentTeam;
+
         public Profile()
         {
-            Characters = new List<CharacterData>();
+            Characters = new List<CharacterData>()
+            {
+                new CharacterData("player1"),
+                new CharacterData("player2"),
+                new CharacterData("player3")
+            };
+
+            CurrentTeam = new List<string>() { "player1", "player3", "player1" };
         }
     }
 
+    [System.Serializable]
     public class CharacterData
     {
         public string Name = "char";

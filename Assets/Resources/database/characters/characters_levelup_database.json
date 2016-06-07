@@ -24,5 +24,57 @@
             "defense": 58,
             "magic": 58
         }
+    ],
+    "player2": [
+        {
+            "level": 1,
+            "xp": 0,
+            "hp": 45,
+            "attack": 40,
+            "defense": 50,
+            "magic": 50
+        },
+        {
+            "level": 2,
+            "xp": 10,
+            "hp": 65,
+            "attack": 54,
+            "defense": 54,
+            "magic": 54
+        },
+        {
+            "level": 3,
+            "xp": 30,
+            "hp": 78,
+            "attack": 58,
+            "defense": 58,
+            "magic": 58
+        }
+    ],
+    "player3": [
+        {
+            "level": 1,
+            "xp": 0,
+            "hp": 45,
+            "attack": 60,
+            "defense": 50,
+            "magic": 50
+        },
+        {
+            "level": 2,
+            "xp": 10,
+            "hp": 65,
+            "attack": 54,
+            "defense": 54,
+            "magic": 54
+        },
+        {
+            "level": 3,
+            "xp": 30,
+            "hp": 78,
+            "attack": 58,
+            "defense": 58,
+            "magic": 58
+        }
     ]
 }
