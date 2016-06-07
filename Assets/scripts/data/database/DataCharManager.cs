@@ -29,22 +29,17 @@ public class DataCharManager : DatabaseLoader
         }
         return levelUpData;
     }
-
+    
     public class LevelUpData
     {
-        public string PlayerId;
+        public string CharId;
         public int XpNeeded = 0;
         public Stats Stats = new Stats();
 
         public LevelUpData(JSONObject json)
         {
             XpNeeded = (int)json.GetField("xp").f;
-            //stats
-            Stats = new Stats();
-            Stats.Level = (int)json.GetField("level").f;
-            Stats.Attack = (int)json.GetField("attack").f;
-            Stats.Defense = (int)json.GetField("defense").f;
-            Stats.Magic = (int)json.GetField("magic").f;
+            Stats = new Stats(json);
         }
     }
 }

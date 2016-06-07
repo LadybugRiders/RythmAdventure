@@ -16,7 +16,6 @@ public class DataManager : DatabaseLoader {
     //Global data
     JSONObject m_gameData;
 
-
 	override protected void Awake()
     {
         DontDestroyOnLoad(this.gameObject);

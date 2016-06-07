@@ -26,6 +26,15 @@ public class Stats {
         Utils.CopyProperties(stats, this);
     }
 
+    public Stats(JSONObject json)
+    {
+        //stats
+        Level = (int)json.GetField("level").f;
+        Attack = (int)json.GetField("attack").f;
+        Defense = (int)json.GetField("defense").f;
+        Magic = (int)json.GetField("magic").f;
+    }
+
 	public int Level {
 		get {
 			return m_level;
