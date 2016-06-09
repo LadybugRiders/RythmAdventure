@@ -93,5 +93,10 @@ public class DataManager : DatabaseLoader {
         get { return GetComponent<DataCharManager>(); }
     }
 
+    public DataEnemiesManager EnemiesManager
+    {
+        get { return GetComponent<DataEnemiesManager>(); }
+    }
+
     #endregion
 }

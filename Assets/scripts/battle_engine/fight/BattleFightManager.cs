@@ -51,10 +51,12 @@ public class BattleFightManager : MonoBehaviour {
             {
                 if(m_enemies[i])
                 {
+                    //Destroy the temporary enemy
                     Transform parent = m_enemies[i].transform.parent;
                     Vector3 position = m_enemies[i].transform.position;
                     Destroy(m_enemies[i].gameObject);
-                    var prefab = battleData.Enemies[i];
+                    //instantiate and place the new one
+                    var prefab = battleData.Enemies[i].Prefab;
                     if( prefab != null)
                     {
                         //instantiate enemy
@@ -62,6 +64,8 @@ public class BattleFightManager : MonoBehaviour {
                         m_enemies[i] = go.GetComponent<BattleEnemy>();
                         go.transform.SetParent(parent, true);
                         go.transform.position = position;
+                        //load
+                        m_enemies[i].Load(battleData.Enemies[i].Name, battleData.Enemies[i].Level);
                     }
                 }
             }
