@@ -57,7 +57,6 @@ public class ProfileManager : MonoBehaviour {
 
     public void SaveProfile()
     {
-        profile.Initialized = true;
         string json = JsonUtility.ToJson(profile);
         PlayerPrefs.SetString("profile", json);
         Debug.Log("[Saved Profile] " + json);
@@ -90,14 +89,35 @@ public class ProfileManager : MonoBehaviour {
 
     #region CHARACTERS
 
-    public CharacterData GetCharacter(string id)
+    public CharacterData GetCharacter(string _id)
     {
         foreach (var chara in profile.Characters)
         {
-            if (chara.Id == id)
+            if (chara.Id == _id)
                 return chara;
         }
         return null;
+    }
+
+    public void AddCharacterXp(string _id, int _xp)
+    {
+        var charaSave = GetCharacter(_id);
+        if( charaSave != null)
+        {
+            charaSave.Xp += _xp;
+        }
+    }
+
+    public List<CharacterData> GetCurrentTeam()
+    {
+        List<CharacterData> chars = new List<CharacterData>();
+        foreach (string teamMateName in profile.CurrentTeam)
+        {
+            var charaSave = GetCharacter(teamMateName);
+            if (charaSave != null)
+                chars.Add(charaSave);
+        }
+        return chars;
     }
 
     #endregion
@@ -132,8 +152,9 @@ public class ProfileManager : MonoBehaviour {
     {
         public string Id;
         public string Name = "temp";
+        public int Xp = 0;
         public Stats baseStats = new Stats();
-        public string Category;
+        public string Category = "warrior";
         //public CharacterBuild Build; // skins
         //Equipment
         public CharacterData(string _id)

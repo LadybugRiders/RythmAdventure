@@ -24,5 +24,12 @@ public class ProfileManagerEditor : Editor {
         {
             m_profileManager.ResetProfile();
         }
+
+        GUILayout.Box("", new GUILayoutOption[] { GUILayout.ExpandWidth(true), GUILayout.Height(1) });
+        if (GUILayout.Button("Print"))
+        {
+            var json = JsonUtility.ToJson(m_profileManager.profile,true);
+            Debug.Log("PROFILE : " + json);
+        }
     }
 }
