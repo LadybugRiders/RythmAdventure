@@ -12,16 +12,22 @@ public class BattleEndManager : MonoBehaviour {
 
     [SerializeField] List<CharacterXpInfo> m_characters;
 
-    List<int> m_oldXp = new List<int>();
+    DataCharManager m_charManager;
+
+    List<StoredLevelUpStats> m_storedStats = new List<StoredLevelUpStats>();
     int m_totalXp = 0;
 
 	// Use this for initialization
 	void Start () {
+        m_charManager = DataManager.instance.CharacterManager;
+
         m_totalXp = ComputeTotalXp();
         ApplyXp(m_totalXp);
         SetTotalXp(m_totalXp);
         //
         InitCharacters();
+
+        LaunchXpAnimation();
 	}
 	
     /// <summary>
@@ -48,10 +54,23 @@ public class BattleEndManager : MonoBehaviour {
     {
         foreach(var charaSave in ProfileManager.instance.GetCurrentTeam())
         {
-            //keep xp before level up ( for ui )
-            m_oldXp.Add(charaSave.Xp);
+            //old values for ui
+            StoredLevelUpStats data = new StoredLevelUpStats();
+            m_storedStats.Add(data);
+
+            var levelupdata = m_charManager.GetNextStatsBonus(charaSave.Category, charaSave.Xp);
+            data.oldXp = charaSave.Xp;
+            data.oldLevel = levelupdata.Stats.Level;
+            data.oldXpRequired = levelupdata.XpNeeded - charaSave.Xp;
+
             //apply xp on profile
             charaSave.Xp += _xp;
+
+            //new values for ui
+            var newLevelupdata = m_charManager.GetNextStatsBonus(charaSave.Category, charaSave.Xp);
+            data.newXp = charaSave.Xp;
+            data.newLevel = newLevelupdata.Stats.Level;
+            data.newXpRequired = newLevelupdata.XpNeeded - charaSave.Xp;
         }
         ProfileManager.instance.SaveProfile();
     }
@@ -71,13 +90,21 @@ public class BattleEndManager : MonoBehaviour {
             if( mate != null)
             {
                 //Set xp before battle
-                var NextLvlUp = DataManager.instance.CharacterManager.GetNextStatsBonus(mate.Category, m_oldXp[i]);
-                if (NextLvlUp != null)
-                {
-                    chara.text.text = "" + (NextLvlUp.XpNeeded - m_oldXp[i]);
-                    chara.gauge.SetValue((float)m_oldXp[i] / NextLvlUp.XpNeeded);
-                }
+                chara.text.text = "" + m_storedStats[i].oldXpRequired;
+                chara.gauge.SetValue((float)m_storedStats[i].oldXp / m_storedStats[i].oldXpRequired);
             }
+        }
+    }
+
+    void LaunchXpAnimation()
+    {
+        var teamMates = ProfileManager.instance.GetCurrentTeam();
+        for (int i = 0; i < m_characters.Count; ++i)
+        {
+            CharacterXpInfo chara = m_characters[i];
+            StoredLevelUpStats storedData = m_storedStats[i];
+
+            chara.text.GetComponent<UITextNumberScroller>().ScrollTo(storedData.newXpRequired, 1f);
         }
     }
 
@@ -101,5 +128,25 @@ public class BattleEndManager : MonoBehaviour {
         [SerializeField] public GameObject characterObject;
         [SerializeField] public Text text;
         [SerializeField] public UIGauge gauge;
+    }
+
+    [System.Serializable]
+    class StoredLevelUpStats
+    {
+        public int oldLevel = 0;
+        public int newLevel = 0;
+        public int oldXp = 0;
+        public int newXp = 0;
+
+        public int oldXpRequired = 0;
+        public int newXpRequired = 0;
+
+        public bool HasLeveledUp
+        {
+            get
+            {
+                return oldLevel != newLevel;
+            }
+        }
     }
 }
