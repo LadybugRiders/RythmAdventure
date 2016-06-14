@@ -3,21 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class DataCharManager : DatabaseLoader
-{
-    
+{    
     protected override void LoadDatabase()
     {
         base.LoadDatabase();
 
         JSONObject tempJson;
         tempJson = LoadDataJSON("characters/characters_levelup_database");
-        m_database.Add("levelup", tempJson);
+        m_database.Add("levelup", tempJson);        
     }
-
-    public LevelUpData GetFullStats(string playerId)
+    
+    public LevelUpData GetStatsBonus(string category)
     {
         JSONObject levelupDB = m_database["levelup"];
-        JSONObject levelsForPlayerJSON = levelupDB[playerId];
+        JSONObject levelsForPlayerJSON = levelupDB[category];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -30,9 +29,11 @@ public class DataCharManager : DatabaseLoader
         return levelUpData;
     }
     
+    /// <summary>
+    /// Data used to stored levels 
+    /// </summary>
     public class LevelUpData
     {
-        public string CharId;
         public int XpNeeded = 0;
         public Stats Stats = new Stats();
 

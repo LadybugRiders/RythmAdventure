@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class BattleScoreManager : MonoBehaviour {
 
-	public enum Accuracy { PERFECT, GREAT, GOOD, BAD };
+	public enum Accuracy { PERFECT, GREAT, GOOD, BAD, MISS };
 	
 	//Accuracy variables
 	[SerializeField] private float m_accuPerfect = 80f;

@@ -15,11 +15,11 @@ public class BattleCharacter : BattleActor {
 	#region LOADING 
 	override public void Load(string _name){
 		m_charAnimator.LoadSprites(_name);
-        DataCharManager.LevelUpData levelup = DataManager.instance.CharacterManager.GetFullStats(_name);
-        if(levelup != null)
+        var charData = ProfileManager.instance.GetCharacter(_name);
+        if(charData != null && charData.baseStats != null)
         {
-            m_maxStats = new Stats(levelup.Stats);
-            m_currentStats = new Stats(levelup.Stats);
+            m_maxStats = new Stats(charData.baseStats);
+            m_currentStats = new Stats(charData.baseStats);
         }
 	}
 	#endregion

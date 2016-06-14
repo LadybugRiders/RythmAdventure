@@ -62,6 +62,7 @@ public class DataManager : DatabaseLoader {
 			if( _instance == null ){
                 GameObject newGO = Instantiate(Resources.Load("prefabs/DataManager")) as GameObject; ;
                 _instance = newGO.GetComponent<DataManager>();
+                newGO.name = "DataManager";
 			}
 			return _instance;
 		}

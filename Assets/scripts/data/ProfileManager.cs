@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
+[ExecuteInEditMode]
 public class ProfileManager : MonoBehaviour {
 
     private static ProfileManager _instance;
 
     public Profile profile;
-
-    [SerializeField] public bool Reset = false;
-
+    
     public static ProfileManager instance{
         get{
             if(_instance == null)
@@ -23,23 +26,20 @@ public class ProfileManager : MonoBehaviour {
 
     void Awake()
     {
+        DontDestroyOnLoad(this.gameObject);
+        _instance = this;
+        PlayerPrefs.DeleteAll();
         LoadProfile();
     }
 
-    [ExecuteInEditMode]
     void Update()
     {
-        if( Reset == true)
-        {
-            Reset = false;
-            ResetProfile();
-        }
     }
 
-    void ResetProfile()
+    #region PROFILE_SAVE_LOAD
+    public void ResetProfile()
     {
-        profile = new Profile();
-        SaveProfile();
+        LoadDefaultProfile();
     }
 
     void LoadProfile()
@@ -47,8 +47,8 @@ public class ProfileManager : MonoBehaviour {
         string json = PlayerPrefs.GetString("profile");
         if (string.IsNullOrEmpty(json))
         {
-            //create blank profile save
-            SaveProfile();
+            //Load profile by default
+            LoadDefaultProfile();
             return;
         }
         //PArse JSON
@@ -63,10 +63,44 @@ public class ProfileManager : MonoBehaviour {
         Debug.Log("[Saved Profile] " + json);
     }
 
+#if UNITY_EDITOR
+    public void SaveDefaultProfile()
+    {
+        string path = Application.dataPath + "/Resources/database/defaultProfile.json";
+        string text = JsonUtility.ToJson(profile);
+
+        File.WriteAllText(path, text);
+        AssetDatabase.Refresh();
+    }
+#endif
+
+    void LoadDefaultProfile()
+    {
+        TextAsset json = Resources.Load("database/defaultProfile") as TextAsset;
+        profile = JsonUtility.FromJson(json.text, typeof(Profile)) as Profile;
+        Resources.UnloadAsset(json);
+    }
+
+    #endregion
+
     public Profile GetProfile()
     {
         return profile;
     }
+
+    #region CHARACTERS
+
+    public CharacterData GetCharacter(string id)
+    {
+        foreach (var chara in profile.Characters)
+        {
+            if (chara.Id == id)
+                return chara;
+        }
+        return null;
+    }
+
+    #endregion
 
     [System.Serializable]
     public class Profile
@@ -75,7 +109,7 @@ public class ProfileManager : MonoBehaviour {
         [SerializeField] public int Xp = 0;
         [SerializeField] public bool Initialized = false;
 
-        [SerializeField] public List<CharacterData> Characters;
+        [SerializeField] public List<CharacterData> Characters = new List<CharacterData>();
 
         [SerializeField] public List<string> CurrentTeam;
 
@@ -90,25 +124,21 @@ public class ProfileManager : MonoBehaviour {
 
             CurrentTeam = new List<string>() { "player1", "player3", "player1" };
         }
+
     }
 
     [System.Serializable]
     public class CharacterData
     {
-        public string Name = "char";
-        public int Xp = 0;
-
-        //Equipement
-        //
-        //
-
-        public Stats AdditionalStats = new Stats();
-
-        public CharacterData() { }
-
-        public CharacterData(string name)
+        public string Id;
+        public string Name = "temp";
+        public Stats baseStats = new Stats();
+        public string Category;
+        //public CharacterBuild Build; // skins
+        //Equipment
+        public CharacterData(string _id)
         {
-            Name = name;
+            Id = _id;
         }
     }
 }
