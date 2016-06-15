@@ -12,9 +12,10 @@ public class UIBattleLifeBar : UIGauge {
 		m_baseColor = m_gaugeSpr.color;
 	}
 
-	override public void SetValue(float _value){
+	override public void SetValue(float _value, bool _fill = false, float _fillDuration = 1.0f){
 		base.SetValue (_value);
 
+        //blinking
 		if (_value >= 1.0f && m_isMana) {
 			m_tweenBlink = TweenEngine.instance.ColorTo (m_gaugeSpr, Color.white, 0.5f, true, int.MaxValue, null);
 		} else if (m_tweenBlink != null) {

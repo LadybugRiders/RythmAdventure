@@ -23,6 +23,19 @@ public class UIGauge : MonoBehaviour {
 
 	protected Transform m_gaugeTransform;
 
+    private float m_time;
+
+    private bool m_isFilling = false;
+
+    private float m_targetFillScale = 1.0f;
+    private float m_targetFillPos = 0.0f;
+
+    private float m_timeByScaleUnit = 0.01f;
+    /// <summary>
+    /// This means the rate of the filling
+    /// </summary>
+    [SerializeField]  private float m_scaleFillUnitValue = 0.01f; 
+
 	// Use this for initialization
 	virtual protected void Awake () {
 
@@ -41,6 +54,32 @@ public class UIGauge : MonoBehaviour {
 		SetValue (m_currentValue);
 	}
 
+    protected virtual void Update()
+    {
+        if (m_isFilling)
+        {
+            m_time += Time.deltaTime;
+            if (m_time >= m_timeByScaleUnit)
+            {
+                m_time = 0;
+                //increase value
+                m_currentValue += m_scaleFillUnitValue;
+
+                //Compute and set scale/position
+                float newScale = m_currentValue * m_maxScale;
+                float newPos = m_posAtZero + m_posRange * m_currentValue;
+                SetValue_private(newScale, newPos);
+
+                //check if ended
+                if (m_currentValue >= m_targetFillScale)
+                {
+                    m_currentValue = m_targetFillScale;
+                    m_isFilling = false;
+                }
+            }
+        }
+    }
+
     public void ChangeOrientation(ORIENTATION _orientation, ALIGN _align)
     {
         m_orientation = _orientation;
@@ -49,8 +88,11 @@ public class UIGauge : MonoBehaviour {
         ComputeEdge();
     }
 
-    //Scale the sprite to max value, then compute the edge according to the orientation and alignement
-    //The edge is the position of the sprite when the gauge is at 0
+
+    /// <summary>
+    /// Scale the sprite to max value, then compute the edge according to the orientation and alignement
+    /// The edge is the position of the sprite when the gauge is at 0
+    /// </summary>
     void ComputeEdge()
     {
         float posAtMax = 0.0f;
@@ -87,8 +129,10 @@ public class UIGauge : MonoBehaviour {
         m_initPos = m_gaugeTransform.localPosition;
     }
     
-	/** Set value between 0 and 1*/
-	virtual public void SetValue(float _value){
+    /// <summary>
+    /// Set value between 0 and 1
+    /// </summary>
+	virtual public void SetValue(float _value , bool _fill = false, float _fillDuration = 1.0f){
 
         if (m_gaugeTransform == null)
         {
@@ -99,19 +143,40 @@ public class UIGauge : MonoBehaviour {
 		if (_value < 0.0f) _value = 0.0f;
 		if (_value > 1.0f) _value = 1.0f;
 
-        m_currentValue = _value;
+        m_isFilling = _fill;
 
-        float newScale = _value * m_maxScale;
-        float newPos = m_posAtZero + m_posRange * m_currentValue;
-
-        //change scale
-        if ( m_orientation == ORIENTATION.HORIZONTAL){
-			Utils.SetLocalScaleX( m_gaugeTransform, newScale );
-            Utils.SetLocalPositionX(m_gaugeTransform, newPos);
+        if( _fill)
+        {
+            m_targetFillScale = _value;
+            //Get direction of the scroll
+            float delta = Mathf.Abs( _value - m_currentValue );
+            //compute the speed
+            m_timeByScaleUnit = _fillDuration * m_scaleFillUnitValue / Mathf.Abs(delta);
         }
-        else{			
-			Utils.SetLocalScaleY( m_gaugeTransform, newScale );
-            Utils.SetLocalPositionY(m_gaugeTransform, newPos);
+        else
+        {
+            m_currentValue = _value;
+
+            float newScale = _value * m_maxScale;
+            float newPos = m_posAtZero + m_posRange * m_currentValue;
+
+            SetValue_private(newScale, newPos);
+        }
+
+    }
+
+    void SetValue_private(float _scaleValue, float _posValue)
+    {
+        //change scale
+        if (m_orientation == ORIENTATION.HORIZONTAL)
+        {
+            Utils.SetLocalScaleX(m_gaugeTransform, _scaleValue);
+            Utils.SetLocalPositionX(m_gaugeTransform, _posValue);
+        }
+        else
+        {
+            Utils.SetLocalScaleY(m_gaugeTransform, _scaleValue);
+            Utils.SetLocalPositionY(m_gaugeTransform, _posValue);
         }
     }
     

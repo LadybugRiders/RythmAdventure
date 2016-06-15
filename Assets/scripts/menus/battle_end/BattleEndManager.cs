@@ -105,6 +105,10 @@ public class BattleEndManager : MonoBehaviour {
             StoredLevelUpStats storedData = m_storedStats[i];
 
             chara.text.GetComponent<UITextNumberScroller>().ScrollTo(storedData.newXpRequired, 1f);
+
+            var prog = (float)storedData.newXp / storedData.newXpRequired;
+            var fills = storedData.newLevel - storedData.oldLevel; // how many times we need to fill the gauge
+            chara.gauge.SetValue(prog, true);
         }
     }
 

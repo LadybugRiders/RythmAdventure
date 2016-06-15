@@ -15,7 +15,7 @@ public class UITextNumberScroller : MonoBehaviour {
     protected int m_direction = 1;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         m_text = GetComponent<Text>();
 	}
 	
