@@ -30,8 +30,14 @@ public class UITextNumberScroller : MonoBehaviour {
                 int current = int.Parse( m_text.text );
                 current += m_direction;
                 m_text.text = "" + current;
+                if( current == 0)
+                {
+                    _ZeroReached();
+                }
                 if (current == m_targetNumber)
-                    m_scrolling = false;
+                {
+                    TargetReached();
+                }
             }
         }
 	}
@@ -39,6 +45,11 @@ public class UITextNumberScroller : MonoBehaviour {
     protected virtual void _ZeroReached()
     {
 
+    }
+
+    protected virtual void TargetReached()
+    {
+        m_scrolling = false;
     }
 
     public virtual void ScrollTo(int _targetNumber, float _duration)

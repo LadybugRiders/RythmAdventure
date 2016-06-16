@@ -10,7 +10,7 @@ public class BattleActor : MonoBehaviour {
 	protected ActorType m_type = ActorType.CHARACTER;
 
 	//Battle Fight references
-	[SerializeField] protected BattleFightManager m_fightManager;
+	protected BattleFightManager m_fightManager;
 	protected BattleFightManager.FightDuel m_fightDuel;
 
 	//Main Sprite
@@ -30,17 +30,42 @@ public class BattleActor : MonoBehaviour {
 
 	protected Transform m_transform;
 
+    void Awake()
+    {
+        Init();
+    }
+
 	// Use this for initialization
-	virtual protected void Start () {
-		RefreshLifeGauge ();
-		RefreshManaGauge ();
-		//Transform
-		m_transform = transform;
-	}
+	virtual protected void Start ()
+    {
+        //Transform
+        m_transform = transform;
+    }
 
-	virtual public void Load(string _name){
+    void Init()
+    {
+        //find fight manager and ui stuff
+        m_fightManager = BattleFightManager.instance;
+        //ui gauges ( when instanciating the actors, it hasnt a parent yet )
+        if ( (m_lifeGauge == null || m_manaGauge == null) && transform.parent != null )
+        {
+            var bars = transform.parent.GetComponentsInChildren<UIBattleLifeBar>();
+            foreach (var bar in bars)
+            {
+                if (bar.IsMana)
+                    m_manaGauge = bar;
+                else
+                    m_lifeGauge = bar;
+            }
+        }
+        RefreshLifeGauge();
+        RefreshManaGauge();
+    }
 
-	}
+    virtual public void Load(string _name){
+        Init();
+        m_transform = transform;
+    }
 	
 	// Update is called once per frame
 	virtual protected void Update () {

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class BattleFightManager : MonoBehaviour {
 
+    static BattleFightManager _instance;
+
 	[SerializeField] BattleEngine m_engine;
 	[SerializeField] BattleFightMagicManager m_magicManager;
 	[SerializeField] BattleDamageTextManager m_damageTextManager;
@@ -22,6 +24,7 @@ public class BattleFightManager : MonoBehaviour {
 	public static float DEPTH_UI = 0.0f;
 
 	void Awake(){
+        _instance = this;
 		m_duels = new List<FightDuel>();
 		for(int i=0; i<3 ; i ++){
 			m_duels.Add( new FightDuel(i,m_damageTextManager,this) );
@@ -31,6 +34,14 @@ public class BattleFightManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	}
+
+    public static BattleFightManager instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
 	/// <summary>
 	/// Called by battle engine at start of the scene. Loads all the actors

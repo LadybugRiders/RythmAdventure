@@ -25,4 +25,9 @@ public class UIBattleLifeBar : UIGauge {
 		}
 	}
 
+
+    public bool IsMana
+    {
+        get { return m_isMana; }
+    }
 }

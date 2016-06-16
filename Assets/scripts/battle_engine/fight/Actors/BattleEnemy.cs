@@ -11,10 +11,11 @@ public class BattleEnemy : BattleActor {
 	override protected void Start () {
 		base.Start ();
 		m_type = ActorType.ENEMY;
+        
 		m_animator.Play("idle",0, Random.Range(0.0f,1.0f) );
         m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
         m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
-    }
+    }    
 	
 	// Update is called once per frame
 	override protected void Update () {
@@ -23,6 +24,7 @@ public class BattleEnemy : BattleActor {
 
 	#region LOADING 
 	public void Load(string _name, int _level){
+        base.Load(_name);
         var dataManager = DataManager.instance.EnemiesManager;
         var levelData = dataManager.GetFullStats(_name, _level);
         if (levelData != null)

@@ -6,12 +6,13 @@ using System.IO;
 using UnityEditor;
 #endif
 
-[ExecuteInEditMode]
 public class ProfileManager : MonoBehaviour {
 
     private static ProfileManager _instance;
 
     public Profile profile;
+
+    [SerializeField] bool m_resetPrefsAtLaunch = false;
     
     public static ProfileManager instance{
         get{
@@ -26,14 +27,13 @@ public class ProfileManager : MonoBehaviour {
 
     void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
         _instance = this;
-        PlayerPrefs.DeleteAll();
-        LoadProfile();
-    }
 
-    void Update()
-    {
+        if( m_resetPrefsAtLaunch)
+            PlayerPrefs.DeleteAll();
+
+        LoadProfile();
+        DontDestroyOnLoad(this.gameObject);
     }
 
     #region PROFILE_SAVE_LOAD

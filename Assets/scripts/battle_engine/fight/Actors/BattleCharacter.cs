@@ -14,6 +14,8 @@ public class BattleCharacter : BattleActor {
 
 	#region LOADING 
 	override public void Load(string _name){
+        base.Load(_name);
+
 		m_charAnimator.LoadSprites(_name);
         var charData = ProfileManager.instance.GetCharacter(_name);
         if(charData != null && charData.baseStats != null)
