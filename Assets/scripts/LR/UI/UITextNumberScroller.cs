@@ -13,9 +13,9 @@ public class UITextNumberScroller : MonoBehaviour {
     protected float m_timeByUnit = 1;
     protected float m_time = 0;
     protected int m_direction = 1;
-
-	// Use this for initialization
-	void Awake () {
+    
+    // Use this for initialization
+    void Awake () {
         m_text = GetComponent<Text>();
 	}
 	
@@ -64,5 +64,13 @@ public class UITextNumberScroller : MonoBehaviour {
         //compute the speed
         m_timeByUnit = _duration / Mathf.Abs(delta);
         m_time = 0;
+    }
+    
+    public bool Scrolling
+    {
+        get
+        {
+            return m_scrolling;
+        }        
     }
 }

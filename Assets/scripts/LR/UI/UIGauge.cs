@@ -31,6 +31,10 @@ public class UIGauge : MonoBehaviour {
     private float m_targetFillPos = 0.0f;
 
     private float m_timeByScaleUnit = 0.01f;
+
+    private int m_fillCount = 0;
+    private int m_fillCountTarget = 0;
+
     /// <summary>
     /// This means the rate of the filling
     /// </summary>
@@ -71,10 +75,17 @@ public class UIGauge : MonoBehaviour {
                 SetValue_private(newScale, newPos);
 
                 //check if ended
-                if (m_currentValue >= m_targetFillScale)
+                if (m_currentValue >= m_targetFillScale && m_fillCount >= m_fillCountTarget)
                 {
                     m_currentValue = m_targetFillScale;
                     m_isFilling = false;
+                }
+
+                //Fill count 
+                if(m_currentValue >= 1.0f && m_fillCount < m_fillCountTarget)
+                {
+                    m_fillCount++;
+                    m_currentValue = 0.0f;
                 }
             }
         }
@@ -132,7 +143,7 @@ public class UIGauge : MonoBehaviour {
     /// <summary>
     /// Set value between 0 and 1
     /// </summary>
-	virtual public void SetValue(float _value , bool _fill = false, float _fillDuration = 1.0f){
+	virtual public void SetValue(float _value , bool _fill = false, float _fillDuration = 1.0f, int _fillCount = 0){
 
         if (m_gaugeTransform == null)
         {
@@ -147,6 +158,10 @@ public class UIGauge : MonoBehaviour {
 
         if( _fill)
         {
+            //count
+            m_fillCount = 0;
+            m_fillCountTarget = _fillCount;
+
             m_targetFillScale = _value;
             //Get direction of the scroll
             float delta = Mathf.Abs( _value - m_currentValue );

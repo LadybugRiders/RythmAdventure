@@ -12,7 +12,8 @@ public class UIBattleLifeBar : UIGauge {
 		m_baseColor = m_gaugeSpr.color;
 	}
 
-	override public void SetValue(float _value, bool _fill = false, float _fillDuration = 1.0f){
+	override public void SetValue(float _value, bool _fill = false, float _fillDuration = 1.0f, int _fillCount = 0)
+    {
 		base.SetValue (_value);
 
         //blinking
