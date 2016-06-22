@@ -104,7 +104,7 @@ public partial class MapNodesManager : MonoBehaviour {
         //Save map
         PlayerPrefs.SetString("current_map_scene", SceneManager.GetActiveScene().name);
         PlayerPrefs.SetString("current_map_node", m_targetNode.Id);
-        SceneManager.LoadScene(data.scene.name);
+        SceneManager.LoadScene(data.sceneName);
     }
 
     #region PATH

@@ -75,7 +75,7 @@ public class SongEditorManager : MonoBehaviour {
             m_battleData.TimeBegin = m_timeDebugBegin;
             DataManager.instance.BattleData = m_battleData;
 			
-            SceneManager.LoadScene(m_battleData.scene.name);
+            SceneManager.LoadScene(m_battleData.sceneName);
         }
 	}
 

@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 public class BattleDataAsset : ScriptableObject  {
 
-    public SceneAsset scene;
+    public string sceneName;
 
     public string Name;
 

@@ -4,7 +4,7 @@ using System.Collections;
 
 public class MenuMainManager : MonoBehaviour {
 
-	public string playSceneName = "battle_scene";
+	public string playSceneName = "mapTest";
 
 	// Use this for initialization
 	void Start () {

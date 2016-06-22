@@ -10,7 +10,9 @@ public class SongExporter {
 
 	JSONObject m_json = new JSONObject();
 
-	public void SetUp(SongEditorManager _manager){
+	public void SetUp(SongEditorManager _manager)
+    {
+#if UNITY_EDITOR
         if (_manager.music != null)
         {
             m_json.AddField("clipName", _manager.music.name);
@@ -27,7 +29,8 @@ public class SongExporter {
         
 
 		m_json.AddField ("timeSpeed", _manager.timeSpeed);
-	}
+#endif
+    }
 
 	public void SetNotes(List<SongEditorNote> _notes){
 		JSONObject allNotes = new JSONObject (JSONObject.Type.ARRAY);
