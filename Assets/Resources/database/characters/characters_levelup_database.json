@@ -23,6 +23,38 @@
             "attack": 4,
             "defense": 4,
             "magic": 1
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 1
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 0
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 1
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 1
         }
     ],
     "magus": [
@@ -40,7 +72,7 @@
             "hp": 5,
             "attack": 2,
             "defense": 2,
-            "magic": 12
+            "magic": 10
         },
         {
             "level": 3,
@@ -48,6 +80,38 @@
             "hp": 5,
             "attack": 2,
             "defense": 2,
+            "magic": 10
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 12
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 12
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 10
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
             "magic": 12
         }
     ],
@@ -75,6 +139,38 @@
             "attack": 5,
             "defense": 5,
             "magic": 5
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 4
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 4
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 4
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 10,
+            "attack": 4,
+            "defense": 4,
+            "magic": 4
         }
     ]
 }

@@ -8,7 +8,7 @@ public class UIXpText : UITextNumberScroller {
     private List<int> m_targetNumbers;
 
     private int m_currentIndex = 0;
-	
+
     /// <summary>
     /// Make multiple scrollings from the array in parameter. Each couple in this array represents the begin value and the end value
     /// ie : [ 50, 0, 55, 9 ] will scroll once from 50 to 0, then from 55 to 9

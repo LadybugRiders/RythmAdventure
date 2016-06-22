@@ -14,7 +14,7 @@ public class BattleEndManager : MonoBehaviour {
 
     DataCharManager m_charManager;
 
-    List<StoredLevelUpStats> m_storedStats = new List<StoredLevelUpStats>();
+    List<UIXpScrollerManager.StoredLevelUpStats> m_storedStats = new List<UIXpScrollerManager.StoredLevelUpStats>();
     int m_totalXp = 0;
 
 	// Use this for initialization
@@ -55,7 +55,7 @@ public class BattleEndManager : MonoBehaviour {
         foreach(var charaSave in ProfileManager.instance.GetCurrentTeam())
         {
             //old values for ui
-            StoredLevelUpStats data = new StoredLevelUpStats();
+            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(charaSave.Id);
             m_storedStats.Add(data);
 
             var levelupdata = m_charManager.GetNextLevelByXp(charaSave.Category, charaSave.Xp);
@@ -83,6 +83,7 @@ public class BattleEndManager : MonoBehaviour {
                 data.newLevel = levelupdata.Stats.Level;
                 data.isMaxLevel = true;
             }
+            data.Process();
         }
         ProfileManager.instance.SaveProfile();
     }
@@ -117,26 +118,8 @@ public class BattleEndManager : MonoBehaviour {
         for (int i = 0; i < m_characters.Count; ++i)
         {
             CharacterXpInfo chara = m_characters[i];
-            StoredLevelUpStats storedData = m_storedStats[i];
-            ProfileManager.CharacterData mate = teamMates[i];
-
-            List<int> xpNumbersList = new List<int>();
-            //Build all data needed to scroll several levels experiences
-            for(int l = storedData.oldLevel + 1 ; l <= storedData.newLevel; l++)
-            {
-                var levelupdata = m_charManager.GetLevel(mate.Category, l);
-                //add start
-                int startValue = (l == storedData.oldLevel +1) ? ( storedData.oldXpRequired - storedData.oldXp ) : levelupdata.XpNeeded;
-                xpNumbersList.Add(startValue);
-                //end value
-                int endValue = (l == storedData.newLevel) ? (storedData.newXpRequired - mate.Xp) : 0;
-                xpNumbersList.Add(endValue);
-            }
-            chara.text.GetComponent<UIXpText>().ScrollTo(xpNumbersList.ToArray(), 1f);
-
-            var prog = (float)storedData.newXp / storedData.newXpRequired;
-            var fills = storedData.newLevel - storedData.oldLevel; // how many times we need to fill the gauge
-            chara.gauge.SetValue(prog, true,0.2f,fills);
+            UIXpScrollerManager.StoredLevelUpStats storedData = m_storedStats[i];
+            chara.xpScroller.Scroll(storedData,3.0f);
         }
     }
     
@@ -160,27 +143,7 @@ public class BattleEndManager : MonoBehaviour {
         [SerializeField] public GameObject characterObject;
         [SerializeField] public Text text;
         [SerializeField] public UIGauge gauge;
+        [SerializeField] public UIXpScrollerManager xpScroller;
     }
-
-    [System.Serializable]
-    class StoredLevelUpStats
-    {
-        public int oldLevel = 0;
-        public int newLevel = 0;
-        public int oldXp = 0;
-        public int newXp = 0;
         
-        public int oldXpRequired = 0;
-        public int newXpRequired = 0;
-
-        public bool isMaxLevel = false;
-
-        public bool HasLeveledUp
-        {
-            get
-            {
-                return oldLevel != newLevel;
-            }
-        }
-    }
 }
