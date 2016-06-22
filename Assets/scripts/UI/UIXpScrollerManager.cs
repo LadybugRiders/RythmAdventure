@@ -9,7 +9,9 @@ using UnityEngine.UI;
 public class UIXpScrollerManager : MonoBehaviour {
 
     [SerializeField] UIGauge m_gauge;
-    [SerializeField] Text m_text;
+    [SerializeField] Text m_xpText;
+
+    [SerializeField] Text m_levelText;
     
     protected bool m_scrolling = false;
 
@@ -40,7 +42,7 @@ public class UIXpScrollerManager : MonoBehaviour {
                 m_time = 0;
                 m_currentNumber += m_direction;
                 SetGaugeValue();
-                m_text.text = "" + m_currentNumber;
+                m_xpText.text = "" + m_currentNumber;
                 if (m_currentNumber == 0)
                 {
                     _ZeroReached();
@@ -87,20 +89,28 @@ public class UIXpScrollerManager : MonoBehaviour {
         {
             //Set begin text and value
             m_currentNumber = currentData.beginNumbers[m_currentIndex];
-            m_text.text = "" + m_currentNumber;
+            m_xpText.text = "" + m_currentNumber;
             //end
             m_targetNumber = currentData.targetNumbers[m_currentIndex];
 
             m_currentLevel++;
+            if (m_levelText != null)
+                m_levelText.text = "" + m_currentLevel;
         }
     }
 
     public virtual void Scroll(StoredLevelUpStats stats, float _duration)
     {
         currentData = stats;
-        m_currentLevel = stats.oldLevel;
         m_targetNumber = stats.targetNumbers[0];
+        //level
+        m_currentLevel = stats.oldLevel;
+        if(m_levelText != null)
+            m_levelText.text = "" + m_currentLevel;
+        //xp
         m_currentNumber = stats.beginNumbers[0];
+        m_xpText.text = "" + m_currentNumber;
+
         m_scrolling = true;
                 
         //Get direction of the scroll
