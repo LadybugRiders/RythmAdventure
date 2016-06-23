@@ -56,7 +56,7 @@ public class BattleCharacter : BattleActor {
 			case BattleScoreManager.Accuracy.GOOD :
 				damage = damage - (int) (damage * CurrentStats.blockGoodModifier);
 				break;
-			case BattleScoreManager.Accuracy.BAD :
+			case BattleScoreManager.Accuracy.MISS :
 				damage = damage - (int) (damage * CurrentStats.blockBadModifier);
 				break;
 		}

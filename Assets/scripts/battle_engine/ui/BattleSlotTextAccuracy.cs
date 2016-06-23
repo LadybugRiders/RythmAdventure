@@ -24,7 +24,7 @@ public class BattleSlotTextAccuracy : MonoBehaviour {
 	}
 
 	public void Play(BattleScoreManager.Accuracy _accuracy){
-		if (_accuracy == BattleScoreManager.Accuracy.BAD)
+		if (_accuracy == BattleScoreManager.Accuracy.MISS)
 			PlayMiss ();
 		else
 			PlayHit (_accuracy);

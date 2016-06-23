@@ -203,7 +203,7 @@ public class BattleFightManager : MonoBehaviour {
 		#region ATTACKS
 		public int RegularAttack(bool _fromPlayer, NoteData _noteData){
 			//if attack from player missed
-			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.BAD)
+			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.MISS)
 				return -1;
 			//Affect attackers & defenders
 			List<BattleActor> m_attackers = null;

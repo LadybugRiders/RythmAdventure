@@ -42,7 +42,7 @@ public class BattleTracksManager : MonoBehaviour {
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
         public BattleScoreManager.Accuracy Accuracy { get; private set; }
-        public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.BAD)
+        public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS)
         {
             NoteHit = _notehit;
             Success = _success;

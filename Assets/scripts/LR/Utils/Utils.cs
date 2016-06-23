@@ -192,4 +192,12 @@ public partial class Utils  {
             targetProperty.SetValue(destination, srcProp.GetValue(source, null), null);
         }
     }
+
+    /// <summary>
+    /// Returns the number of elements inside an enum. 
+    /// Usage : EnumCount( MyEnum.AnyValue )
+    /// </summary>
+    public static int EnumCount( Enum _enum ){        
+        return Enum.GetNames(_enum.GetType()).Length;
+    }
 }
