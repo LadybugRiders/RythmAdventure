@@ -11,26 +11,27 @@ public class BattleScoreManager : MonoBehaviour {
 	[SerializeField] private float m_accuGreat = 50f;
 
 	//COUNT
-	private int m_notesCount = 0;
-	private Dictionary<Accuracy,int> m_notesCountByAcc;
+	public int m_notesCount = 0;
+    /// <summary>
+    /// Notes sorted by accuracy
+    /// </summary>
+	public Dictionary<Accuracy,int> m_notesCountByAcc;
 
 	//SCORE
-	private int m_totalScore = 0;
-	[SerializeField] private Dictionary<Accuracy, int>  m_baseScoreByAcc;
-	private Dictionary<Accuracy, int> m_currentScoreByAcc;
+	public int m_totalScore = 0;
+	[SerializeField] public Dictionary<Accuracy, int>  m_baseScoreByAcc;
 
 	// Use this for initialization
 	void Start () {
         //init Counts
         m_notesCountByAcc = new Dictionary<Accuracy, int>();
-        //init scores values
-        m_currentScoreByAcc = new Dictionary<Accuracy, int>();
 
         for (int i = 0; i < Utils.EnumCount(Accuracy.GOOD); i++) {
             Accuracy acc = (Accuracy)i;
 			m_notesCountByAcc.Add(acc, 0 );
-            m_currentScoreByAcc.Add(acc, 0);
         }
+
+        DontDestroyOnLoad(gameObject);
 	}
 	
 	// Update is called once per frame
@@ -40,10 +41,10 @@ public class BattleScoreManager : MonoBehaviour {
 
 	/** Adds Note to the scoreManager and returns accuracy (BattleScoreManager.Accuracy) */
 	public BattleScoreManager.Accuracy AddNote ( float _accuracyValue ){
+        //increase total
 		m_notesCount ++;
-        Accuracy acc = GetAccuracyByValue(_accuracyValue);
-
-        m_totalScore += m_currentScoreByAcc[acc];
+        //Compute Accuracy
+        Accuracy acc = GetAccuracyByValue(_accuracyValue);        
         m_notesCountByAcc[acc]++;
 		return acc;
 	}

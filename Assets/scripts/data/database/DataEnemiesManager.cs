@@ -25,8 +25,8 @@ public class DataEnemiesManager : DatabaseLoader {
             if( lvlUp.GetField("levelmax").f > _level && lvlUp.GetField("level").f < _level)
             {
                 levelUpData = new DataCharManager.LevelUpData(lvlUp);
+                break;
             }
-            break;
         }
         return levelUpData;
     }

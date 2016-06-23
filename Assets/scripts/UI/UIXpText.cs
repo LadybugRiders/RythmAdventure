@@ -36,8 +36,7 @@ public class UIXpText : UITextNumberScroller {
         m_targetNumber = m_targetNumbers[0];
 
         m_scrolling = true;
-
-        var current = int.Parse(m_text.text);
+        
         //Get direction of the scroll
         m_direction = totalDelta < 0 ? -1 : 1;
         //compute the speed

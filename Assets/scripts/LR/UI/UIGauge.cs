@@ -28,7 +28,6 @@ public class UIGauge : MonoBehaviour {
     private bool m_isFilling = false;
 
     private float m_targetFillScale = 1.0f;
-    private float m_targetFillPos = 0.0f;
 
     private float m_timeByScaleUnit = 0.01f;
 

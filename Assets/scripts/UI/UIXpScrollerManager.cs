@@ -61,8 +61,6 @@ public class UIXpScrollerManager : MonoBehaviour {
         {
 
             int begin = currentData.beginNumbers[m_currentIndex];
-            int end = currentData.targetNumbers[m_currentIndex];
-
 
             int length = Mathf.Abs( begin );
             float prog = 0;

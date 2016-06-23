@@ -85,12 +85,12 @@ public class BattleEngine : MonoBehaviour {
         //Load Battle Data
         TextAsset jsonFile = battleData.Song;
         JSONObject jsonData = new JSONObject(jsonFile.text);
-        string clipPath = jsonData.GetField("clipPath").ToString();
 
         //Load Note Generator
         m_notesGenerator.LoadData(jsonData);
 
         //Load song music
+        ///string clipPath = jsonData.GetField("clipPath").ToString();
         string clipName = jsonData.GetField("clipName").str;
         m_audioClip = Resources.Load("songs/" + clipName) as AudioClip;
         m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;

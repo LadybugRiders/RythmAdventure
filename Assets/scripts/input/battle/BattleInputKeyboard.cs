@@ -20,11 +20,18 @@ public class BattleInputKeyboard : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (CheckInput (m_inputAttack, 1)) {
+        if (CheckInput(m_inputAttack, 1))
+        {
 
-		} else if(CheckInput (m_inputDefend, -1) ){
+        }
+        else if (CheckInput(m_inputDefend, -1))
+        {
 
-		}
+        }
+        else
+        {
+            CheckSlide();
+        }
 	}
 
 	bool CheckInput( string _input, int _index){
@@ -38,4 +45,18 @@ public class BattleInputKeyboard : MonoBehaviour {
 		}
 		return false;
 	}
+
+    bool CheckSlide()
+    {
+        if(Input.GetKeyDown(m_inputSlide) ){
+            int phase = m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK ? 1 : -1;
+            m_tracksManager.OnInputTriggered(phase, BattleNote.HIT_METHOD.PRESS);
+        }
+        else if(Input.GetKeyUp(m_inputSlide))
+        {
+            int phase = m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK ? 1 : -1;
+            m_tracksManager.OnInputTriggered(phase, BattleNote.HIT_METHOD.RELEASE);
+        }
+        return false;
+    }
 }

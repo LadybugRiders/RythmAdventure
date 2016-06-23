@@ -12,28 +12,59 @@ public class BattleEndManager : MonoBehaviour {
 
     [SerializeField] List<CharacterXpInfo> m_characters;
 
+    enum State { IDLE, SCORE, XP };
+    State m_state = State.IDLE;
+
     DataCharManager m_charManager;
+    BattleScoreManager m_scoreManager;
 
     List<UIXpScrollerManager.StoredLevelUpStats> m_storedStats = new List<UIXpScrollerManager.StoredLevelUpStats>();
     int m_totalXp = 0;
 
+    //UI Value
+    float m_time = 0;
+
+    int m_count = 0;
+    [SerializeField] float m_scoreTimeByUnits = 0.05f;
+
 	// Use this for initialization
 	void Start () {
         m_charManager = DataManager.instance.CharacterManager;
+        m_scoreManager = FindObjectOfType<BattleScoreManager>();
+
+        InitCharacters();
+
+        //Get Score and multipliers
+        ApplyScore();
+
+	}
+
+    void Update()
+    {
+        switch (m_state)
+        {
+            case State.SCORE: UpdateScore();
+                break;
+        }
+    }
+
+    #region XP
+
+    void ProcessXp()
+    {
+        m_state = State.XP;
 
         m_totalXp = ComputeTotalXp();
         ApplyXp(m_totalXp);
         SetTotalXp(m_totalXp);
-        //
-        InitCharacters();
 
         LaunchXpAnimation();
-	}
-    	
+    }
+
     /// <summary>
     /// For all enemies, add xp
     /// </summary>
-	int ComputeTotalXp()
+    int ComputeTotalXp()
     {
         if (DataManager.instance.BattleData == null)
             return 0;
@@ -48,6 +79,26 @@ public class BattleEndManager : MonoBehaviour {
             }
         }
         return totalXp;
+    }
+
+    void InitCharacters()
+    {
+        var teamMates = ProfileManager.instance.GetCurrentTeam();
+        for (int i = 0; i < m_characters.Count; ++i)
+        {
+            CharacterXpInfo chara = m_characters[i];
+            var mate = teamMates[i];
+            var levelUpData = m_charManager.GetNextLevel(mate.Category, mate.baseStats.Level);
+            if (mate != null)
+            {
+                //Set xp before battle
+                chara.text.text = "" + mate.Xp;
+                float prog = 1.0f;
+                if (levelUpData.XpNeeded != 0)
+                    prog = (float)mate.Xp / levelUpData.XpNeeded;
+                chara.gauge.SetValue(prog);
+            }
+        }
     }
 
     void ApplyXp(int _xp)
@@ -93,28 +144,8 @@ public class BattleEndManager : MonoBehaviour {
         m_totalXpText.text = "" + _totalXp;
     }
 
-    void InitCharacters()
-    {
-        var teamMates = ProfileManager.instance.GetCurrentTeam();
-        for(int i = 0; i < m_characters.Count; ++i)
-        {
-            CharacterXpInfo chara = m_characters[i];
-            var mate = teamMates[i];
-            if( mate != null)
-            {
-                //Set xp before battle
-                chara.text.text = "" + m_storedStats[i].oldXpRequired;
-                float prog = 1.0f;
-                if (m_storedStats[i].oldXpRequired != 0)
-                    prog = (float)m_storedStats[i].oldXp / m_storedStats[i].oldXpRequired;
-                chara.gauge.SetValue(prog);
-            }
-        }
-    }
-
     void LaunchXpAnimation()
     {
-        var teamMates = ProfileManager.instance.GetCurrentTeam();
         for (int i = 0; i < m_characters.Count; ++i)
         {
             CharacterXpInfo chara = m_characters[i];
@@ -122,7 +153,51 @@ public class BattleEndManager : MonoBehaviour {
             chara.xpScroller.Scroll(storedData,3.0f);
         }
     }
-    
+    #endregion
+
+    #region SCORE
+
+    void ApplyScore()
+    {
+        if (m_scoreManager != null)
+        {
+            foreach (var scoreInfo in m_scoresInfos)
+            {
+                int count = m_scoreManager.m_notesCountByAcc[scoreInfo.Accuracy];
+            }
+            m_state = State.SCORE;
+        }else
+        {
+            ProcessXp();
+        }
+    }
+
+    void UpdateScore()
+    {
+        m_time += Time.deltaTime;
+        if(m_time >= m_scoreTimeByUnits)
+        {
+            m_time = 0;
+            bool end = true;
+            m_count++;
+            foreach (var scoreInfo in m_scoresInfos)
+            {
+                int count = m_scoreManager.m_notesCountByAcc[scoreInfo.Accuracy];
+                if( m_count <= count)
+                {
+                    end = false;
+                    scoreInfo.ScoreText.text = m_count.ToString();
+                }
+            }
+            if (end)
+            {
+                ProcessXp();
+            }
+        }
+    }
+
+    #endregion
+
     void OnGoToMap()
     {
         string mapSceneName = PlayerPrefs.GetString("current_map_scene");
@@ -133,6 +208,7 @@ public class BattleEndManager : MonoBehaviour {
     class ScoreInfo
     {
         [SerializeField] public GameObject UIObject;
+        [SerializeField] public Text ScoreText;
         [SerializeField] public BattleScoreManager.Accuracy Accuracy;
     }
 
