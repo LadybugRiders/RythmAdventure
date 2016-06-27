@@ -26,6 +26,9 @@ public class UIXpScrollerManager : MonoBehaviour {
     private int m_currentIndex = 0;
     private int m_currentLevel;
 
+    public delegate void onScrollFinished(UIXpScrollerManager _scroller);
+    protected onScrollFinished m_scrollFinishedDelegate = null;
+
     // Use this for initialization
     void Start () {
 	
@@ -82,6 +85,10 @@ public class UIXpScrollerManager : MonoBehaviour {
         if (m_currentIndex >= currentData.targetNumbers.Count)
         {
             m_scrolling = false;
+            if( m_scrollFinishedDelegate != null)
+            {
+                m_scrollFinishedDelegate(this);
+            }
         }
         else
         {
@@ -97,7 +104,7 @@ public class UIXpScrollerManager : MonoBehaviour {
         }
     }
 
-    public virtual void Scroll(StoredLevelUpStats stats, float _duration)
+    public virtual void Scroll(StoredLevelUpStats stats, float _duration, onScrollFinished _delegate = null)
     {
         currentData = stats;
         m_targetNumber = stats.targetNumbers[0];
@@ -117,6 +124,8 @@ public class UIXpScrollerManager : MonoBehaviour {
         //compute the speed
         m_timeByUnit = _duration / Mathf.Abs(stats.deltaXp);
         m_time = 0;
+
+        m_scrollFinishedDelegate = _delegate;
     }
 
     public bool Scrolling

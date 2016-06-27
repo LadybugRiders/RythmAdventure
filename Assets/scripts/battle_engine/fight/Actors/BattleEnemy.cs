@@ -32,6 +32,8 @@ public class BattleEnemy : BattleActor {
             m_maxStats = new Stats(levelData.Stats);
             m_currentStats = new Stats(levelData.Stats);
         }
+        CurrentStats.MP = 0;
+        RefreshManaGauge();
     }
 	#endregion
 

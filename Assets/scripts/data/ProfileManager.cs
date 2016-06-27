@@ -99,6 +99,13 @@ public class ProfileManager : MonoBehaviour {
         return null;
     }
 
+    public Stats GetCharacterStats(string _id)
+    {
+        var chara = GetCharacter(_id);
+        var levelupdata = DataManager.instance.CharacterManager.GetLevelByXp(chara.Category, chara.Xp);
+        return levelupdata!=null ? levelupdata.Stats : null;
+    }
+
     public void AddCharacterXp(string _id, int _xp)
     {
         var charaSave = GetCharacter(_id);
@@ -153,10 +160,12 @@ public class ProfileManager : MonoBehaviour {
         public string Id;
         public string Name = "temp";
         public int Xp = 0;
-        public Stats baseStats = new Stats();
         public string Category = "warrior";
+        
         //public CharacterBuild Build; // skins
+
         //Equipment
+
         public CharacterData(string _id)
         {
             Id = _id;

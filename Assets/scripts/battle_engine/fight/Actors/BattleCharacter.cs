@@ -18,12 +18,15 @@ public class BattleCharacter : BattleActor {
 
 		m_charAnimator.LoadSprites(_name);
         var charData = ProfileManager.instance.GetCharacter(_name);
-        if(charData != null && charData.baseStats != null)
+        var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Category, charData.Xp);
+        if(charData != null && levelupData.Stats != null)
         {
-            m_maxStats = new Stats(charData.baseStats);
-            m_currentStats = new Stats(charData.baseStats);
+            m_maxStats = new Stats(levelupData.Stats);
+            m_currentStats = new Stats(levelupData.Stats);
         }
-	}
+        CurrentStats.MP = 0;
+        RefreshManaGauge();
+    }
 	#endregion
 
 	override protected void UpdateAttacking(){

@@ -12,6 +12,8 @@ public class BattleEndManager : MonoBehaviour {
 
     [SerializeField] List<CharacterXpInfo> m_characters;
 
+    [SerializeField] GameObject m_mapButton;
+
     enum State { IDLE, SCORE, XP };
     State m_state = State.IDLE;
 
@@ -29,6 +31,7 @@ public class BattleEndManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        m_mapButton.SetActive(false);
         m_charManager = DataManager.instance.CharacterManager;
         m_scoreManager = FindObjectOfType<BattleScoreManager>();
 
@@ -87,8 +90,9 @@ public class BattleEndManager : MonoBehaviour {
         for (int i = 0; i < m_characters.Count; ++i)
         {
             CharacterXpInfo chara = m_characters[i];
-            var mate = teamMates[i];
-            var levelUpData = m_charManager.GetNextLevel(mate.Category, mate.baseStats.Level);
+            var mate = teamMates[i];            
+            var levelUpData = m_charManager.GetNextLevelByXp(mate.Category, mate.Xp);
+
             if (mate != null)
             {
                 //Set xp before battle
@@ -150,7 +154,7 @@ public class BattleEndManager : MonoBehaviour {
         {
             CharacterXpInfo chara = m_characters[i];
             UIXpScrollerManager.StoredLevelUpStats storedData = m_storedStats[i];
-            chara.xpScroller.Scroll(storedData,3.0f);
+            chara.xpScroller.Scroll(storedData,3.0f,OnXpScrollerEnded);
         }
     }
     #endregion
@@ -194,6 +198,11 @@ public class BattleEndManager : MonoBehaviour {
                 ProcessXp();
             }
         }
+    }
+
+    void OnXpScrollerEnded(UIXpScrollerManager _scroller)
+    {
+        m_mapButton.SetActive(true);
     }
 
     #endregion

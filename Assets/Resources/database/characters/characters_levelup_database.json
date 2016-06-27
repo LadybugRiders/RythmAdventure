@@ -4,57 +4,57 @@
             "level": 1,
             "xp": 0,
             "hp": 45,
-            "attack": 50,
+            "attack": 140,
             "defense": 50,
-            "magic": 50
+            "magic": 10
         },
         {
             "level": 2,
             "xp": 10,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 1
+            "hp": 50,
+            "attack": 145,
+            "defense": 55,
+            "magic": 12
         },
         {
             "level": 3,
             "xp": 30,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 1
+            "hp": 55,
+            "attack": 150,
+            "defense": 60,
+            "magic": 14
         },
         {
             "level": 4,
             "xp": 50,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 1
+            "hp": 60,
+            "attack": 155,
+            "defense": 65,
+            "magic": 16
         },
         {
             "level": 5,
             "xp": 80,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 0
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18
         },
         {
             "level": 6,
             "xp": 120,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 1
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20
         },
         {
             "level": 7,
             "xp": 160,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 1
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22
         }
     ],
     "magus": [
@@ -64,55 +64,55 @@
             "hp": 45,
             "attack": 40,
             "defense": 50,
-            "magic": 50
+            "magic": 10
         },
         {
             "level": 2,
             "xp": 10,
-            "hp": 5,
-            "attack": 2,
-            "defense": 2,
-            "magic": 10
+            "hp": 50,
+            "attack": 45,
+            "defense": 55,
+            "magic": 12
         },
         {
             "level": 3,
             "xp": 30,
-            "hp": 5,
-            "attack": 2,
-            "defense": 2,
-            "magic": 10
+            "hp": 55,
+            "attack": 50,
+            "defense": 60,
+            "magic": 14
         },
         {
             "level": 4,
             "xp": 50,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 12
+            "hp": 60,
+            "attack": 55,
+            "defense": 65,
+            "magic": 16
         },
         {
             "level": 5,
             "xp": 80,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 12
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18
         },
         {
             "level": 6,
             "xp": 120,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 10
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20
         },
         {
             "level": 7,
             "xp": 160,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 12
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22
         }
     ],
     "thief": [
@@ -120,57 +120,57 @@
             "level": 1,
             "xp": 0,
             "hp": 45,
-            "attack": 60,
+            "attack": 40,
             "defense": 50,
-            "magic": 50
+            "magic": 10
         },
         {
             "level": 2,
             "xp": 10,
-            "hp": 5,
-            "attack": 5,
-            "defense": 5,
-            "magic": 5
+            "hp": 50,
+            "attack": 45,
+            "defense": 55,
+            "magic": 12
         },
         {
             "level": 3,
             "xp": 30,
-            "hp": 5,
-            "attack": 5,
-            "defense": 5,
-            "magic": 5
+            "hp": 55,
+            "attack": 50,
+            "defense": 60,
+            "magic": 14
         },
         {
             "level": 4,
             "xp": 50,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 4
+            "hp": 60,
+            "attack": 55,
+            "defense": 65,
+            "magic": 16
         },
         {
             "level": 5,
             "xp": 80,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 4
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18
         },
         {
             "level": 6,
             "xp": 120,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 4
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20
         },
         {
             "level": 7,
             "xp": 160,
-            "hp": 10,
-            "attack": 4,
-            "defense": 4,
-            "magic": 4
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22
         }
     ]
 }
