@@ -19,16 +19,22 @@ public class BattleScoreManager : MonoBehaviour {
 
 	//SCORE
 	public int m_totalScore = 0;
-	[SerializeField] public Dictionary<Accuracy, int>  m_baseScoreByAcc;
+	public Dictionary<Accuracy, int>  m_baseScoreByAcc;
+
+    void Awake()
+    {
+        InitScoresData();
+    }
 
 	// Use this for initialization
 	void Start () {
-        //init Counts
         m_notesCountByAcc = new Dictionary<Accuracy, int>();
 
         for (int i = 0; i < Utils.EnumCount(Accuracy.GOOD); i++) {
             Accuracy acc = (Accuracy)i;
 			m_notesCountByAcc.Add(acc, 0 );
+			if( !m_baseScoreByAcc.ContainsKey(acc) )
+            	m_baseScoreByAcc[acc] = 0;
         }
 
         DontDestroyOnLoad(gameObject);
@@ -44,8 +50,11 @@ public class BattleScoreManager : MonoBehaviour {
         //increase total
 		m_notesCount ++;
         //Compute Accuracy
-        Accuracy acc = GetAccuracyByValue(_accuracyValue);        
+        Accuracy acc = GetAccuracyByValue(_accuracyValue);   
+        //keep total of accuracies     
         m_notesCountByAcc[acc]++;
+        //Increment score
+        m_totalScore += m_baseScoreByAcc[acc];
 		return acc;
 	}
 
@@ -69,5 +78,26 @@ public class BattleScoreManager : MonoBehaviour {
             acc = Accuracy.MISS;
         }
         return acc;
+    }
+
+    void InitScoresData()
+    {
+		var database = DataManager.instance.GetDatabase("scoring");
+		m_baseScoreByAcc = new Dictionary<Accuracy, int>();
+        if(database != null)
+        {
+            var accDatabase = database["accuracy_scoring"][0];
+            foreach(var key in accDatabase.keys)
+            {
+                try
+                {
+                    Accuracy acc = (Accuracy) System.Enum.Parse(typeof(Accuracy),key.ToUpper());
+                    m_baseScoreByAcc[acc] = (int) accDatabase.GetField(key).f;
+                }catch(System.Exception e)
+                {
+                    e.ToString();
+                }
+            }
+        }
     }
 }

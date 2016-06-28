@@ -1,0 +1,10 @@
+{
+    "accuracy_scoring": [
+        {
+            "miss": 0,
+            "good": 10,
+            "great": 18,
+            "perfect": 25
+        }
+    ]
+}

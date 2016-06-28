@@ -9,11 +9,13 @@ public class BattleEndManager : MonoBehaviour {
     [SerializeField] List<ScoreInfo> m_scoresInfos;
 
     [SerializeField] Text m_totalXpText;
+    [SerializeField] UITextNumberScroller m_totalScoreText;
 
     [SerializeField] List<CharacterXpInfo> m_characters;
 
     [SerializeField] GameObject m_mapButton;
 
+	[SerializeField] float m_timeDisplayScore = 0.5f;
     enum State { IDLE, SCORE, XP };
     State m_state = State.IDLE;
 
@@ -27,7 +29,7 @@ public class BattleEndManager : MonoBehaviour {
     float m_time = 0;
 
     int m_count = 0;
-    [SerializeField] float m_scoreTimeByUnits = 0.05f;
+	[SerializeField] float m_scoreTimeByUnits = 0.05f;
 
 	// Use this for initialization
 	void Start () {
@@ -39,7 +41,6 @@ public class BattleEndManager : MonoBehaviour {
 
         //Get Score and multipliers
         ApplyScore();
-
 	}
 
     void Update()
@@ -165,6 +166,8 @@ public class BattleEndManager : MonoBehaviour {
     {
         if (m_scoreManager != null)
         {
+			m_totalScoreText.ScrollTo(m_scoreManager.m_totalScore, m_timeDisplayScore);
+
             foreach (var scoreInfo in m_scoresInfos)
             {
                 int count = m_scoreManager.m_notesCountByAcc[scoreInfo.Accuracy];
