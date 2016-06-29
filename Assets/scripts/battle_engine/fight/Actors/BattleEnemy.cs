@@ -13,8 +13,6 @@ public class BattleEnemy : BattleActor {
 		m_type = ActorType.ENEMY;
         
 		m_animator.Play("idle",0, Random.Range(0.0f,1.0f) );
-        m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
-        m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.RIGHT);
     }    
 	
 	// Update is called once per frame
@@ -33,7 +31,6 @@ public class BattleEnemy : BattleActor {
             m_currentStats = new Stats(levelData.Stats);
         }
         CurrentStats.MP = 0;
-        RefreshManaGauge();
     }
 	#endregion
 

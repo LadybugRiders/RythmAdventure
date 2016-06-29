@@ -16,15 +16,15 @@ public class BattleActor : MonoBehaviour {
 	//Main Sprite
 	[SerializeField] protected SpriteRenderer m_sprite;
 
-	//UI
-	[SerializeField] protected UIBattleLifeBar m_lifeGauge;
-	[SerializeField] protected UIBattleLifeBar m_manaGauge;
-
     //STATS
     protected Stats m_currentStats = new Stats();
     protected Stats m_maxStats = new Stats();
 
-    [SerializeField] protected BattleFightMagic m_currentMagic = null;
+	[SerializeField] protected BattleFightMagic m_currentMagic = null;
+
+	//UI
+	[SerializeField] protected UIBattleLifeBar m_lifeGauge;
+	[SerializeField] protected UIBattleLifeBar m_manaGauge;
 
 	protected bool m_dead = false;
 
@@ -46,18 +46,20 @@ public class BattleActor : MonoBehaviour {
     {
         //find fight manager and ui stuff
         m_fightManager = BattleFightManager.instance;
-        //ui gauges ( when instanciating the actors, it hasnt a parent yet )
-        if ( (m_lifeGauge == null || m_manaGauge == null) && transform.parent != null )
-        {
-            var bars = transform.parent.GetComponentsInChildren<UIBattleLifeBar>();
-            foreach (var bar in bars)
-            {
-                if (bar.IsMana)
-                    m_manaGauge = bar;
-                else
-                    m_lifeGauge = bar;
-            }
-        }
+
+		//ui gauges ( when instanciating the actors, it hasnt a parent yet )
+		if ( (m_lifeGauge == null || m_manaGauge == null) && transform.parent != null )
+		{
+			var bars = transform.parent.GetComponentsInChildren<UIBattleLifeBar>();
+			foreach (var bar in bars)
+			{
+				if (bar.IsMana)
+					m_manaGauge = bar;
+				else
+					m_lifeGauge = bar;
+			}
+		}
+
         RefreshLifeGauge();
         RefreshManaGauge();
     }
@@ -111,8 +113,6 @@ public class BattleActor : MonoBehaviour {
 		if (damage < 0)
 			damage = 0;
 		CurrentStats.HP -=  damage;
-
-		//UI
 		RefreshLifeGauge ();
 
 		//Notify manager if dead
@@ -130,8 +130,6 @@ public class BattleActor : MonoBehaviour {
 		if (_damage < 0)
 			_damage = 0;
 		CurrentStats.HP -=  _damage;
-		
-		//UI
 		RefreshLifeGauge ();
 		
 		//Notify manager if dead
@@ -151,7 +149,7 @@ public class BattleActor : MonoBehaviour {
 			CurrentStats.MP = MaxStats.MP;
 			full = true;
 		}
-		RefreshManaGauge();
+		RefreshManaGauge ();
 		return full;
 	}
 
@@ -198,7 +196,7 @@ public class BattleActor : MonoBehaviour {
 	protected void RefreshLifeGauge(){
 		if (m_lifeGauge == null)
 			return;
-		
+
 		float hpPercent = (float)CurrentStats.HP / (float)MaxStats.HP;
 		m_lifeGauge.SetValue( hpPercent );
 	}
@@ -206,7 +204,7 @@ public class BattleActor : MonoBehaviour {
 	protected void RefreshManaGauge(){
 		if (m_manaGauge == null)
 			return;
-		
+
 		float mpPercent = (float)CurrentStats.MP / (float)MaxStats.MP;
 		m_manaGauge.SetValue( mpPercent );
 	}

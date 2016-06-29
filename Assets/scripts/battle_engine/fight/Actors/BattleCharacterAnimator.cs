@@ -5,12 +5,10 @@ public class BattleCharacterAnimator : MonoBehaviour {
 
 	[SerializeField] Animator m_animator;
 
-	[SerializeField] GameObject m_body;
-	[SerializeField] GameObject m_eyes;
-	[SerializeField] GameObject m_arm1;
-	[SerializeField] GameObject m_arm2;
-
-	[SerializeField] GameObject m_eyelids;
+	[SerializeField] SpriteRenderer m_body;
+	[SerializeField] SpriteRenderer m_eyebrows;
+	[SerializeField] SpriteRenderer m_arm;
+	[SerializeField] SpriteRenderer m_eyes;
 
 	// Use this for initialization
 	void Start () {
@@ -46,37 +44,13 @@ public class BattleCharacterAnimator : MonoBehaviour {
 
 	#region RENDERING
 
-	/// <summary>
-	/// Replaces the eyelids gameObject, or deactivate if paramaeter is null
-	/// </summary>
-	/// <param name="_go">_go.</param>
-	public void ReplaceEyelids(GameObject _go){
-		if (_go == null) {
-			m_eyelids.SetActive(false);
-			return;
-		}
-		Transform t = m_eyelids.transform;
-		Utils.SetParentKeepTransform( _go.transform, t.parent );
-		m_eyelids = _go;
-		Destroy (t.gameObject);
-	}
-
 	public void SetColor( Color _color){
-		m_body.GetComponent<SpriteRenderer> ().color = _color;
-		m_arm1.GetComponent<SpriteRenderer> ().color = _color;
-		m_arm2.GetComponent<SpriteRenderer> ().color = _color;
-		m_eyelids.GetComponent<SpriteRenderer> ().color = _color;
+		m_body.color = _color;
+		m_arm.color = _color;
+		//m_eyebrows.color = _color;
 	}
 
 	public void LoadSprites(string _characterName){
-		//change Eyelid
-		JSONObject eyelidObject = DataManager.instance.GameData.GetField ("playerEyelid");
-		if (eyelidObject && Utils.IsValidString(eyelidObject.str)) {
-			GameObject goEyelid = Instantiate (Resources.Load ("prefabs/character/eyelids/" + eyelidObject.str) as GameObject);
-			ReplaceEyelids (goEyelid);
-		}else{
-			ReplaceEyelids(null);
-		}
 		//change color
 		JSONObject colorObject = DataManager.instance.GameData.GetField ("playerColor");
         if( colorObject != null)
