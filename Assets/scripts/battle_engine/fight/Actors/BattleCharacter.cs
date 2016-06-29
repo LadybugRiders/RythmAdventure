@@ -12,6 +12,7 @@ public class BattleCharacter : BattleActor {
 
         m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
         m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
+
     }
 
 	#region LOADING 
@@ -26,7 +27,7 @@ public class BattleCharacter : BattleActor {
             m_maxStats = new Stats(levelupData.Stats);
             m_currentStats = new Stats(levelupData.Stats);
         }
-        CurrentStats.MP = 0;
+		CurrentStats.MP = 0;
         RefreshManaGauge();
     }
 	#endregion

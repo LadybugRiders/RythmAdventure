@@ -21,8 +21,10 @@ public class UIBattlePhaseTitle : MonoBehaviour {
 	// Use this for initialization
 	void Start () {		
 		m_centerPosition = transform.localPosition;
-		//Utils.SetAlpha (m_titleRenderer, 0.0f);
-		Utils.SetLocalPositionX (transform, leftPositionX);
+        rightPositionX = Screen.currentResolution.width * 0.6f;
+        leftPositionX = Screen.currentResolution.width * -0.6f;
+        //Utils.SetAlpha (m_titleRenderer, 0.0f);
+        Utils.SetLocalPositionX (transform, leftPositionX);
 	}
 
 	public void Switch( bool _attack ){
@@ -38,7 +40,7 @@ public class UIBattlePhaseTitle : MonoBehaviour {
 		m_state = State.LEAVING;
 		Vector3 pos = transform.localPosition;
 		pos.x = rightPositionX;
-		TweenEngine.instance.PositionTo (transform, pos, 0.5f, "ComeBack");
+		TweenEngine.instance.PositionTo (transform, pos, 1f);
 	}
 
 	void ComeBack(){
@@ -51,11 +53,12 @@ public class UIBattlePhaseTitle : MonoBehaviour {
             m_titleRenderer.color = ColorManager.instance.GetColor("green_defense_bright");
         }
 		Utils.SetLocalPositionX (transform, leftPositionX);
-		TweenEngine.instance.PositionTo (transform, m_centerPosition, 0.5f, "OnCentered");
+		TweenEngine.instance.PositionTo (transform, m_centerPosition, 1f, "OnCentered");
     }
 
 	void OnCentered(){
 		m_state = State.IDLE;
+        TimerEngine.instance.AddTimer(2.0f, "Leave", gameObject);
 	}
 	
 	// Update is called once per frame

@@ -39,7 +39,9 @@ public class BattleActor : MonoBehaviour {
 	virtual protected void Start ()
     {
         //Transform
-        m_transform = transform;
+		m_transform = transform;
+		RefreshLifeGauge();
+		RefreshManaGauge();
     }
 
     void Init()
@@ -59,9 +61,6 @@ public class BattleActor : MonoBehaviour {
 					m_lifeGauge = bar;
 			}
 		}
-
-        RefreshLifeGauge();
-        RefreshManaGauge();
     }
 
     virtual public void Load(string _name){
