@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class BattleTracksManager : MonoBehaviour {
 
+	static BattleTracksManager _instance;
+
 	[SerializeField] BattleEngine m_engine;
 	//State
 	public enum BattleState { ATTACK, DEFEND, SWITCHING };
@@ -36,19 +38,29 @@ public class BattleTracksManager : MonoBehaviour {
 	private float m_currentSpeed = 5.0f;
 
     //EVENTS
-    public event System.EventHandler<NoteEventInfo> noteEventHandler;
+	public event System.EventHandler<NoteEventInfo> noteEventHandler;
     public class NoteEventInfo : System.EventArgs{
         public NoteData NoteHit { get; private set; }
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
         public BattleScoreManager.Accuracy Accuracy { get; private set; }
-        public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS)
+		/// <summary>
+		/// Tells if the note is on a disabled track
+		/// </summary>
+		public bool IsFinal { get; set; }
+
+		public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS, bool _isFinal = false)
         {
             NoteHit = _notehit;
             Success = _success;
             Accuracy = _acc;
+			IsFinal = _isFinal;
         }
     }
+
+	void Awake(){
+		_instance = this;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -214,8 +226,12 @@ public class BattleTracksManager : MonoBehaviour {
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote
 		_note.Data = _data;		
+		BattleTrack track = m_tracks [_data.TrackID];
+		if ( !track.IsActive ) {
+			track = GetReplacementTrack ();
+		}
 		//Affect TrackID ( may vary if a track is disabled ) : The TrackID of a track may point to another when it is disabled
-		_data.TrackID = m_tracks[_data.TrackID].Id;
+		_data.TrackID = track.Id;
 		//Launch
 		m_tracks [_data.TrackID].Iteration = m_iteration;
 		bool success = m_tracks [_data.TrackID].LaunchNote (_note,m_currentSpeed);
@@ -297,14 +313,9 @@ public class BattleTracksManager : MonoBehaviour {
 	public void DisableTrack(int _index, int _replacementIndex){
 		if (_index < m_tracks.Count) {
 			//Debug.Log ("Replace " + _index + " par " + _replacementIndex);
-			m_tracks [_index].Disable ();
-			//redirect disabled tracks to the replacement one
-			for(int i=0; i < m_tracks.Count; i++){	
-				if( m_tracks[i].Id == _index ){
-					m_tracks[i] = m_tracks[_replacementIndex];
-					m_tracks[i].Id = _replacementIndex;
-					break;
-				}
+			bool trackIsClear = m_tracks [_index].Disable ();
+			if (trackIsClear) {
+				RedirectTrack (_index, _replacementIndex);
 			}
 			CheckCurrentTrack();
 		} else {
@@ -312,6 +323,26 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
+	void RedirectTrack(int _disabledIndex, int _replacementIndex){
+		//redirect disabled tracks to the replacement one
+		for (int i = 0; i < m_tracks.Count; i++) {	
+			if (m_tracks [i].Id == _disabledIndex) {
+				m_tracks [i] = m_tracks [_replacementIndex];
+				m_tracks [i].Id = _replacementIndex;
+				break;
+			}
+		}
+	}
+
+	BattleTrack GetReplacementTrack(){
+		//redirect disabled tracks to the replacement one
+		for (int i = 0; i < m_tracks.Count; i++) {	
+			if (m_tracks [i].IsActive) {
+				return m_tracks [i];
+			}
+		}
+		return null;
+	}
     #endregion
     
     ///<summary>
@@ -369,6 +400,12 @@ public class BattleTracksManager : MonoBehaviour {
 	public bool IsAttacking{
 		get{
 			return PhaseState == BattleState.ATTACK;
+		}
+	}
+
+	public static BattleTracksManager instance{
+		get{
+			return _instance;
 		}
 	}
 }

@@ -5,7 +5,6 @@ using System.Collections;
 public class NoteData {
 
 	[SerializeField] protected float m_timeBegin;
-
 	
 	public enum NoteType{ SIMPLE, LONG, SLIDE };
 	[SerializeField] protected NoteType m_type = NoteType.SIMPLE;
@@ -19,17 +18,7 @@ public class NoteData {
 	[SerializeField] protected bool m_head = true;
 
 	/** Use to store the accuracy of a hit note. Unused outside battle */
-	[SerializeField] protected BattleScoreManager.Accuracy m_hitAccuracy;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+	protected BattleScoreManager.Accuracy m_hitAccuracy;
 
 	public NoteData Clone(){
 		NoteData noteData = new NoteData ();

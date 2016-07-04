@@ -33,15 +33,9 @@ public class BattleFightManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		BattleTracksManager.instance.noteEventHandler += OnReceiveNoteEvent;
 	}
 
-    public static BattleFightManager instance
-    {
-        get
-        {
-            return _instance;
-        }
-    }
 
 	/// <summary>
 	/// Called by battle engine at start of the scene. Loads all the actors
@@ -98,22 +92,29 @@ public class BattleFightManager : MonoBehaviour {
 	
 	}
 
-	public void AddNote(NoteData _note){
-		switch (_note.Subtype) {
+	public void OnReceiveNoteEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
+		if (eventInfo.Accuracy == BattleScoreManager.Accuracy.MISS)
+			return;
+		switch (eventInfo.NoteHit.Subtype) {
 			case NoteData.NoteSubtype.REGULAR :
 			case NoteData.NoteSubtype.MAGIC :
-				ProcessRegular(_note); break;
+				ProcessRegular(eventInfo); break;
 		}
 	}
 
-	public void ProcessRegular(NoteData _note ){
+	public void ProcessRegular(BattleTracksManager.NoteEventInfo eventInfo){
 		//no attack for long note's head
-		if (_note.Type == NoteData.NoteType.LONG && _note.Head)
+		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
 			return;
 
 		//Get the duel
-		FightDuel duel = m_duels [_note.TrackID];
-		duel.RegularAttack ( m_engine.IsAttacking,_note);
+		FightDuel duel = m_duels [eventInfo.NoteHit.TrackID];
+
+		if (eventInfo.IsFinal) {
+			duel.BlankNoteBonus (eventInfo.NoteHit);
+		} else {
+			duel.RegularAttack ( m_engine.IsAttacking,eventInfo.NoteHit);
+		}
 	}
 
 	#region ACTOR_DIE
@@ -170,6 +171,14 @@ public class BattleFightManager : MonoBehaviour {
 			}
 		}
 		return -1;
+	}
+
+	public static BattleFightManager instance
+	{
+		get
+		{
+			return _instance;
+		}
 	}
 
 	#region DUEL_CLASS
@@ -247,6 +256,13 @@ public class BattleFightManager : MonoBehaviour {
 				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
 			}
 			return totalDamage;
+		}
+
+		/// <summary>
+		/// Triggered when a note is hit on a disabled track ( enemy is dead )
+		/// </summary>
+		public int BlankNoteBonus( NoteData _noteData){
+			return 0;
 		}
 
 		#endregion

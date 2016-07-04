@@ -161,7 +161,6 @@ public class BattleEngine : MonoBehaviour {
     /// </summary>
     public BattleScoreManager.Accuracy AddNote( NoteData _note, float _accuracy){
 		_note.HitAccuracy = m_scoreManager.AddNote (_accuracy);
-		m_fightManager.AddNote(_note);
 		return _note.HitAccuracy;
 	}
     

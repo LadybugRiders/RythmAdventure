@@ -34,6 +34,11 @@ public class BattleNote : MonoBehaviour {
 
 	protected Vector3 m_startPos;
 
+	/// <summary>
+	/// The note is on a track that has been disabled
+	/// </summary>
+	protected bool m_isFinal = false;
+
 	protected bool m_paused = false;
 
 	// Use this for initialization
@@ -214,6 +219,15 @@ public class BattleNote : MonoBehaviour {
 		}
 		set{
 			m_data = value;
+		}
+	}
+
+	public bool IsFinal {
+		get {
+			return m_isFinal;
+		}
+		set {
+			m_isFinal = value;
 		}
 	}
 

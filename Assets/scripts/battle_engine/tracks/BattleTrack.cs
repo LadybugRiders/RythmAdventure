@@ -94,7 +94,7 @@ public class BattleTrack : MonoBehaviour {
 		m_notes.Remove (_note);
 		//add note to the manager
 		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note, _accuracy);
-
+		//kill note
 		_note.Hit (_slot);
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (acc);
@@ -104,7 +104,7 @@ public class BattleTrack : MonoBehaviour {
 		//Audio
 		PlayAudio (_note);
 
-        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, acc));
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, true, acc , _note.IsFinal));
     }
 
 	/** Called directly by BattleSlot if a note is missed ( went past the slot )
@@ -112,7 +112,7 @@ public class BattleTrack : MonoBehaviour {
 	public void OnNoteMiss(BattleNote _note){
 		//miss note and gather notes to delete with it
 		BattleNote[] notesToDelete = _note.Miss ();
-        m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false, BattleScoreManager.Accuracy.MISS,_note.IsFinal));
 
         //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
         foreach(var note in notesToDelete)
@@ -145,8 +145,9 @@ public class BattleTrack : MonoBehaviour {
         if (m_notes.Count > 0)
         {
             if (noteMissed)
-            {
-                OnNoteMiss(m_notes[0]);
+			{
+				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+				OnNoteMiss(m_notes[0]);
             }
             else
             {
@@ -214,14 +215,17 @@ public class BattleTrack : MonoBehaviour {
 
 	#endregion
 
-	public void Disable(){
-		if (m_enabled == false)
-			return;
-		m_enabled = false;
-		for( int i=m_notes.Count-1; i >= 0 ; i--){
-			m_notes[i].Die();
-			m_notes.RemoveAt(i);
+	/// <summary>
+	/// disable the track by setting all current notes to final mode. Returns true if the track is clear of all notes.
+	/// </summary>
+	public bool Disable(){
+		if (m_enabled) {
+			m_enabled = false;
+			for (int i = m_notes.Count - 1; i >= 0; i--) {
+				m_notes [i].IsFinal = true;
+			}
 		}
+		return IsEmpty;
 	}
 
 	public BattleTracksManager TracksManager {
@@ -234,6 +238,10 @@ public class BattleTrack : MonoBehaviour {
 		get{
 			return m_notes;
 		}
+	}
+
+	public bool IsEmpty{
+		get{ return NotesOnTrack.Count == 0; }
 	}
 
     /// <summary>
@@ -279,7 +287,7 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
-	public bool Active {
+	public bool IsActive {
 		get {
 			return m_enabled;
 		}
