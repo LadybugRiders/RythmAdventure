@@ -49,15 +49,25 @@ public class SongEditorCamera : MonoBehaviour {
 				m_currentTime --;
 			PlaceTimeBars ();
 		}
-		GUI.TextField( new Rect (50, 0, 20, 20), ""+m_currentTime) ;
+        if (GUI.Button(new Rect(0, 50, 50, 20), "<<"))
+        {
+            m_currentTime-= m_currentTime > 10 ? 10 : m_currentTime;
+            PlaceTimeBars();
+        }
+        GUI.TextField( new Rect (50, 0, 20, 20), ""+m_currentTime) ;
 		//move right
 		if (GUI.Button (new Rect (80, 0, 50, 50), ">")) {
 			m_currentTime++;
 			PlaceTimeBars ();
 		}
+        if (GUI.Button(new Rect(80, 50, 50, 20), ">>"))
+        {
+            m_currentTime+= 10;
+            PlaceTimeBars();
+        }
 
-		//Change Mode
-		if (GUI.Button (new Rect (150, 0, 55, 50), m_manager.CurrentMode.ToString())) {
+        //Change Mode
+        if (GUI.Button (new Rect (150, 0, 55, 50), m_manager.CurrentMode.ToString())) {
 			m_manager.ChangeMode();
 		}
 
@@ -201,4 +211,10 @@ public class SongEditorCamera : MonoBehaviour {
 
 	#endregion
 
+    public void Reset()
+    {
+        m_currentTime = 0;
+        PlaceTimeBars();
+        Utils.SetLocalPositionX(m_playBarTransf, m_initPlayBarPosX);
+    }
 }

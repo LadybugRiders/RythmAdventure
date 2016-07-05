@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattleTracksManager : MonoBehaviour {
+
+	static BattleTracksManager _instance;
+
 	[SerializeField] BattleEngine m_engine;
 	//State
 	public enum BattleState { ATTACK, DEFEND, SWITCHING };
@@ -14,14 +17,16 @@ public class BattleTracksManager : MonoBehaviour {
 	private int m_currentTrackID = 0;
 
 	/** GameObject containing all simple notes */
-	public GameObject m_simpleNotesGroup;
-	public GameObject m_longNotesGroup;
-	/** List of simple notes scipts */
-	private List<BattleNote> m_simpleNotes;
+	[SerializeField] public GameObject m_simpleNotesGroup;
+    [SerializeField] public GameObject m_longNotesGroup;
+    [SerializeField] public GameObject m_slideNotesGroup;
+    /** List of notes scripts */
+    private List<BattleNote> m_simpleNotes;
 	private List<BattleNote> m_longNotes;
+    private List<BattleNote> m_slideNotes;
 
-	//COLOR
-	public Color attackColor;
+    //COLOR
+    public Color attackColor;
 	public Color defendColor;
 
 	[SerializeField] int m_magicNoteRate = 20;
@@ -32,12 +37,38 @@ public class BattleTracksManager : MonoBehaviour {
 
 	private float m_currentSpeed = 5.0f;
 
+    //EVENTS
+	public event System.EventHandler<NoteEventInfo> noteEventHandler;
+    public class NoteEventInfo : System.EventArgs{
+        public NoteData NoteHit { get; private set; }
+        public NoteData NextNote { get; set; }
+        public bool Success { get; private set; }
+        public BattleScoreManager.Accuracy Accuracy { get; private set; }
+		/// <summary>
+		/// Tells if the note is on a disabled track
+		/// </summary>
+		public bool IsFinal { get; set; }
+
+		public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS, bool _isFinal = false)
+        {
+            NoteHit = _notehit;
+            Success = _success;
+            Accuracy = _acc;
+			IsFinal = _isFinal;
+        }
+    }
+
+	void Awake(){
+		_instance = this;
+	}
+
 	// Use this for initialization
 	void Start () {
 		transform.position = new Vector3 ();
 		m_simpleNotesGroup.transform.localPosition = new Vector3 ();
 		m_longNotesGroup.transform.localPosition = new Vector3 ();
 		FindNotesScripts ();
+        InitTracks();
 	}
 	
 	// Update is called once per frame
@@ -45,6 +76,14 @@ public class BattleTracksManager : MonoBehaviour {
 		if (m_state == BattleState.SWITCHING)
 			UpdateSwitching ();
 	}
+
+    void InitTracks()
+    {
+        for(int i=0; i < m_tracks.Count; i++)
+        {
+            m_tracks[i].Id = i;
+        }
+    }
 
 	#region PAUSE/RESUME
 
@@ -86,7 +125,7 @@ public class BattleTracksManager : MonoBehaviour {
 	public void ExecuteSwitch(){
 		m_state = m_switchState;
 		//notify engine
-		m_engine.OnSwitchSuccesful();
+		m_engine.OnSwitchSuccessful();
 		//notify tracks
 		for( int i=0; i < m_tracks.Count; i ++ ){
 			m_tracks[i].SwitchPhase();
@@ -98,12 +137,14 @@ public class BattleTracksManager : MonoBehaviour {
 		CheckCurrentTrack ();
 	}
 
-	#endregion
+    #endregion
 
-	#region LAUNCH_NOTE
+    #region LAUNCH_NOTE
 
-	/** Called by the NoteGenerator. Only entry to create a note on a track */
-	public void LaunchNote( NoteData _data, int _iteration){
+    /// <summary>
+    ///  Called by the NoteGenerator. Only entry to create a note on a track
+    /// </summary>
+    public void LaunchNote( NoteData _data, int _iteration){
 		m_iteration = _iteration;
 		//don't throw notes while switchin'
 		if (m_state == BattleState.SWITCHING)
@@ -114,31 +155,31 @@ public class BattleTracksManager : MonoBehaviour {
 		bool success = false;
 		switch (_data.Type) {
 			case NoteData.NoteType.SIMPLE : success = LaunchNote(_data, m_simpleNotes); break;
-			case NoteData.NoteType.LONG : success = LaunchLongNote(_data);break;
+			case NoteData.NoteType.LONG : success = LaunchLongNote(_data); break;
+            case NoteData.NoteType.SLIDE: success = LaunchNote(_data, m_slideNotes); break;
 		}
 		if (success) {
 			m_engine.OnNoteLaunched (_data);
 		}
 	}
 
-	bool LaunchNote(NoteData _data, List<BattleNote> _inputArray){
+	bool LaunchNote(NoteData _data, List<BattleNote> _notes){
 		BattleNote note = null;
 		//Search for a available note
-		for (int i=0; i < _inputArray.Count; i ++) {
-			if( _inputArray[i].CurrentState == BattleNote.State.DEAD ){
-				note = _inputArray[i];
+		for (int i=0; i < _notes.Count; i ++) {
+			if(_notes[i].CurrentState == BattleNote.State.DEAD ){
+				note = _notes[i];
 				break;
 			}
 		}
 		if (note == null) {
-			Debug.LogError( "No Available Note found ");
+			Debug.LogError( "No Note Available Note found ");
 			return false;
 		}
 		//Launch the note on the right track
 		return LaunchNoteOnTrack (note,_data);
 	}
-
-	/** Laucnh a long note */
+    
 	bool LaunchLongNote( NoteData _data ){
 		BattleNoteLong note = null;
 		//TRYING TO ADD A TAIL
@@ -177,14 +218,20 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	/** Every BattleNote added to the track pass in there */
-	bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
+    /// <summary>
+    /// Every BattleNote added to the track pass in there
+    /// </summary>
+    bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
 		//keep track of launched notes
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote
 		_note.Data = _data;		
-		//Affect TrackID ( may vary if a track is disabled )
-		_data.TrackID = m_tracks[_data.TrackID].Id;
+		BattleTrack track = m_tracks [_data.TrackID];
+		if ( !track.IsActive ) {
+			track = GetReplacementTrack ();
+		}
+		//Affect TrackID ( may vary if a track is disabled ) : The TrackID of a track may point to another when it is disabled
+		_data.TrackID = track.Id;
 		//Launch
 		m_tracks [_data.TrackID].Iteration = m_iteration;
 		bool success = m_tracks [_data.TrackID].LaunchNote (_note,m_currentSpeed);
@@ -192,57 +239,73 @@ public class BattleTracksManager : MonoBehaviour {
 		return success;
 	}
 
-	#endregion
+    #endregion
 
-	#region INPUT
+    #region INPUT
+    /// <summary>
+    /// Called when a input is pressed. The id correspond to the phase state ( attack =1 , defense = -1)
+    /// methode is PRESS, RELEASE, SLIDE
+    /// </summary>
+    public void OnInputTriggered(int _id, BattleNote.HIT_METHOD _method)
+    {
+        if (CheckInputState(_id))
+        {
+            m_tracks[m_currentTrackID].OnInputTriggered(_method);
+        }
+        else
+        {
+            m_tracks[m_currentTrackID].OnInputError(_method);
+        }
+    }
 
-	/** Called when a input is pressed. The id correspond to the phase state ( attack > 0, defense < 0) */
-	public void OnInputDown(int _id){
-		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputDown ();
-		} else {	
-			m_tracks[m_currentTrackID].OnInputError(true);
-		}
-	}
-
-	/** Called when a input is released. The id correspond to the phase state ( attack > 0, defense < 0) */
-	public void OnInputUp(int _id){
-		if (CheckInputState(_id)) {			
-			m_tracks [m_currentTrackID].OnInputUp ();
-		} else {	
-			m_tracks[m_currentTrackID].OnInputError(false);
-		}
-	}
-
+	/// <summary>
+	/// Check the input according to the phase (attack / defense)
+	/// </summary>
 	bool CheckInputState(int _id){
 		if(m_state == BattleState.SWITCHING)
 			return (_id < 0 && m_switchState == BattleState.ATTACK) || (_id > 0 && m_switchState == BattleState.DEFEND);
 		return (_id < 0 && m_state == BattleState.DEFEND) || (_id > 0 && m_state == BattleState.ATTACK);
 	}
 
+    public void RaiseNoteEvent(NoteEventInfo _eventNote)
+    {		
+        if (noteEventHandler != null)
+        {
+            CheckCurrentTrack();
+            var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+            _eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
+            noteEventHandler.Invoke(this, _eventNote);
+        }
+		//check redirection
+		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
+		if (!track.IsActive && track.IsEmpty) {
+			var replcmtTrack = GetReplacementTrack ();
+			if( replcmtTrack != null )
+				RedirectTrack (track.Id,replcmtTrack.Id);
+		}
+    }
+
 	#endregion
 
 	#region FIND_NOTES
 	void FindNotesScripts(){
-		FindSimpleNotes ();
-		FindLongNotes ();
-	}
-
-	void FindSimpleNotes(){		
 		//Create list of simples notes scripts
 		BattleNote[] notes = m_simpleNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_simpleNotes = new List<BattleNote> (notes);
-	}
-
-	void FindLongNotes(){		
-		BattleNote[] notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
+        //Long notes
+		notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_longNotes = new List<BattleNote> (notes);
-	}
+        //Slide notes
+        notes = m_slideNotesGroup.GetComponentsInChildren<BattleNote>(true);
+        m_slideNotes = new List<BattleNote>(notes);
+    }
 
-	#endregion
-
-	/** Give subtype to the note*/
-	void ApplySubtype(NoteData _note){
+    #endregion
+    
+    ///<summary>
+    /// Give subtype to the note (MAGIC / REGULAR ...)
+    ///</summary>
+    void ApplySubtype(NoteData _note){
 		if (_note.Type == NoteData.NoteType.LONG ) {
 			return;
 		}
@@ -260,14 +323,9 @@ public class BattleTracksManager : MonoBehaviour {
 	public void DisableTrack(int _index, int _replacementIndex){
 		if (_index < m_tracks.Count) {
 			//Debug.Log ("Replace " + _index + " par " + _replacementIndex);
-			m_tracks [_index].Disable ();
-			//redirect disabled tracks to the replacement one
-			for(int i=0; i < m_tracks.Count; i++){	
-				if( m_tracks[i].Id == _index ){
-					m_tracks[i] = m_tracks[_replacementIndex];
-					m_tracks[i].Id = _replacementIndex;
-					break;
-				}
+			bool trackIsClear = m_tracks [_index].Disable ();
+			if (trackIsClear) {
+				RedirectTrack (_index, _replacementIndex);
 			}
 			CheckCurrentTrack();
 		} else {
@@ -275,21 +333,45 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	#endregion
+	void RedirectTrack(int _disabledIndex, int _replacementIndex){
+		//redirect disabled tracks to the replacement one
+		for (int i = 0; i < m_tracks.Count; i++) {	
+			if (m_tracks [i].Id == _disabledIndex) {
+				m_tracks [i] = m_tracks [_replacementIndex];
+				m_tracks [i].Id = _replacementIndex;
+				break;
+			}
+		}
+	}
 
-	/** Adds the performed note to the engine, even if missed */
-	public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
+	BattleTrack GetReplacementTrack(){
+		//redirect disabled tracks to the replacement one
+		for (int i = 0; i < m_tracks.Count; i++) {	
+			if (m_tracks [i].IsActive) {
+				return m_tracks [i];
+			}
+		}
+		return null;
+	}
+    #endregion
+    
+    ///<summary>
+    /// Adds the performed note to the engine, even if missed, so that it can be processed
+    ///</summary>
+    public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
 		CheckCurrentTrack ();
 		return m_engine.AddNote (_note.Data,_accuracy);
 	}
 
-	/** Search between all tracks to see the one which is the current one */
-	void CheckCurrentTrack(){
+    /// <summary>
+    /// Search between all tracks to see the one which is the current one aka the one with the next not on it
+    /// </summary>
+    void CheckCurrentTrack(){
 		float bestTime = float.MaxValue;
 		int minIteration = int.MaxValue;
 		for(int i=0; i < m_tracks.Count; i ++){
 			BattleNote n = m_tracks[i].CurrentNote;
-			if( n==null)
+			if( n==null )
 				continue;
 			if( m_tracks[i].Iteration < minIteration || n.Data.TimeBegin < bestTime ){
 				bestTime = n.Data.TimeBegin ;
@@ -299,8 +381,11 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	/** Computes the speed of the notes according to the timeshift ( time for a note to arrive )*/
-	public void SetTimeShift(float _timeShift){
+    /// <summary>
+    /// Computes the speed of the notes according to the timeshift ( time for a note to arrive )
+    /// </summary>
+    /// <param name="_timeShift"></param>
+    public void SetTimeShift(float _timeShift){
 		m_currentSpeed = m_tracks [0].Length / _timeShift;
 	}
 
@@ -325,6 +410,12 @@ public class BattleTracksManager : MonoBehaviour {
 	public bool IsAttacking{
 		get{
 			return PhaseState == BattleState.ATTACK;
+		}
+	}
+
+	public static BattleTracksManager instance{
+		get{
+			return _instance;
 		}
 	}
 }

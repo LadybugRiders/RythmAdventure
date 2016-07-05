@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class BattleFightManager : MonoBehaviour {
 
+    static BattleFightManager _instance;
+
 	[SerializeField] BattleEngine m_engine;
 	[SerializeField] BattleFightMagicManager m_magicManager;
 	[SerializeField] BattleDamageTextManager m_damageTextManager;
@@ -11,6 +13,27 @@ public class BattleFightManager : MonoBehaviour {
 	[SerializeField] List<BattleCharacter> m_party;
 	[SerializeField] List<BattleEnemy> m_enemies;
 	List<FightDuel> m_duels;
+
+    [SerializeField] SpriteRenderer m_backgroundSprite;
+
+	//Event for death
+	public event System.EventHandler<ActorDeadEventInfo> actorDeadEventHandler;
+	public class ActorDeadEventInfo : System.EventArgs{
+		public BattleActor DeadActor{ get; set; }
+
+		public ActorDeadEventInfo(BattleActor _actor){
+			DeadActor = _actor;
+		}
+	}
+
+	//Event for battle end
+	public event System.EventHandler<EndBattleEventInfo> endBattleEventHandler;
+	public class EndBattleEventInfo : System.EventArgs{
+		public bool Win {get;set;}
+		public EndBattleEventInfo(bool _win){
+			Win = _win;
+		}
+	}
 
 	/** used when a note is hit to determine the current actor action */
 	public enum ActorAttackAction { NONE, ATTACK, MAGIC, _COUNT };
@@ -20,6 +43,7 @@ public class BattleFightManager : MonoBehaviour {
 	public static float DEPTH_UI = 0.0f;
 
 	void Awake(){
+        _instance = this;
 		m_duels = new List<FightDuel>();
 		for(int i=0; i<3 ; i ++){
 			m_duels.Add( new FightDuel(i,m_damageTextManager,this) );
@@ -28,18 +52,58 @@ public class BattleFightManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		for (int i=0; i<m_duels.Count; i ++) {
-			m_duels [i].Start (m_party [i], m_enemies [i]);
-		}
+		BattleTracksManager.instance.noteEventHandler += OnReceiveNoteEvent;
 	}
+
 
 	/// <summary>
 	/// Called by battle engine at start of the scene. Loads all the actors
 	/// </summary>
-	public void Load(){
-		m_party [0].Load ("rodriguez");
-		m_party [1].Load ("player");
-		m_party [2].Load ("nidan");
+	public void Load(BattleDataAsset battleData){
+
+        //load team
+        var teamCharsIds = ProfileManager.instance.GetProfile().CurrentTeam;
+        for(int i=0; i < teamCharsIds.Count; i++)
+        {
+            m_party[i].Load(teamCharsIds[i]);
+        }
+
+        //Loads enemies
+        if (battleData != null)
+        {
+            for(int i=0; i < battleData.Enemies.Count; i++)
+            {
+                if(m_enemies[i])
+                {
+                    //Destroy the temporary enemy
+                    Transform parent = m_enemies[i].transform.parent;
+                    Vector3 position = m_enemies[i].transform.position;
+                    Destroy(m_enemies[i].gameObject);
+                    //instantiate and place the new one
+                    var prefab = battleData.Enemies[i].Prefab;
+                    if( prefab != null)
+                    {
+                        //instantiate enemy
+                        GameObject go = Instantiate(prefab) as GameObject;
+                        m_enemies[i] = go.GetComponent<BattleEnemy>();
+                        go.transform.SetParent(parent, true);
+                        go.transform.position = position;
+                        //load
+                        m_enemies[i].Load(battleData.Enemies[i].Name, battleData.Enemies[i].Level);
+                    }
+                }
+            }
+        }
+
+        //Start duels
+        for (int i = 0; i < m_duels.Count; i++)
+        {
+            m_duels[i].Start(m_party[i], m_enemies[i]);
+        }
+
+        //Background
+        if (battleData.Background != null)
+            m_backgroundSprite.sprite = battleData.Background;
 	}
 	
 	// Update is called once per frame
@@ -47,22 +111,40 @@ public class BattleFightManager : MonoBehaviour {
 	
 	}
 
-	public void AddNote(NoteData _note){
-		switch (_note.Subtype) {
+	#region EVENTS
+
+	public void OnReceiveNoteEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
+		if (eventInfo.Accuracy == BattleScoreManager.Accuracy.MISS)
+			return;
+		switch (eventInfo.NoteHit.Subtype) {
 			case NoteData.NoteSubtype.REGULAR :
 			case NoteData.NoteSubtype.MAGIC :
-				ProcessRegular(_note); break;
+				ProcessRegular(eventInfo); break;
 		}
 	}
 
-	public void ProcessRegular(NoteData _note ){
+	public void RaiseActorDeadEvent(BattleActor _actor){
+		if (actorDeadEventHandler == null)
+			return;
+		var eventInfo = new ActorDeadEventInfo (_actor);
+		actorDeadEventHandler.Invoke (this, eventInfo);
+	}
+
+	#endregion
+
+	public void ProcessRegular(BattleTracksManager.NoteEventInfo eventInfo){
 		//no attack for long note's head
-		if (_note.Type == NoteData.NoteType.LONG && _note.Head)
+		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
 			return;
 
 		//Get the duel
-		FightDuel duel = m_duels [_note.TrackID];
-		duel.RegularAttack ( m_engine.IsAttacking,_note);
+		FightDuel duel = m_duels [eventInfo.NoteHit.TrackID];
+
+		if (eventInfo.IsFinal) {
+			duel.BlankNoteBonus (eventInfo.NoteHit);
+		} else {
+			duel.RegularAttack ( m_engine.IsAttacking,eventInfo.NoteHit);
+		}
 	}
 
 	#region ACTOR_DIE
@@ -85,10 +167,11 @@ public class BattleFightManager : MonoBehaviour {
 				//check end of the whole battle
 				end = end && !tempEnabled;
 			}
-			
+
 			//Notify BattleEngine
 			if (end) {
-				m_engine.OnFightEnded(true);
+				bool win = _actor.GetType() == typeof(BattleEnemy);
+				endBattleEventHandler.Invoke (this, new EndBattleEventInfo(win));
 			}else{				
 				m_engine.OnDisableTrack( index, repTrack ) ;
 			}
@@ -121,6 +204,14 @@ public class BattleFightManager : MonoBehaviour {
 		return -1;
 	}
 
+	public static BattleFightManager instance
+	{
+		get
+		{
+			return _instance;
+		}
+	}
+
 	#region DUEL_CLASS
 	public class FightDuel{
 		public int ID;
@@ -141,8 +232,10 @@ public class BattleFightManager : MonoBehaviour {
 		}
 
 		public void Start(BattleCharacter _char, BattleEnemy _enemy){
+            m_characters.Clear();
 			m_characters.Add (_char);
 			_char.FightDuel = this;
+            m_enemies.Clear();
 			m_enemies.Add (_enemy);
 			_enemy.FightDuel = this;
 		}
@@ -150,7 +243,7 @@ public class BattleFightManager : MonoBehaviour {
 		#region ATTACKS
 		public int RegularAttack(bool _fromPlayer, NoteData _noteData){
 			//if attack from player missed
-			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.BAD)
+			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.MISS)
 				return -1;
 			//Affect attackers & defenders
 			List<BattleActor> m_attackers = null;
@@ -194,6 +287,13 @@ public class BattleFightManager : MonoBehaviour {
 				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
 			}
 			return totalDamage;
+		}
+
+		/// <summary>
+		/// Triggered when a note is hit on a disabled track ( enemy is dead )
+		/// </summary>
+		public int BlankNoteBonus( NoteData _noteData){
+			return 0;
 		}
 
 		#endregion

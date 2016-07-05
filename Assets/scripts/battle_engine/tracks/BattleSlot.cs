@@ -11,6 +11,12 @@ public class BattleSlot : MonoBehaviour {
 	[SerializeField] protected List<BattleSlotTextAccuracy> m_textsAcc;
 	[SerializeField] protected BattleSlotExplosion m_explosion;
 
+    [SerializeField] protected float m_slideErrorDelay = 0.6f;
+    bool m_errorPending = false;
+    BattleNote.HIT_METHOD m_errorInputMethod;
+
+    BattleNote.HIT_METHOD m_lastInputMethod = BattleNote.HIT_METHOD.RELEASE;    
+
 	protected float m_diameter;
 
 	/** Notes currently colliding with the slot */
@@ -18,10 +24,7 @@ public class BattleSlot : MonoBehaviour {
 
 	//Accuacy Text
 	protected SpriteRenderer m_textSprite;
-
-	//Long note
-	protected BattleNoteLong m_currentLongNote;
-
+    
 	// Use this for initialization
 	void Start () {
 		m_collidingNotes = new List<BattleNote> ();
@@ -30,7 +33,6 @@ public class BattleSlot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	public void Activate(){
@@ -42,24 +44,44 @@ public class BattleSlot : MonoBehaviour {
 		m_collidingNotes.Clear ();
 	}
 
-	public void OnInputHit( bool _down){
+	public void OnInputTriggered(BattleNote.HIT_METHOD _method){
+
 		if (m_active == false ) 
 			return;
-		//if no note is colliding, send an error to BattleTrack
+		//if no note is colliding (miss)
 		if (m_collidingNotes.Count <= 0) {
-			m_track.OnInputError(_down);
-			m_explosion.Stop();
+            //if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
+            if (_method == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null)
+                return;
+            //send an error to BattleTrack
+            ApplyError(_method);
+            m_lastInputMethod = _method;
 			return;
 		}
 
 		//else we hit the first note that has collided
 		BattleNote note = m_collidingNotes [0];
-		//check input method of the note
-		if ( note.HitPress != _down) {
-			m_track.OnInputError(_down);
-			m_explosion.Stop();
-			return;
+        //check input method of the note
+        if ( note.HitMethod != _method ) {
+            // If we expect a slide and a press is done, wait a bit for a potential slide before erroring
+            if( note.HitMethod == BattleNote.HIT_METHOD.SLIDE && _method == BattleNote.HIT_METHOD.PRESS)
+            {
+                LaunchPendingError(_method);
+            }
+            else
+            {
+                ApplyError(_method);
+            }
+            m_lastInputMethod = _method;
+            return;
 		}
+
+        //Check slide, aborting an error if a hit is pending
+        //=> a hit has been done, but we didn't know if it was the beginning of a slide or not. Now we're sure, so NO need to raise an error
+        if( m_errorPending && _method == BattleNote.HIT_METHOD.SLIDE )
+        {
+            AbortPendingError();
+        }
 
 		//hit note and compute accuracy
 		float accuracy = ComputeAccuracy (note);
@@ -68,11 +90,47 @@ public class BattleSlot : MonoBehaviour {
 
 		//play explosion
 		m_explosion.Play (note);
+        m_lastInputMethod = _method;
 	}
 
-	#region COLLISIONS
+    #region ERROR_HANDLING
 
-	void OnTriggerEnter2D(Collider2D _collider){
+    public void LaunchPendingError(BattleNote.HIT_METHOD _method)
+    {        
+        //clean just in case
+        TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
+        m_errorPending = true;
+        m_errorInputMethod = _method;
+        TimerEngine.instance.AddTimer(m_slideErrorDelay, "OnPendingErrorTimerOver", this.gameObject);
+    }    
+
+    public void OnPendingErrorTimerOver()
+    {
+        if (m_errorPending)
+        {
+            ApplyError(m_errorInputMethod);
+        }
+    }
+
+    public void AbortPendingError()
+    {
+        m_errorPending = false;
+        //clean timers
+        TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
+    }
+
+    public void ApplyError(BattleNote.HIT_METHOD _method)
+    {
+        m_errorPending = false;
+        m_track.OnInputError(m_errorInputMethod);
+        m_explosion.Stop();
+    }
+
+    #endregion
+
+    #region COLLISIONS
+
+    void OnTriggerEnter2D(Collider2D _collider){
 		if (m_active == false ) 
 			return;
 		if( _collider.gameObject.layer == 8 ){
@@ -124,10 +182,16 @@ public class BattleSlot : MonoBehaviour {
 
 		return 100 - (percent * 100);
 	}
-
-	/** Compute Accuracy Values */
+    ///<summary>
+	/// Compute Accuracy Values 
+    /// </summary>
 	void ComputeDiameter(){		
 		CircleCollider2D coll = GetComponent<CircleCollider2D> ();
 		m_diameter = coll.radius * transform.localScale.x * 2 ;
 	}
+
+    public BattleNoteLong CurrentLongNote
+    {
+        get { return m_track.CurrentLongNote; }
+    }
 }

@@ -1,0 +1,197 @@
+{
+    "warrior": [
+        {
+            "level": 1,
+            "xp": 0,
+            "hp": 45,
+            "attack": 140,
+            "defense": 50,
+            "magic": 10,
+            "speed": 10
+        },
+        {
+            "level": 2,
+            "xp": 10,
+            "hp": 50,
+            "attack": 45,
+            "defense": 55,
+            "magic": 12,
+            "speed": 11
+        },
+        {
+            "level": 3,
+            "xp": 30,
+            "hp": 55,
+            "attack": 50,
+            "defense": 60,
+            "magic": 14,
+            "speed": 12
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 60,
+            "attack": 55,
+            "defense": 65,
+            "magic": 16,
+            "speed": 13
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18,
+            "speed": 14
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20,
+            "speed": 15
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22,
+            "speed": 16
+        }
+    ],
+    "magus": [
+        {
+            "level": 1,
+            "xp": 0,
+            "hp": 45,
+            "attack": 140,
+            "defense": 50,
+            "magic": 10,
+            "speed": 12
+        },
+        {
+            "level": 2,
+            "xp": 10,
+            "hp": 50,
+            "attack": 45,
+            "defense": 55,
+            "magic": 12,
+            "speed": 14
+        },
+        {
+            "level": 3,
+            "xp": 30,
+            "hp": 55,
+            "attack": 50,
+            "defense": 60,
+            "magic": 14,
+            "speed": 16
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 60,
+            "attack": 55,
+            "defense": 65,
+            "magic": 16,
+            "speed": 18
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18,
+            "speed": 19
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20,
+            "speed": 20
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22,
+            "speed": 22
+        }
+    ],
+    "thief": [
+        {
+            "level": 1,
+            "xp": 0,
+            "hp": 45,
+            "attack": 140,
+            "defense": 50,
+            "magic": 10,
+            "speed": 20
+        },
+        {
+            "level": 2,
+            "xp": 10,
+            "hp": 50,
+            "attack": 45,
+            "defense": 55,
+            "magic": 12,
+            "speed": 22
+        },
+        {
+            "level": 3,
+            "xp": 30,
+            "hp": 55,
+            "attack": 50,
+            "defense": 60,
+            "magic": 14,
+            "speed": 26
+        },
+        {
+            "level": 4,
+            "xp": 50,
+            "hp": 60,
+            "attack": 55,
+            "defense": 65,
+            "magic": 16,
+            "speed": 28
+        },
+        {
+            "level": 5,
+            "xp": 80,
+            "hp": 65,
+            "attack": 60,
+            "defense": 70,
+            "magic": 18,
+            "speed": 30
+        },
+        {
+            "level": 6,
+            "xp": 120,
+            "hp": 70,
+            "attack": 65,
+            "defense": 75,
+            "magic": 20,
+            "speed": 34
+        },
+        {
+            "level": 7,
+            "xp": 160,
+            "hp": 82,
+            "attack": 70,
+            "defense": 80,
+            "magic": 22,
+            "speed": 37
+        }
+    ]
+}

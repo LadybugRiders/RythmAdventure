@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class FirstSceneManager : MonoBehaviour {
 	
@@ -14,17 +15,17 @@ public class FirstSceneManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (DataManager.instance.IsLoaded) {
-			Application.LoadLevel( "main_menu" );
+			SceneManager.LoadScene( "main_menu" );
 		}
 	}
 	
-	public void Quit(){		
-		Application.LoadLevel ("locker_room");
+	public void Quit(){
+        SceneManager.LoadScene("locker_room");
 	}
 	
 	public void DeleteAndReset(){		
 		PlayerPrefs.DeleteAll ();
-		Application.LoadLevel ("first_scene");
+        SceneManager.LoadScene("first_scene");
 	}
 
 }

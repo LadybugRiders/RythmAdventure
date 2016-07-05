@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ public class LockerRoomManager : MonoBehaviour {
 		DataManager.instance.GameData.SetField ("playerEyelid",eyeName);
 		//SAVE & QUIT
 		DataManager.instance.SaveGameData ();
-		Application.LoadLevel ("battle_scene");
+        SceneManager.LoadScene("battle_scene");
 	}
 
 	void Load(){

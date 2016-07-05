@@ -82,14 +82,11 @@ public class BattleTrack : MonoBehaviour {
 			m_notes.Add (_note);
 		return success;
 	}
-
-	public void OnInputDown(){
-		m_currentSlot.OnInputHit (true);
-	}
-
-	public void OnInputUp(){
-		m_currentSlot.OnInputHit (false);
-	}
+    
+    public void OnInputTriggered(BattleNote.HIT_METHOD method)
+    {
+        m_currentSlot.OnInputTriggered(method);
+    }
 
 	#region NOTE_EVENTS
 
@@ -97,7 +94,7 @@ public class BattleTrack : MonoBehaviour {
 		m_notes.Remove (_note);
 		//add note to the manager
 		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note, _accuracy);
-
+		//kill note
 		_note.Hit (_slot);
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (acc);
@@ -106,16 +103,20 @@ public class BattleTrack : MonoBehaviour {
 
 		//Audio
 		PlayAudio (_note);
-	}
+
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, true, acc , _note.IsFinal));
+    }
 
 	/** Called directly by BattleSlot if a note is missed ( went past the slot )
 	 * Or from BattleTrack.OnInputError ( before the note hits the slot) */
 	public void OnNoteMiss(BattleNote _note){
 		//miss note and gather notes to delete with it
-		BattleNote[] toDelete = _note.Miss ();
-		//remove notes induced by the miss
-		for(int i=0; i < toDelete.Length; i ++)
-			m_notes.Remove (toDelete[i]);
+		BattleNote[] notesToDelete = _note.Miss ();
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false, BattleScoreManager.Accuracy.MISS,_note.IsFinal));
+
+        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
+        foreach(var note in notesToDelete)
+            m_notes.Remove (note);
 
 		//add note to the manager
 		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note, -100);
@@ -123,13 +124,14 @@ public class BattleTrack : MonoBehaviour {
 		m_currentSlot.PlayTextAccuracy (acc);
 		m_currentLongNote = null;
 	}
-
-	/** Called from a slot when the input is pressed but no note is hit
-	 * Param _down tells if the input is pressed down */
-	public void OnInputError(bool _down){
+    
+    ///<summary>
+	/// Called from a slot when the input is pressed but no note is hit
+	///</summary>
+	public void OnInputError(BattleNote.HIT_METHOD method){
 		bool noteMissed = false;
 		//input is released
-		if (_down == false) {
+		if (method == BattleNote.HIT_METHOD.RELEASE) {
 			//and a long note is ongoing ( but it didn't get hit )
 			if (m_currentLongNote) {
 				noteMissed = true;
@@ -139,11 +141,21 @@ public class BattleTrack : MonoBehaviour {
 			noteMissed = true;
 		}
 
-		//Delete if needed
-		if (noteMissed && m_notes.Count > 0) {
-			OnNoteMiss (m_notes [0]);
-		}
-	}
+        
+        if (m_notes.Count > 0)
+        {
+            if (noteMissed)
+			{
+				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+				OnNoteMiss(m_notes[0]);
+            }
+            else
+            {
+                m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+            }
+        }            
+        
+    }
 
 	#endregion
 
@@ -203,14 +215,17 @@ public class BattleTrack : MonoBehaviour {
 
 	#endregion
 
-	public void Disable(){
-		if (m_enabled == false)
-			return;
-		m_enabled = false;
-		for( int i=m_notes.Count-1; i >= 0 ; i--){
-			m_notes[i].Die();
-			m_notes.RemoveAt(i);
+	/// <summary>
+	/// disable the track by setting all current notes to final mode. Returns true if the track is clear of all notes.
+	/// </summary>
+	public bool Disable(){
+		if (m_enabled) {
+			m_enabled = false;
+			for (int i = m_notes.Count - 1; i >= 0; i--) {
+				m_notes [i].IsFinal = true;
+			}
 		}
+		return IsEmpty;
 	}
 
 	public BattleTracksManager TracksManager {
@@ -225,13 +240,28 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
+	public bool IsEmpty{
+		get{ return NotesOnTrack.Count == 0; }
+	}
+
+    /// <summary>
+    /// The current Note of the track. This note cannot be Dead (hit).
+    /// </summary>
 	public BattleNote CurrentNote{
 		get{
 			if( m_notes == null || m_notes.Count <= 0 )
 				return null;
-			return m_notes[0];
-		}
+            foreach (var note in m_notes)
+                if (!note.IsDead)
+                    return note;
+            return null;
+        }
 	}
+
+    public BattleNoteLong CurrentLongNote
+    {
+        get { return m_currentLongNote; }
+    }
 
 	public int Id {
 		get {
@@ -257,7 +287,7 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
-	public bool Active {
+	public bool IsActive {
 		get {
 			return m_enabled;
 		}

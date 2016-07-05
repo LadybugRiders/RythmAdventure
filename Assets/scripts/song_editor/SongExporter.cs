@@ -10,14 +10,27 @@ public class SongExporter {
 
 	JSONObject m_json = new JSONObject();
 
-	public void SetUp(SongEditorManager _manager){
-		if( _manager.music != null)
-			m_json.AddField ("clipName", _manager.music.name);
-		else
-			m_json.AddField ("clipName", _manager.songName);
+	public void SetUp(SongEditorManager _manager)
+    {
+#if UNITY_EDITOR
+        if (_manager.music != null)
+        {
+            m_json.AddField("clipName", _manager.music.name);
+            //Get path
+            string path = AssetDatabase.GetAssetPath(_manager.music);
+            int indexCut = path.LastIndexOf("Resources") + "Resources".Length;
+            path = path.Substring(indexCut+1);
+            m_json.AddField("clipPath", path);
+        }
+        else
+        {
+            m_json.AddField("clipName", _manager.songName);
+        }
+        
 
 		m_json.AddField ("timeSpeed", _manager.timeSpeed);
-	}
+#endif
+    }
 
 	public void SetNotes(List<SongEditorNote> _notes){
 		JSONObject allNotes = new JSONObject (JSONObject.Type.ARRAY);
@@ -40,9 +53,10 @@ public class SongExporter {
 		m_json.AddField ("notes", allNotes);
 	}
 
-	public void Export(string _songName, BattleEngine.Difficulty _difficulty){
-		
-		string fullName = _songName + "_"+_difficulty.ToString().ToLower();
+	public TextAsset Export(string _songName, BattleEngine.Difficulty _difficulty){
+
+#if UNITY_EDITOR
+        string fullName = _songName + "_"+_difficulty.ToString().ToLower();
 		string folderPath = Application.dataPath + "/Resources/song_data/" + _songName;
 
 		//check folder and create if necessary
@@ -50,11 +64,13 @@ public class SongExporter {
 			Directory.CreateDirectory(folderPath);
 		}
 
-#if UNITY_EDITOR
         string text = m_json.Print();
 
         File.WriteAllText( folderPath +"/"+fullName+ ".json", text);
 		AssetDatabase.Refresh();
+        return Resources.Load("song_data/" + _songName + "/" + fullName) as TextAsset;
+#else
+        return null;
 #endif
-	}
+    }
 }

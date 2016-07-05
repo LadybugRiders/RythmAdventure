@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -8,8 +9,7 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 public class SongEditorManager : MonoBehaviour {
-
-	[SerializeField] SongEditorTestLauncher m_testLauncher;
+    
 	[SerializeField] SongEditorPlayerNotes m_playerNotes;
 	[SerializeField] List<SongEditorTrack> m_tracks;
 
@@ -47,6 +47,9 @@ public class SongEditorManager : MonoBehaviour {
 	[SerializeField] List<SongEditorNote> m_copiedNotes;
 	float m_copiedBeginTime = 0;
 
+    [SerializeField] BattleDataAsset m_battleData;
+    [SerializeField] float m_timeDebugBegin;
+
 	// Use this for initialization
 	void Start () {
 		BootCheck ();
@@ -67,9 +70,13 @@ public class SongEditorManager : MonoBehaviour {
 
 	public void OnGUI() {
 		if (GUI.Button (new Rect (10, 10, 150, 100), "LaunchTest")) {
-			Export("test",difficulty);
-			m_testLauncher.LaunchTest("test",difficulty);
-		}
+			TextAsset textAsset = Export("test",difficulty);
+            m_battleData.Song = textAsset;
+            m_battleData.TimeBegin = m_timeDebugBegin;
+            DataManager.instance.BattleData = m_battleData;
+			
+            SceneManager.LoadScene(m_battleData.sceneName);
+        }
 	}
 
 	//Called by SongEditor
@@ -154,7 +161,7 @@ public class SongEditorManager : MonoBehaviour {
 
 	#region IMPORT_EXPORT
 
-	public void Export(string _songName, BattleEngine.Difficulty _difficulty){
+	public TextAsset Export(string _songName, BattleEngine.Difficulty _difficulty){
 		RecheckAll ();
 		//Export
 		m_exporter = new SongExporter ();
@@ -192,7 +199,7 @@ public class SongEditorManager : MonoBehaviour {
 		}
 		//now we have all notes. Set them to the exporter
 		m_exporter.SetNotes (allNotes);
-		m_exporter.Export (_songName,_difficulty);
+		return m_exporter.Export (_songName,_difficulty);
 	}
 
 	public void Import(){
@@ -219,6 +226,7 @@ public class SongEditorManager : MonoBehaviour {
 			newNote.type = (NoteData.NoteType) ((int)noteJSON.GetField("type").n);
 			newNote.time = noteJSON.GetField("time").f;
 			newNote.head = noteJSON.GetField("head").b;
+            newNote.OnTypeChanged();
 		}
 
 		//try loading audioClip
@@ -346,8 +354,12 @@ public class SongEditorManager : MonoBehaviour {
 		}
 	}
 
-	
-	public void ChangeMode(){
+    public void Reset()
+    {
+        m_camera.Reset();
+    }
+
+    public void ChangeMode(){
 		if (m_mode == Mode.PLAY)
 			return;
 		switch (m_mode) {

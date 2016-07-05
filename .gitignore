@@ -7,3 +7,6 @@ Assembly-CSharp-Editor-vs.csproj
 /Versions
 /RythmAdventure - Wndows_Data
 /obj
+*.suo
+/Builds
+rythmadventure.userprefs

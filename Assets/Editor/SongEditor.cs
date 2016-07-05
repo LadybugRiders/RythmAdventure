@@ -7,19 +7,30 @@ using System.IO;
 public class SongEditor : Editor {
 
 	SongEditorManager m_target;
+
+    AudioClip m_lastSong;   
 	
 	void OnEnable(){
 		m_target = (SongEditorManager)target;
+        m_lastSong = m_target.music;
 	}
 
 	public override void OnInspectorGUI(){
 		
 		base.OnInspectorGUI ();
+
+        //Check if we loaded a new song
+        if( m_target.music != m_lastSong )
+        {
+            m_target.Reset();
+        }
+        m_lastSong = m_target.music;
+
 		GUILayout.Space (5.0f);
 		//EXPORT
 		GUILayout.Box("", new GUILayoutOption[]{GUILayout.ExpandWidth(true), GUILayout.Height(1)});
 
-		m_target.music =(AudioClip) EditorGUILayout.ObjectField ("Music", m_target.music, typeof (AudioClip));
+		m_target.music =(AudioClip) EditorGUILayout.ObjectField ("Music", m_target.music, typeof (AudioClip), true);
 		if( m_target.music == null)
 			m_target.songName = EditorGUILayout.TextField ("DebugName", m_target.songName);
 		m_target.difficulty = (BattleEngine.Difficulty) EditorGUILayout.EnumPopup ("Diff",m_target.difficulty);
