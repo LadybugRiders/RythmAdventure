@@ -16,6 +16,25 @@ public class BattleFightManager : MonoBehaviour {
 
     [SerializeField] SpriteRenderer m_backgroundSprite;
 
+	//Event for death
+	public event System.EventHandler<ActorDeadEventInfo> actorDeadEventHandler;
+	public class ActorDeadEventInfo : System.EventArgs{
+		public BattleActor DeadActor{ get; set; }
+
+		public ActorDeadEventInfo(BattleActor _actor){
+			DeadActor = _actor;
+		}
+	}
+
+	//Event for battle end
+	public event System.EventHandler<EndBattleEventInfo> endBattleEventHandler;
+	public class EndBattleEventInfo : System.EventArgs{
+		public bool Win {get;set;}
+		public EndBattleEventInfo(bool _win){
+			Win = _win;
+		}
+	}
+
 	/** used when a note is hit to determine the current actor action */
 	public enum ActorAttackAction { NONE, ATTACK, MAGIC, _COUNT };
 
@@ -92,6 +111,8 @@ public class BattleFightManager : MonoBehaviour {
 	
 	}
 
+	#region EVENTS
+
 	public void OnReceiveNoteEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
 		if (eventInfo.Accuracy == BattleScoreManager.Accuracy.MISS)
 			return;
@@ -101,6 +122,15 @@ public class BattleFightManager : MonoBehaviour {
 				ProcessRegular(eventInfo); break;
 		}
 	}
+
+	public void RaiseActorDeadEvent(BattleActor _actor){
+		if (actorDeadEventHandler == null)
+			return;
+		var eventInfo = new ActorDeadEventInfo (_actor);
+		actorDeadEventHandler.Invoke (this, eventInfo);
+	}
+
+	#endregion
 
 	public void ProcessRegular(BattleTracksManager.NoteEventInfo eventInfo){
 		//no attack for long note's head
@@ -137,10 +167,11 @@ public class BattleFightManager : MonoBehaviour {
 				//check end of the whole battle
 				end = end && !tempEnabled;
 			}
-			
+
 			//Notify BattleEngine
 			if (end) {
-				m_engine.OnFightEnded(true);
+				bool win = _actor.GetType() == typeof(BattleEnemy);
+				endBattleEventHandler.Invoke (this, new EndBattleEventInfo(win));
 			}else{				
 				m_engine.OnDisableTrack( index, repTrack ) ;
 			}

@@ -46,6 +46,14 @@ public class BattleEngine : MonoBehaviour {
 				m_notesGenerator = gens [i];
 		}
 		TimerEngine.instance.AddTimer (1.0f, "BeginBattle", gameObject);
+
+		//events
+		m_fightManager.endBattleEventHandler += OnFightEnded;
+	}
+
+	void OnDestroy(){
+		//events
+		m_fightManager.endBattleEventHandler -= OnFightEnded;
 	}
 
 	void BeginBattle(){
@@ -150,7 +158,7 @@ public class BattleEngine : MonoBehaviour {
 		m_tracksManager.DisableTrack (_index, _replacementTrack);
 	}
 
-	public void OnFightEnded(bool _win){
+	public void OnFightEnded(object sender, BattleFightManager.EndBattleEventInfo eventInfo){
         SceneManager.LoadScene("battle_end");
 	}
 

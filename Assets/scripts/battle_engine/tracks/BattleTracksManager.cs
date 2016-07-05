@@ -258,6 +258,9 @@ public class BattleTracksManager : MonoBehaviour {
         }
     }
 
+	/// <summary>
+	/// Check the input according to the phase (attack / defense)
+	/// </summary>
 	bool CheckInputState(int _id){
 		if(m_state == BattleState.SWITCHING)
 			return (_id < 0 && m_switchState == BattleState.ATTACK) || (_id > 0 && m_switchState == BattleState.DEFEND);
@@ -265,7 +268,7 @@ public class BattleTracksManager : MonoBehaviour {
 	}
 
     public void RaiseNoteEvent(NoteEventInfo _eventNote)
-    {
+    {		
         if (noteEventHandler != null)
         {
             CheckCurrentTrack();
@@ -273,6 +276,13 @@ public class BattleTracksManager : MonoBehaviour {
             _eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
             noteEventHandler.Invoke(this, _eventNote);
         }
+		//check redirection
+		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
+		if (!track.IsActive && track.IsEmpty) {
+			var replcmtTrack = GetReplacementTrack ();
+			if( replcmtTrack != null )
+				RedirectTrack (track.Id,replcmtTrack.Id);
+		}
     }
 
 	#endregion
