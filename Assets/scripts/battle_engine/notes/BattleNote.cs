@@ -41,6 +41,8 @@ public class BattleNote : MonoBehaviour {
 
 	protected bool m_paused = false;
 
+	protected bool m_canSlide = true;
+
 	// Use this for initialization
 	virtual protected void Start () {
 		m_renderer = GetComponent<SpriteRenderer> ();
@@ -231,5 +233,13 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+	public bool CanSlide{
+		get{
+			return m_canSlide;
+		}
+		set{
+			m_canSlide = value;
+		}
+	}
 	#endregion
 }

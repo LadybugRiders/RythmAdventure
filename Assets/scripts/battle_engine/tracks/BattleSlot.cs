@@ -53,58 +53,66 @@ public class BattleSlot : MonoBehaviour {
 		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
 	}
 
-	public void OnInputTriggered(BattleNote.HIT_METHOD _method){
+	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
 
 		if (m_active == false ) 
 			return;
+		//EXCEPTION CASES
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
-		if (_method == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null)
+		if (_inputMethod == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null)
 			return;
 		//if a slide is done but no press, this is a remain from a previous track input
-		if (_method == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod == BattleNote.HIT_METHOD.NONE) {
-			Debug.Log ("SLIDE NOT PRESS");
+		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS) {
 			return;
 		}
 
 		//if no note is colliding (miss)
 		if (m_collidingNotes.Count <= 0) {            
             //send an error to BattleTrack
-			Debug.Log("ERROR no note");
-			ApplyError(_method);
-			m_lastInputMethod = _method;
+			//Debug.Log("ERROR trigger no note");
+			ApplyError(_inputMethod);
 			return;
 		}
 
 		//else we hit the first note that has collided
 		BattleNote note = m_errorPendingNote != null ? m_errorPendingNote : GetFirstAliveCollidingNote();
+
 		//Return if not is not active (launched)
 		if (note.CurrentState != BattleNote.State.LAUNCHED) {
 			return;
 		}
 
-        //check input method of the note
-        if ( note.HitMethod != _method ) {
-            // If we expect a slide and a press is done, wait a bit for a potential slide before erroring
-            if( note.HitMethod == BattleNote.HIT_METHOD.SLIDE && _method == BattleNote.HIT_METHOD.PRESS)
-            {
-                LaunchPendingError(_method,note);
-            }
-            else
-            {
-                ApplyError(_method);
+			//If the input method is incorrect, we still have the slide case to check ( if input is not slide )
+		if (note.CanSlide) {
+			if (_inputMethod != BattleNote.HIT_METHOD.SLIDE) {
+				// a press can be the beginning of a slide : wait a bit for a potential slide before erroring
+				if (_inputMethod == BattleNote.HIT_METHOD.PRESS) {
+					Debug.Log ("Pending Error");
+					LaunchPendingError (_inputMethod, note);
+					return;
+				} else {
+					ApplyError (_inputMethod,note);
+				}
+				Debug.Log ("1" + note.ToString () + " " + note.HitMethod.ToString () + " " + _inputMethod);
+				m_lastInputMethod = _inputMethod;
+				return;
+			} 
+		} else {
+			//check input method of the note
+			if (note.HitMethod == _inputMethod) {
+				ApplyError (_inputMethod,note);
+				return;
 			}
-			Debug.Log ("1" + note.ToString() +" "+ note.HitMethod.ToString() + " " + _method);
-			m_lastInputMethod = _method;
-            return;
 		}
+
 
         //Check slide, aborting an error if a hit is pending
         //=> a hit has been done, but we didn't know if it was the beginning of a slide or not. Now we're sure, so NO need to raise an error
-        if( m_errorPending && _method == BattleNote.HIT_METHOD.SLIDE )
+        if( m_errorPending && _inputMethod == BattleNote.HIT_METHOD.SLIDE )
         {
             AbortPendingError();
         }
-
+		Debug.Log ("HIT " + _inputMethod);
 		//hit note and compute accuracy
 		float accuracy = ComputeAccuracy (note);
 		m_track.OnNoteHit (note, accuracy, this);
@@ -113,7 +121,7 @@ public class BattleSlot : MonoBehaviour {
 		//play explosion
 		m_explosion.Play (note);
 		m_errorPendingNote = null;
-		m_lastInputMethod = _method;
+		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
 	}
 
     #region ERROR_HANDLING
@@ -147,7 +155,7 @@ public class BattleSlot : MonoBehaviour {
 	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
 	{
 		m_errorPending = false;
-		Debug.Log ("error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+		//Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
 
 		m_track.OnInputError(m_errorInputMethod, _note);
 

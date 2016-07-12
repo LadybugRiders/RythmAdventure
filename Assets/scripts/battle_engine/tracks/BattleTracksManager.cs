@@ -19,11 +19,9 @@ public class BattleTracksManager : MonoBehaviour {
 	/** GameObject containing all simple notes */
 	[SerializeField] public GameObject m_simpleNotesGroup;
     [SerializeField] public GameObject m_longNotesGroup;
-    [SerializeField] public GameObject m_slideNotesGroup;
     /** List of notes scripts */
     private List<BattleNote> m_simpleNotes;
 	private List<BattleNote> m_longNotes;
-    private List<BattleNote> m_slideNotes;
 
     //COLOR
     public Color attackColor;
@@ -156,7 +154,6 @@ public class BattleTracksManager : MonoBehaviour {
 		switch (_data.Type) {
 			case NoteData.NoteType.SIMPLE : success = LaunchNote(_data, m_simpleNotes); break;
 			case NoteData.NoteType.LONG : success = LaunchLongNote(_data); break;
-            case NoteData.NoteType.SLIDE: success = LaunchNote(_data, m_slideNotes); break;
 		}
 		if (success) {
 			m_engine.OnNoteLaunched (_data);
@@ -301,9 +298,6 @@ public class BattleTracksManager : MonoBehaviour {
         //Long notes
 		notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_longNotes = new List<BattleNote> (notes);
-        //Slide notes
-        notes = m_slideNotesGroup.GetComponentsInChildren<BattleNote>(true);
-        m_slideNotes = new List<BattleNote>(notes);
     }
 
     #endregion

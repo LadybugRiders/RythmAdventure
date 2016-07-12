@@ -14,6 +14,7 @@ public class BattleNoteLong : BattleNote {
 
 	// Use this for initialization
 	override protected void Start () {
+		m_canSlide = false;
 		m_bodyScaleMultiplier = m_bodySprite.sprite.bounds.extents.x * 2;
 		m_bodyTransform = m_bodySprite.gameObject.transform;
 		base.Start ();

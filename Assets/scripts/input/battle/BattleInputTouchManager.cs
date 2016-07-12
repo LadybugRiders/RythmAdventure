@@ -90,11 +90,6 @@ public class BattleInputTouchManager : MonoBehaviour {
     void OnNoteHit(object sender, BattleTracksManager.NoteEventInfo eventInfo) {
         if (eventInfo.NextNote == null)
             return;
-        switch (eventInfo.NextNote.Type)
-        {
-            case NoteData.NoteType.SLIDE:
-                break;
-        }
     }
 
 	Vector2 CustomGetTouchPosition(){

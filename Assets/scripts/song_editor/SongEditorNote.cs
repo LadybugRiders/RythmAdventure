@@ -40,7 +40,6 @@ public class SongEditorNote : MonoBehaviour {
 		switch( type ){
 			case NoteData.NoteType.SIMPLE : ChangeToSimple(); break;
 			case NoteData.NoteType.LONG : ChangeToLong(); break;
-            case NoteData.NoteType.SLIDE: ChangeToSlide(); break;
         }
 	}
 
@@ -49,8 +48,7 @@ public class SongEditorNote : MonoBehaviour {
 		switch (m_type)
         {
             case NoteData.NoteType.SIMPLE: newType = NoteData.NoteType.LONG; break;
-            case NoteData.NoteType.LONG : newType = NoteData.NoteType.SLIDE; break;
-            case NoteData.NoteType.SLIDE: newType = NoteData.NoteType.SIMPLE;break;		
+            case NoteData.NoteType.LONG : newType = NoteData.NoteType.SIMPLE; break;
 		}
 		m_type = newType;
 		OnTypeChanged ();
@@ -64,11 +62,6 @@ public class SongEditorNote : MonoBehaviour {
 	void ChangeToSimple(){
 		GetComponent<SpriteRenderer> ().color = Color.red;
 	}
-
-    void ChangeToSlide()
-    {
-        GetComponent<SpriteRenderer>().color = Color.magenta;
-    }
 
 	#endregion
 
