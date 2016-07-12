@@ -128,7 +128,10 @@ public class BattleTrack : MonoBehaviour {
     ///<summary>
 	/// Called from a slot when the input is pressed but no note is hit
 	///</summary>
-	public void OnInputError(BattleNote.HIT_METHOD method){
+	public void OnInputError(BattleNote.HIT_METHOD method, BattleNote _note){
+		if (_note != null && _note.IsDead) {
+			return;
+		}
 		bool noteMissed = false;
 		//input is released
 		if (method == BattleNote.HIT_METHOD.RELEASE) {
@@ -141,17 +144,21 @@ public class BattleTrack : MonoBehaviour {
 			noteMissed = true;
 		}
 
-        
+		//if there are notes on the track ( the other case shouldn't happen => we would have changed tracks )
         if (m_notes.Count > 0)
         {
+			//if we dont have an active note to error, take the next one on the track
+			if (_note == null)
+				_note = m_notes [0];
+			
             if (noteMissed)
 			{
-				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
-				OnNoteMiss(m_notes[0]);
+				//m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+				OnNoteMiss(_note);
             }
             else
             {
-                m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(m_notes[0].Data, false));
+				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false));
             }
         }            
         
@@ -214,6 +221,11 @@ public class BattleTrack : MonoBehaviour {
 	}
 
 	#endregion
+
+	public void ResetInput(){
+		m_slotAttack.ResetInput ();
+		m_slotDefend.ResetInput ();
+	}
 
 	/// <summary>
 	/// disable the track by setting all current notes to final mode. Returns true if the track is clear of all notes.

@@ -8,7 +8,7 @@ public class BattleNote : MonoBehaviour {
 	public enum State { LAUNCHED, HIT, MISS, DEAD };
 	protected State m_state = State.DEAD;
 
-    public enum HIT_METHOD { PRESS, RELEASE, SLIDE };
+    public enum HIT_METHOD { PRESS, RELEASE, SLIDE, NONE };
     
 	[SerializeField] protected HIT_METHOD m_hitMethod = HIT_METHOD.PRESS;
 

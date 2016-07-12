@@ -15,10 +15,11 @@ public class BattleInputTouchManager : MonoBehaviour {
 	[SerializeField] private BoxCollider2D m_defendCollider;
 
     [SerializeField] private float m_slideMinLength = 3.0f;
+	[SerializeField] private float m_slideMaxTime = 0.1f;
+	private float m_timePressed = 0;
 
 	bool m_pressed = false;
     Vector2 m_positionPressed;
-    int m_framesPressed = 0;
 
     Vector2 m_deltaSlide;
     bool m_sliding = false;
@@ -42,7 +43,7 @@ public class BattleInputTouchManager : MonoBehaviour {
 			Vector2 touchPos = new Vector2(worldPoint.x,worldPoint.y);
             m_positionPressed = touchPos;
 			Collider2D coll = Physics2D.OverlapPoint(touchPos);
-            m_framesPressed = 0;
+			m_timePressed = 0;
             //check attack 
             if ( m_attackCollider == coll ){				
 				m_pressed = true;
@@ -58,12 +59,12 @@ public class BattleInputTouchManager : MonoBehaviour {
 		// check slide and release
 		if( m_pressed )
         {
+			m_timePressed += Time.deltaTime;
             //compute position pressed
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(CustomGetTouchPosition());
             Vector2 touchPos = new Vector2(worldPoint.x, worldPoint.y);
             //compute delta vector from first press point to actual pressed point
             m_deltaSlide = touchPos - m_positionPressed ;
-            m_framesPressed++;
             //if just released
             if (IsReleased())
             {
@@ -76,8 +77,8 @@ public class BattleInputTouchManager : MonoBehaviour {
                 m_tracksManager.OnInputTriggered(m_inputDown,BattleNote.HIT_METHOD.RELEASE);
             }else
             {
-                //Still pressing
-                if (!m_sliding && m_deltaSlide.magnitude >= m_slideMinLength)
+                //Still pressing => check slide
+				if ( m_timePressed <= m_slideMaxTime && !m_sliding && m_deltaSlide.magnitude >= m_slideMinLength)
                 {
                     m_sliding = true;
                     m_tracksManager.OnInputTriggered(m_inputDown, BattleNote.HIT_METHOD.SLIDE);

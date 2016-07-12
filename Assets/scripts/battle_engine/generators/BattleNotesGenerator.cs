@@ -57,6 +57,7 @@ public class BattleNotesGenerator : MonoBehaviour {
 		if (m_paused || m_finished)
 			return;
 		m_timeElapsed = m_engine.TimeElapsed + m_timeShift + m_timeSynchroDelta;
+		Debug.Log (m_timeElapsed + " "+ m_currentNote.TimeBegin + " " + m_iteration);
 
 		//check loop and modify time if longer that clip time ( for looping )
 		if (m_timeElapsed >= m_engine.AudioSrc.clip.length) {

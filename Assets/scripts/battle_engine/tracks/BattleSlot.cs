@@ -15,6 +15,11 @@ public class BattleSlot : MonoBehaviour {
     bool m_errorPending = false;
     BattleNote.HIT_METHOD m_errorInputMethod;
 
+	/// <summary>
+	/// Note on which the error is pending
+	/// </summary>
+	BattleNote m_errorPendingNote; 
+
     BattleNote.HIT_METHOD m_lastInputMethod = BattleNote.HIT_METHOD.RELEASE;    
 
 	protected float m_diameter;
@@ -44,35 +49,52 @@ public class BattleSlot : MonoBehaviour {
 		m_collidingNotes.Clear ();
 	}
 
+	public void ResetInput(){
+		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
+	}
+
 	public void OnInputTriggered(BattleNote.HIT_METHOD _method){
 
 		if (m_active == false ) 
 			return;
+		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
+		if (_method == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null)
+			return;
+		//if a slide is done but no press, this is a remain from a previous track input
+		if (_method == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod == BattleNote.HIT_METHOD.NONE) {
+			Debug.Log ("SLIDE NOT PRESS");
+			return;
+		}
+
 		//if no note is colliding (miss)
-		if (m_collidingNotes.Count <= 0) {
-            //if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
-            if (_method == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null)
-                return;
+		if (m_collidingNotes.Count <= 0) {            
             //send an error to BattleTrack
-            ApplyError(_method);
-            m_lastInputMethod = _method;
+			Debug.Log("ERROR no note");
+			ApplyError(_method);
+			m_lastInputMethod = _method;
 			return;
 		}
 
 		//else we hit the first note that has collided
-		BattleNote note = m_collidingNotes [0];
+		BattleNote note = m_errorPendingNote != null ? m_errorPendingNote : GetFirstAliveCollidingNote();
+		//Return if not is not active (launched)
+		if (note.CurrentState != BattleNote.State.LAUNCHED) {
+			return;
+		}
+
         //check input method of the note
         if ( note.HitMethod != _method ) {
             // If we expect a slide and a press is done, wait a bit for a potential slide before erroring
             if( note.HitMethod == BattleNote.HIT_METHOD.SLIDE && _method == BattleNote.HIT_METHOD.PRESS)
             {
-                LaunchPendingError(_method);
+                LaunchPendingError(_method,note);
             }
             else
             {
                 ApplyError(_method);
-            }
-            m_lastInputMethod = _method;
+			}
+			Debug.Log ("1" + note.ToString() +" "+ note.HitMethod.ToString() + " " + _method);
+			m_lastInputMethod = _method;
             return;
 		}
 
@@ -90,16 +112,18 @@ public class BattleSlot : MonoBehaviour {
 
 		//play explosion
 		m_explosion.Play (note);
-        m_lastInputMethod = _method;
+		m_errorPendingNote = null;
+		m_lastInputMethod = _method;
 	}
 
     #region ERROR_HANDLING
 
-    public void LaunchPendingError(BattleNote.HIT_METHOD _method)
+	public void LaunchPendingError(BattleNote.HIT_METHOD _method, BattleNote _note)
     {        
         //clean just in case
         TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
         m_errorPending = true;
+		m_errorPendingNote = _note;
         m_errorInputMethod = _method;
         TimerEngine.instance.AddTimer(m_slideErrorDelay, "OnPendingErrorTimerOver", this.gameObject);
     }    
@@ -108,21 +132,29 @@ public class BattleSlot : MonoBehaviour {
     {
         if (m_errorPending)
         {
-            ApplyError(m_errorInputMethod);
+			ApplyError(m_errorInputMethod,m_errorPendingNote);
         }
     }
 
     public void AbortPendingError()
     {
         m_errorPending = false;
+		m_errorPendingNote = null;
         //clean timers
         TimerEngine.instance.StopAll("OnPendingErrorTimerOver", this.gameObject);
     }
 
-    public void ApplyError(BattleNote.HIT_METHOD _method)
-    {
-        m_errorPending = false;
-        m_track.OnInputError(m_errorInputMethod);
+	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
+	{
+		m_errorPending = false;
+		Debug.Log ("error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+
+		m_track.OnInputError(m_errorInputMethod, _note);
+
+		//Reset
+		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
+		m_errorPendingNote = null;
+
         m_explosion.Stop();
     }
 
@@ -152,6 +184,15 @@ public class BattleSlot : MonoBehaviour {
 				m_collidingNotes.Remove(note);
 			}
 		}
+	}
+
+	BattleNote GetFirstAliveCollidingNote(){
+		foreach (var note in m_collidingNotes) {
+			if (!note.IsDead) {
+				return note;
+			}
+		}
+		return null;
 	}
 
 	#endregion

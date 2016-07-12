@@ -248,14 +248,19 @@ public class BattleTracksManager : MonoBehaviour {
     /// </summary>
     public void OnInputTriggered(int _id, BattleNote.HIT_METHOD _method)
     {
-		Debug.Log (_method.ToString());
         if (CheckInputState(_id))
-        {
+		{
             m_tracks[m_currentTrackID].OnInputTriggered(_method);
+			//Abort ongoing input (slide/presslong) on other tracks
+			for (int i = 0; i < m_tracks.Count; ++i) {
+				if (m_tracks [i].Id != m_currentTrackID) {
+					m_tracks [i].ResetInput ();
+				}
+			}
         }
         else
-        {
-            m_tracks[m_currentTrackID].OnInputError(_method);
+		{
+            m_tracks[m_currentTrackID].OnInputError(_method,null);
         }
     }
 
