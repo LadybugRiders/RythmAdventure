@@ -36,12 +36,23 @@ public class BattleTracksManager : MonoBehaviour {
 	private float m_currentSpeed = 5.0f;
 
     //EVENTS
+	/// <summary>
+	/// Called when a note is hit
+	/// </summary>
 	public event System.EventHandler<NoteEventInfo> noteEventHandler;
+	/// <summary>
+	/// Called when an action has to be performed. Basically a note has been hit and completely verified.
+	/// This is different from noteEventHandler, in the way that a note hit doesn't always means an action (slide delay)
+	/// </summary>
+	public event System.EventHandler<NoteEventInfo> actionEventHandler;
+
     public class NoteEventInfo : System.EventArgs{
         public NoteData NoteHit { get; private set; }
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
         public BattleScoreManager.Accuracy Accuracy { get; private set; }
+		public bool IsMagic { get; set; }
+
 		/// <summary>
 		/// Tells if the note is on a disabled track
 		/// </summary>
@@ -270,24 +281,6 @@ public class BattleTracksManager : MonoBehaviour {
 		return (_id < 0 && m_state == BattleState.DEFEND) || (_id > 0 && m_state == BattleState.ATTACK);
 	}
 
-    public void RaiseNoteEvent(NoteEventInfo _eventNote)
-    {		
-        if (noteEventHandler != null)
-        {
-            CheckCurrentTrack();
-            var nextNote = m_tracks[m_currentTrackID].CurrentNote;
-            _eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
-            noteEventHandler.Invoke(this, _eventNote);
-        }
-		//check redirection
-		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
-		if (!track.IsActive && track.IsEmpty) {
-			var replcmtTrack = GetReplacementTrack ();
-			if( replcmtTrack != null )
-				RedirectTrack (track.Id,replcmtTrack.Id);
-		}
-    }
-
 	#endregion
 
 	#region FIND_NOTES
@@ -358,10 +351,42 @@ public class BattleTracksManager : MonoBehaviour {
     ///<summary>
     /// Adds the performed note to the engine, even if missed, so that it can be processed
     ///</summary>
-    public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
+    public BattleScoreManager.Accuracy AddNote(BattleNote _note){
 		CheckCurrentTrack ();
-		return m_engine.AddNote (_note.Data,_accuracy);
+		if (_note == null)
+			return BattleScoreManager.Accuracy.GOOD;
+		return m_engine.AddNote (_note.Data, _note.Accuracy);
 	}
+
+	#region EVENTS
+
+	public void RaiseNoteEvent(NoteEventInfo _eventNote)
+	{		
+		if (noteEventHandler != null)
+		{
+			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
+			noteEventHandler.Invoke(this, _eventNote);
+		}
+		//check redirection
+		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
+		if (!track.IsActive && track.IsEmpty) {
+			var replcmtTrack = GetReplacementTrack ();
+			if( replcmtTrack != null )
+				RedirectTrack (track.Id,replcmtTrack.Id);
+		}
+		CheckCurrentTrack();
+	}
+
+	public void RaiseNoteActionEvent(NoteEventInfo _eventNote){
+		if (noteEventHandler != null)
+		{
+			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
+			actionEventHandler.Invoke(this, _eventNote);
+		}
+	}
+	#endregion
 
     /// <summary>
     /// Search between all tracks to see the one which is the current one aka the one with the next not on it

@@ -7,6 +7,8 @@ public class TimerEngine : MonoBehaviour {
 	private static TimerEngine _instance;
 	
 	private List<Timer> m_timers;
+
+	private List<Timer> m_toRemove = new List<Timer>();
 	
 	public static TimerEngine instance {
 		get{
@@ -29,13 +31,28 @@ public class TimerEngine : MonoBehaviour {
 	void Update () {
 		//loop and update timers
 		for (int i= m_timers.Count -1 ; i > -1; i --) {
+			//Remove finished timers
 			if( m_timers[i].UpdateTimer(Time.deltaTime) == true ){
 				m_timers.RemoveAt(i);
 			}
 		}
+
+		//Remove timers that has been stopped manually
+		if (m_toRemove.Count > 0) {
+			for (int i= 0; i < m_toRemove.Count; i++) {
+				//Remove finished timers
+				int index = m_timers.IndexOf( m_toRemove[i] );
+				if( index != -1 ){
+					m_timers.RemoveAt(index);
+				}
+			}
+			m_toRemove.Clear ();
+		}
 	}
 
-	/** Add a timer and start it. Time is in seconds */
+	/// <summary>
+	///  Add a timer and start it. Time is in seconds
+	/// </summary>
 	public Timer AddTimer(float _time, string _callbackBackName, GameObject _callbackObject){
 		Timer timer = new Timer (_time, _callbackBackName,_callbackObject);
 		m_timers.Add (timer);
@@ -51,7 +68,7 @@ public class TimerEngine : MonoBehaviour {
             Timer timer = m_timers[i];
             if( timer.CallbackName == _callbackName && (_callbackObject!=null && timer.CallbackObject == _callbackObject))
             {
-                m_timers.RemoveAt(i);
+				m_toRemove.Add (timer);
                 return;
             }
         }
@@ -67,7 +84,7 @@ public class TimerEngine : MonoBehaviour {
             Timer timer = m_timers[i];
             if (timer.CallbackName == _callbackName && (_callbackObject != null && timer.CallbackObject == _callbackObject))
             {
-                m_timers.RemoveAt(i);
+				m_toRemove.Add (timer);
             }
         }
     }

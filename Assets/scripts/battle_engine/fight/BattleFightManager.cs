@@ -53,6 +53,7 @@ public class BattleFightManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		BattleTracksManager.instance.noteEventHandler += OnReceiveNoteEvent;
+		BattleTracksManager.instance.actionEventHandler += OnReceiveActionEvent;
 	}
 
 
@@ -114,12 +115,29 @@ public class BattleFightManager : MonoBehaviour {
 	#region EVENTS
 
 	public void OnReceiveNoteEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
+		
+	}
+
+	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
+		//nothing for missed notes
 		if (eventInfo.Accuracy == BattleScoreManager.Accuracy.MISS)
 			return;
-		switch (eventInfo.NoteHit.Subtype) {
-			case NoteData.NoteSubtype.REGULAR :
-			case NoteData.NoteSubtype.MAGIC :
-				ProcessRegular(eventInfo); break;
+		//no attack for long note's head
+		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
+			return;
+
+		//Get the duel
+		FightDuel duel = m_duels [eventInfo.NoteHit.TrackID];
+		//If final note, no action is done
+		if (eventInfo.IsFinal) {
+			duel.BlankNoteBonus (eventInfo.NoteHit);
+		} else {
+			//check magic
+			if (eventInfo.IsMagic) {
+				duel.MagicAttack (m_engine.IsAttacking, eventInfo.NoteHit);
+			} else {
+				duel.RegularAttack (m_engine.IsAttacking, eventInfo.NoteHit);
+			}
 		}
 	}
 
@@ -131,21 +149,6 @@ public class BattleFightManager : MonoBehaviour {
 	}
 
 	#endregion
-
-	public void ProcessRegular(BattleTracksManager.NoteEventInfo eventInfo){
-		//no attack for long note's head
-		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
-			return;
-
-		//Get the duel
-		FightDuel duel = m_duels [eventInfo.NoteHit.TrackID];
-
-		if (eventInfo.IsFinal) {
-			duel.BlankNoteBonus (eventInfo.NoteHit);
-		} else {
-			duel.RegularAttack ( m_engine.IsAttacking,eventInfo.NoteHit);
-		}
-	}
 
 	#region ACTOR_DIE
 
@@ -248,13 +251,9 @@ public class BattleFightManager : MonoBehaviour {
 			//Affect attackers & defenders
 			List<BattleActor> m_attackers = null;
 			List<BattleActor> m_defenders = null;
-			if (_fromPlayer) {
-				m_attackers = m_characters;
-				m_defenders = m_enemies;
-			} else {
-				m_attackers = m_enemies;
-				m_defenders = m_characters;
-			}
+
+			m_attackers = _fromPlayer ? m_characters : m_enemies;
+			m_defenders = _fromPlayer ? m_enemies : m_characters;
 			
 			int totalDamage = 0;
 			ActorAttackAction tempAction;
@@ -263,17 +262,9 @@ public class BattleFightManager : MonoBehaviour {
 			BattleActor attacker = null;
 			for (int i=0; i < m_attackers.Count; i++) {		
 				attacker = m_attackers[i];
-				tempAction = attacker.AddNote(_noteData,true);
+				tempAction = attacker.ApplyNote(_noteData,true);
 
-				if( tempAction == ActorAttackAction.MAGIC && !attacker.isCasting){
-					m_manager.LaunchMagic(attacker,m_defenders,this);
-				}else{
-					if( attacker.isCasting ){
-						m_attackers [i].MagicAttack (_noteData);
-					}else{
-						totalDamage += m_attackers [i].Attack (_noteData);
-					}
-				}
+				totalDamage += m_attackers [i].Attack (_noteData);
 			}
 			if (totalDamage < 0)
 				totalDamage = 0;
@@ -282,7 +273,44 @@ public class BattleFightManager : MonoBehaviour {
 			BattleActor defender = null;
 			for (int i=0; i < m_defenders.Count; i++) {
 				defender = m_defenders[i];
-				defender.AddNote(_noteData,false);	
+				defender.ApplyNote(_noteData,false);	
+				int damage = defender.TakeDamage (totalDamage,_noteData);
+				//text
+				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
+			}
+			return totalDamage;
+		}
+
+		public int MagicAttack(bool _fromPlayer, NoteData _noteData){
+			//if attack from player missed
+			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.MISS)
+				return -1;
+			//Affect attackers & defenders
+			List<BattleActor> m_attackers = null;
+			List<BattleActor> m_defenders = null;
+
+			m_attackers = _fromPlayer ? m_characters : m_enemies;
+			m_defenders = _fromPlayer ? m_enemies : m_characters;
+
+			int totalDamage = 0;
+			ActorAttackAction tempAction;
+
+			//Begin attack process
+			BattleActor attacker = null;
+			for (int i=0; i < m_attackers.Count; i++) {		
+				attacker = m_attackers[i];
+				tempAction = attacker.ApplyNote(_noteData,true);
+
+				totalDamage += m_attackers [i].MagicAttack (_noteData);
+			}
+			if (totalDamage < 0)
+				totalDamage = 0;
+
+			//Defenders take damage
+			BattleActor defender = null;
+			for (int i=0; i < m_defenders.Count; i++) {
+				defender = m_defenders[i];
+				defender.ApplyNote(_noteData,false);	
 				int damage = defender.TakeDamage (totalDamage,_noteData);
 				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
 			}

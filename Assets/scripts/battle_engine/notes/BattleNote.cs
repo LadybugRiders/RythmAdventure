@@ -29,6 +29,8 @@ public class BattleNote : MonoBehaviour {
 	/** Distance done by the note from its starting point */
 	protected float m_distanceDone = 0;
 
+	public float Accuracy{ get; set; }
+
 	/** Distance where the alpha of the note will reach 1.Of */
 	protected float m_alphaDist = 5.0f;
 
@@ -125,7 +127,6 @@ public class BattleNote : MonoBehaviour {
 	/** Hit the note */
 	virtual public void Hit(BattleSlot _slot){
 		this.CurrentState = State.HIT;
-		Die ();
 	}
 
 	virtual public BattleNote[] Miss(){
@@ -193,6 +194,10 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+	public bool IsHit{
+		get{ return m_state == State.HIT; }
+	}
+
 	public bool IsDead{
 		get{
 			return m_state == State.DEAD;
@@ -224,6 +229,9 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Tells if the note is a final note of the track. This means the tracks has been disabled but the note still can be hit
+	/// </summary>
 	public bool IsFinal {
 		get {
 			return m_isFinal;
@@ -241,5 +249,6 @@ public class BattleNote : MonoBehaviour {
 			m_canSlide = value;
 		}
 	}
+
 	#endregion
 }

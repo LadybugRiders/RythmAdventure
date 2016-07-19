@@ -75,7 +75,7 @@ public class BattleActor : MonoBehaviour {
 		}
 	}
 
-	virtual public BattleFightManager.ActorAttackAction AddNote(NoteData _noteData, bool _attacking){
+	virtual public BattleFightManager.ActorAttackAction ApplyNote(NoteData _noteData, bool _attacking){
 		//Check noteData
 		if (_attacking && _noteData.Subtype == NoteData.NoteSubtype.MAGIC) {
 			if( AddMP(50) ){
@@ -175,13 +175,14 @@ public class BattleActor : MonoBehaviour {
 	}
 
 	/** Called when a magic attack is cast */
-	virtual public void MagicAttack(NoteData _noteData){
+	virtual public int MagicAttack(NoteData _noteData){
 		m_currentMagic.Attack ();
 		CurrentStats.MP -= m_currentMagic.CostByUse;
 		if (CurrentStats.MP <= 0) {
 			OnDismissMagic();
 		}
 		RefreshManaGauge ();
+		return CurrentStats.Magic;
 	}
 
 	virtual public void OnDismissMagic(){
