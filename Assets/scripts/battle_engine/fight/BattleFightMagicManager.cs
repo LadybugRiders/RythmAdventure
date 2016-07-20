@@ -16,8 +16,8 @@ public class BattleFightMagicManager : MonoBehaviour {
 	void Update () {
 	
 	}
-
-	/** Creates and launch a magic, or make an existing magic attack */
+    /*
+	// Creates and launch a magic, or make an existing magic attack 
 	public BattleFightMagic LaunchMagic(BattleActor _caster, BattleActor _target, int _duelID){
 		//if the caster is already casting
 		if (_caster.isCasting) {
@@ -29,7 +29,7 @@ public class BattleFightMagicManager : MonoBehaviour {
 		magic.Launch (_caster, _target,_duelID);
 		return magic;
 	}
-
+    */
 	public void OnMagicEnded( BattleFightMagic _magic){
 		m_fightManager.OnMagicEnded (_magic);
 	}

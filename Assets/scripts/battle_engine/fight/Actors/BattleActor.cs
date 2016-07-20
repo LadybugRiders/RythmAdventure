@@ -167,26 +167,30 @@ public class BattleActor : MonoBehaviour {
 	#endregion
 
 	#region MAGIC
+
+    /// <summary>
+    /// Launches the magic on the target
+    /// </summary>
 	virtual public BattleFightMagic LaunchMagic(BattleActor _target, int _duelID){
 		if (m_currentMagic != null)
 			m_currentMagic.Launch (this, _target,_duelID);
-		RefreshManaGauge ();
-		return m_currentMagic;
+        //drain mp
+        CurrentStats.MP -= m_currentMagic.CostByUse;
+        RefreshManaGauge ();
+        return m_currentMagic;
 	}
-
-	/** Called when a magic attack is cast */
-	virtual public int MagicAttack(NoteData _noteData){
-		m_currentMagic.Attack ();
-		CurrentStats.MP -= m_currentMagic.CostByUse;
-		if (CurrentStats.MP <= 0) {
-			OnDismissMagic();
-		}
-		RefreshManaGauge ();
+    
+    /// <summary>
+    /// Called when a magic attack is cast. USe MP and return magic power
+    /// </summary>
+	virtual public int GetAppliedMagicAttackPower(NoteData _noteData){
 		return CurrentStats.Magic;
 	}
 
+    /// <summary>
+    /// Called when the magic is dismissed
+    /// </summary>
 	virtual public void OnDismissMagic(){
-		CurrentStats.MP = 0;
 		RefreshManaGauge ();
 		m_currentMagic.Dismiss ();
 	}

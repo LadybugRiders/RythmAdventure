@@ -66,9 +66,16 @@ public class BattleFightMagic : MonoBehaviour {
 		//Effect around the caster
 		Utils.SetAlpha (m_casterEffect, 1f);
 		m_casterEffect.gameObject.GetComponent<Animation> ().Play ();
-		//Launch effect at first trigger ???
-		Attack ();
-	}
+
+        //Launch effect 
+        BattleFightMagicEffect effect = GetFreeEffect();
+        if (effect == null)
+        {
+            Debug.Log("no effect");
+            return;
+        }
+        effect.Launch(m_caster.transform.position, m_target.transform.position);
+    }
 	
 	virtual public void Dismiss(){
 		if (m_launched) {
@@ -85,15 +92,6 @@ public class BattleFightMagic : MonoBehaviour {
 	}
 
 	#endregion
-
-	virtual public void Attack(){	
-		BattleFightMagicEffect effect = GetFreeEffect ();
-		if (effect == null) {
-			Debug.Log( "no effect");
-			return;
-		}
-		effect.Launch (m_caster.transform.position, m_target.transform.position);
-	}
 
 	/** Called by an effect when it has hit its target(s) */
 	virtual public void OnHit(){
