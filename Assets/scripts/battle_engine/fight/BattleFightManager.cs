@@ -34,10 +34,7 @@ public class BattleFightManager : MonoBehaviour {
 			Win = _win;
 		}
 	}
-
-	/** used when a note is hit to determine the current actor action */
-	public enum ActorAttackAction { NONE, ATTACK, MAGIC, _COUNT };
-
+    
 	public static float DEPTH_BACKGROUND = 30.0f;
 	public static float DEPTH_PLAYERS = 10.0f;
 	public static float DEPTH_UI = 0.0f;
@@ -55,7 +52,6 @@ public class BattleFightManager : MonoBehaviour {
 		BattleTracksManager.instance.noteEventHandler += OnReceiveNoteEvent;
 		BattleTracksManager.instance.actionEventHandler += OnReceiveActionEvent;
 	}
-
 
 	/// <summary>
 	/// Called by battle engine at start of the scene. Loads all the actors
@@ -119,8 +115,9 @@ public class BattleFightManager : MonoBehaviour {
 	}
 
 	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
+
 		//nothing for missed notes
-		if (eventInfo.Accuracy == BattleScoreManager.Accuracy.MISS)
+		if (eventInfo.Accuracy == HitAccuracy.MISS)
 			return;
 		//no attack for long note's head
 		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
@@ -134,9 +131,9 @@ public class BattleFightManager : MonoBehaviour {
 		} else {
 			//check magic
 			if (eventInfo.IsMagic) {
-				duel.MagicAttack (m_engine.IsAttacking, eventInfo.NoteHit);
+                duel.MagicAttack (m_engine.IsAttacking, eventInfo.NoteHit);
 			} else {
-				duel.RegularAttack (m_engine.IsAttacking, eventInfo.NoteHit);
+                duel.RegularAttack (m_engine.IsAttacking, eventInfo.NoteHit);
 			}
 		}
 	}
@@ -185,11 +182,14 @@ public class BattleFightManager : MonoBehaviour {
 
 	#region LAUNCH_MAGIC
 
-	/** Launched by the FightDuel when magic is full */
-	public void LaunchMagic(BattleActor _actor, List<BattleActor> _targets,FightDuel _duel){
-		BattleFightMagic magic = _actor.LaunchMagic (_targets[0],_duel.ID);
+	/// <summary>
+    /// Launched by the duel. When a magic is done, the duel call this method to effectively launch the magic ( graphically )
+    /// </summary>
+	public BattleFightMagic LaunchMagic(BattleActor _actor, List<BattleActor> _targets,FightDuel _duel, HitAccuracy _accuracy){
+		BattleFightMagic magic = _actor.LaunchMagic (_targets[0],_duel.ID,_accuracy);
 		if( magic != null )
 			m_engine.OnLaunchMagic (magic);
+        return magic;
 	}
 
 	public void OnMagicEnded( BattleFightMagic _magic){
@@ -246,7 +246,7 @@ public class BattleFightManager : MonoBehaviour {
 		#region ATTACKS
 		public int RegularAttack(bool _fromPlayer, NoteData _noteData){
 			//if attack from player missed
-			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.MISS)
+			if (_fromPlayer && _noteData.HitAccuracy == HitAccuracy.MISS)
 				return -1;
 			//Affect attackers & defenders
 			List<BattleActor> m_attackers = null;
@@ -256,15 +256,13 @@ public class BattleFightManager : MonoBehaviour {
 			m_defenders = _fromPlayer ? m_enemies : m_characters;
 			
 			int totalDamage = 0;
-			ActorAttackAction tempAction;
 
 			//Begin attack process
 			BattleActor attacker = null;
 			for (int i=0; i < m_attackers.Count; i++) {		
 				attacker = m_attackers[i];
-				tempAction = attacker.ApplyNote(_noteData,true);
 
-				totalDamage += m_attackers [i].Attack (_noteData);
+				totalDamage += m_attackers [i].GetAppliedAttackingPower (_noteData);
 			}
 			if (totalDamage < 0)
 				totalDamage = 0;
@@ -273,7 +271,6 @@ public class BattleFightManager : MonoBehaviour {
 			BattleActor defender = null;
 			for (int i=0; i < m_defenders.Count; i++) {
 				defender = m_defenders[i];
-				defender.ApplyNote(_noteData,false);	
 				int damage = defender.TakeDamage (totalDamage,_noteData);
 				//text
 				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
@@ -283,7 +280,7 @@ public class BattleFightManager : MonoBehaviour {
 
 		public int MagicAttack(bool _fromPlayer, NoteData _noteData){
 			//if attack from player missed
-			if (_fromPlayer && _noteData.HitAccuracy == BattleScoreManager.Accuracy.MISS)
+			if (_fromPlayer && _noteData.HitAccuracy == HitAccuracy.MISS)
 				return -1;
 			//Affect attackers & defenders
 			List<BattleActor> m_attackers = null;
@@ -293,15 +290,16 @@ public class BattleFightManager : MonoBehaviour {
 			m_defenders = _fromPlayer ? m_enemies : m_characters;
 
 			int totalDamage = 0;
-			ActorAttackAction tempAction;
+            BattleFightMagic magic = null;
 
-			//Begin attack process
+			//Begin attack process == actually find the real caster
 			BattleActor attacker = null;
 			for (int i=0; i < m_attackers.Count; i++) {		
 				attacker = m_attackers[i];
-				tempAction = attacker.ApplyNote(_noteData,true);
-
-				totalDamage += m_attackers [i].MagicAttack (_noteData);
+                //apply magic attack and get the power 
+				totalDamage += m_attackers [i].GetAppliedMagicAttackPower (_noteData.HitAccuracy);
+                //Effectively Launch the magic
+                magic = m_manager.LaunchMagic(attacker, m_defenders, this, _noteData.HitAccuracy);
 			}
 			if (totalDamage < 0)
 				totalDamage = 0;
@@ -310,9 +308,10 @@ public class BattleFightManager : MonoBehaviour {
 			BattleActor defender = null;
 			for (int i=0; i < m_defenders.Count; i++) {
 				defender = m_defenders[i];
-				defender.ApplyNote(_noteData,false);	
-				int damage = defender.TakeDamage (totalDamage,_noteData);
-				m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
+				//int damage = defender.TakeMagicDamage (totalDamage, magic);
+                Debug.Log("onAttack");
+                //text
+                //m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
 			}
 			return totalDamage;
 		}
@@ -324,10 +323,18 @@ public class BattleFightManager : MonoBehaviour {
 			return 0;
 		}
 
-		#endregion
+        #endregion
 
-		public void OnActorTakeDamage(BattleActor _actor, int _damage){
-			m_damageTextManager.LaunchDamage (_actor.gameObject, _damage, false);
+        public void OnActorTakeDamage( BattleFightMagic _magic )
+        {
+            //MAGIC DAMAGE
+            int damage = _magic.Target.TakeMagicDamage(_magic.Caster.CurrentStats.Magic, _magic);
+            m_damageTextManager.LaunchDamage(_magic.Target.gameObject, damage, false);
+        }
+
+        public void OnActorTakeDamage(BattleActor _target, int _damage){
+            //
+			m_damageTextManager.LaunchDamage (_target.gameObject, _damage, false);
 		}
 
 		/** Called by an actor when it's dead*/

@@ -74,20 +74,7 @@ public class BattleActor : MonoBehaviour {
 		    case State.ATTACKING : UpdateAttacking(); break; 
 		}
 	}
-
-	virtual public BattleFightManager.ActorAttackAction ApplyNote(NoteData _noteData, bool _attacking){
-		//Check noteData
-		if (_attacking && _noteData.Subtype == NoteData.NoteSubtype.MAGIC) {
-			if( AddMP(50) ){
-				return BattleFightManager.ActorAttackAction.MAGIC;
-			}
-		}
-		if (_attacking) {			
-			return BattleFightManager.ActorAttackAction.ATTACK;
-		}
-		return BattleFightManager.ActorAttackAction.NONE;
-	}
-
+    
 	#region UPDATES
 	
 	virtual protected void UpdateAttacking(){
@@ -97,7 +84,7 @@ public class BattleActor : MonoBehaviour {
 	
 	#region ACTIONS
 	
-	virtual public int Attack( NoteData _noteData ){
+	virtual public int GetAppliedAttackingPower( NoteData _noteData ){
 		m_state = State.ATTACKING;
 		return CurrentStats.Attack;
 	}
@@ -171,9 +158,10 @@ public class BattleActor : MonoBehaviour {
     /// <summary>
     /// Launches the magic on the target
     /// </summary>
-	virtual public BattleFightMagic LaunchMagic(BattleActor _target, int _duelID){
+	virtual public BattleFightMagic LaunchMagic(BattleActor _target, int _duelID, HitAccuracy _accuracy){
 		if (m_currentMagic != null)
-			m_currentMagic.Launch (this, _target,_duelID);
+			m_currentMagic.Launch (this, _target,_duelID,_accuracy);
+        
         //drain mp
         CurrentStats.MP -= m_currentMagic.CostByUse;
         RefreshManaGauge ();
@@ -183,7 +171,7 @@ public class BattleActor : MonoBehaviour {
     /// <summary>
     /// Called when a magic attack is cast. USe MP and return magic power
     /// </summary>
-	virtual public int GetAppliedMagicAttackPower(NoteData _noteData){
+	virtual public int GetAppliedMagicAttackPower(HitAccuracy _accuracy){
 		return CurrentStats.Magic;
 	}
 
@@ -262,7 +250,7 @@ public class BattleActor : MonoBehaviour {
         }
     }
 
-    protected Stats CurrentStats
+    public Stats CurrentStats
     {
         get
         {

@@ -50,9 +50,6 @@ public class BattleSlot : MonoBehaviour {
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
 		
-		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE) {
-			Debug.Log ("debug "+  transform.parent.parent.name);
-		}
 		if (m_active == false ) 
 			return;
 		//EXCEPTION CASES
@@ -88,7 +85,7 @@ public class BattleSlot : MonoBehaviour {
 			switch (_inputMethod) {
 				//but it's just pressed, put it in the buffer
 				case BattleNote.HIT_METHOD.PRESS:
-					Debug.Log ("press" + transform.parent.parent.name);
+					//Debug.Log ("press" + transform.parent.parent.name);
 					LaunchPendingSlide (note);
 					m_lastInputMethod = _inputMethod;
 					break;
@@ -96,7 +93,7 @@ public class BattleSlot : MonoBehaviour {
 				case BattleNote.HIT_METHOD.SLIDE: 
 					//launch magic
 					if (m_pendingNote == note) {
-						Debug.Log ("slide "+transform.parent.parent.name);
+						//Debug.Log ("slide "+transform.parent.parent.name);
 						AbortPendingSlide ();
 						m_track.OnNoteTriggerAction (note,this,true);
 					}
@@ -119,7 +116,7 @@ public class BattleSlot : MonoBehaviour {
 			}
 		}
 
-		Debug.Log ("HIT " + _inputMethod + transform.parent.parent.name);
+		//Debug.Log ("HIT " + _inputMethod + transform.parent.parent.name);
 
 		bool forceRemove = CurrentLongNote != null;
 		m_track.OnNoteHit (note,this, forceRemove );
@@ -216,7 +213,7 @@ public class BattleSlot : MonoBehaviour {
 
 	#endregion
 
-	public void PlayTextAccuracy(BattleScoreManager.Accuracy _accuracy){
+	public void PlayTextAccuracy(HitAccuracy _accuracy){
 		//Find dead text
 		for (int i=0; i < m_textsAcc.Count; i++) {
 			if( m_textsAcc[i].IsAvailable ){

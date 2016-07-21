@@ -221,7 +221,7 @@ public class BattleEndManager : MonoBehaviour {
     {
         [SerializeField] public GameObject UIObject;
         [SerializeField] public Text ScoreText;
-        [SerializeField] public BattleScoreManager.Accuracy Accuracy;
+        [SerializeField] public HitAccuracy Accuracy;
     }
 
     [System.Serializable]

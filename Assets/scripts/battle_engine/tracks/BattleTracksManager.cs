@@ -50,7 +50,7 @@ public class BattleTracksManager : MonoBehaviour {
         public NoteData NoteHit { get; private set; }
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
-        public BattleScoreManager.Accuracy Accuracy { get; private set; }
+        public HitAccuracy Accuracy { get; private set; }
 		public bool IsMagic { get; set; }
 
 		/// <summary>
@@ -58,7 +58,7 @@ public class BattleTracksManager : MonoBehaviour {
 		/// </summary>
 		public bool IsFinal { get; set; }
 
-		public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS, bool _isFinal = false)
+		public NoteEventInfo(NoteData _notehit, bool _success, HitAccuracy _acc = HitAccuracy.MISS, bool _isFinal = false)
         {
             NoteHit = _notehit;
             Success = _success;
@@ -351,10 +351,10 @@ public class BattleTracksManager : MonoBehaviour {
     ///<summary>
     /// Adds the performed note to the engine, even if missed, so that it can be processed
     ///</summary>
-    public BattleScoreManager.Accuracy AddNote(BattleNote _note){
+    public HitAccuracy AddNote(BattleNote _note){
 		CheckCurrentTrack ();
 		if (_note == null)
-			return BattleScoreManager.Accuracy.GOOD;
+			return HitAccuracy.GOOD;
 		return m_engine.AddNote (_note.Data, _note.Accuracy);
 	}
 

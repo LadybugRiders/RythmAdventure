@@ -23,20 +23,20 @@ public class BattleSlotTextAccuracy : MonoBehaviour {
 
 	}
 
-	public void Play(BattleScoreManager.Accuracy _accuracy){
-		if (_accuracy == BattleScoreManager.Accuracy.MISS)
+	public void Play(HitAccuracy _accuracy){
+		if (_accuracy == HitAccuracy.MISS)
 			PlayMiss ();
 		else
 			PlayHit (_accuracy);
 	}
 
-	void PlayHit(BattleScoreManager.Accuracy _accuracy){
+	void PlayHit(HitAccuracy _accuracy){
 		m_state = State.HIT;
 		//change texture
 		switch (_accuracy) {
-			case BattleScoreManager.Accuracy.PERFECT : m_renderer.sprite = m_perfectSprite; break;
-			case BattleScoreManager.Accuracy.GREAT : m_renderer.sprite = m_greatSprite; break;
-			case BattleScoreManager.Accuracy.GOOD : m_renderer.sprite = m_goodSprite; break;			
+			case HitAccuracy.PERFECT : m_renderer.sprite = m_perfectSprite; break;
+			case HitAccuracy.GREAT : m_renderer.sprite = m_greatSprite; break;
+			case HitAccuracy.GOOD : m_renderer.sprite = m_goodSprite; break;			
 		}
 		//make visible
 		SetAlpha (1);

@@ -98,7 +98,7 @@ public class BattleTrack : MonoBehaviour {
 			OnNoteKill (_note, _slot);
 		}
 		//add note to the manager
-		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note);
+		HitAccuracy acc = m_manager.AddNote (_note);
 		//kill note
 		_note.Hit (_slot);
 		//play text on slot
@@ -118,7 +118,7 @@ public class BattleTrack : MonoBehaviour {
 	/// </summary>
 	public void OnNoteTriggerAction(BattleNote _note, BattleSlot _slot, bool _isMagic){
 		//add note to the manager
-		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note);
+		HitAccuracy acc = m_manager.AddNote (_note);
 
 		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);
 		noteEvent.IsMagic = _isMagic;		
@@ -148,10 +148,10 @@ public class BattleTrack : MonoBehaviour {
             m_notes.Remove (note);
 
 		//add note to the manager
-		BattleScoreManager.Accuracy acc = m_manager.AddNote (_note);
+		HitAccuracy acc = m_manager.AddNote (_note);
 
 		//raise note miss event
-		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, BattleScoreManager.Accuracy.MISS,_note.IsFinal));
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, HitAccuracy.MISS,_note.IsFinal));
 
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (acc);

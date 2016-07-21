@@ -167,7 +167,7 @@ public class BattleEngine : MonoBehaviour {
     /// <summary>
     /// Called by the TracksManager when a note is hit or missed
     /// </summary>
-    public BattleScoreManager.Accuracy AddNote( NoteData _note, float _accuracy){
+    public HitAccuracy AddNote( NoteData _note, float _accuracy){
 		_note.HitAccuracy = m_scoreManager.AddNote (_accuracy);
 		return _note.HitAccuracy;
 	}

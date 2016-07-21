@@ -36,7 +36,7 @@ public class BattleEnemy : BattleActor {
 
 	#region ACTION
 	
-	override public int Attack(NoteData _noteData){
+	override public int GetAppliedAttackingPower(NoteData _noteData){
 		m_state = State.ATTACKING;
 
 		if( Utils.IsAnimationStateRunning(m_animator,"attack") ){

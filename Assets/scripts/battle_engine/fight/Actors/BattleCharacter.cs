@@ -38,7 +38,7 @@ public class BattleCharacter : BattleActor {
 
 	#region ACTION
 
-	override public int Attack( NoteData _noteData){
+	override public int GetAppliedAttackingPower( NoteData _noteData){
 		m_state = State.ATTACKING;
 
 		m_charAnimator.Attack ();
@@ -53,16 +53,16 @@ public class BattleCharacter : BattleActor {
 		damage -= CurrentStats.Defense ;
 		//Reduce damage by blocking
 		switch(_note.HitAccuracy){
-			case BattleScoreManager.Accuracy.PERFECT :
+			case HitAccuracy.PERFECT :
 				damage = damage - (int) (damage * CurrentStats.blockPerfectModifier);
 				break;
-			case BattleScoreManager.Accuracy.GREAT :
+			case HitAccuracy.GREAT :
 				damage = damage - (int) (damage * CurrentStats.blockGreatModifier);
 				break;
-			case BattleScoreManager.Accuracy.GOOD :
+			case HitAccuracy.GOOD :
 				damage = damage - (int) (damage * CurrentStats.blockGoodModifier);
 				break;
-			case BattleScoreManager.Accuracy.MISS :
+			case HitAccuracy.MISS :
 				damage = damage - (int) (damage * CurrentStats.blockBadModifier);
 				break;
 		}

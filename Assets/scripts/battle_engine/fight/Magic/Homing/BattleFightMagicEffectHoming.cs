@@ -21,8 +21,8 @@ public class BattleFightMagicEffectHoming : BattleFightMagicEffect {
 	void Update () {
 		if (m_launched) {
 			switch( m_state ){
-			case "homing": UpdateHoming(); break;
-			case "exploding" : UpdateExplosion(); break;
+			    case "homing": UpdateHoming(); break;
+			    case "exploding" : UpdateExplosion(); break;
 			}
 		}
 	}

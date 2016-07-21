@@ -21,6 +21,11 @@ public class BattleFightMagic : MonoBehaviour {
 	protected int m_duelID = -1;
 	protected float m_duration = 1.0f;
 
+    /// <summary>
+    /// Accuracy of the note hit for this magic action
+    /// </summary>
+    protected HitAccuracy m_noteAccuracy = HitAccuracy.MISS;
+
 	/** RAw power of the magic */
 	protected int m_power = 20;
 	/** How much mana are gained with a magic note */
@@ -33,7 +38,7 @@ public class BattleFightMagic : MonoBehaviour {
 	// Use this for initialization
 	virtual protected void Start () {
 		m_audioSource = GetComponent<AudioSource> ();
-		m_effects = new List<BattleFightMagicEffect> ( this.GetComponentsInChildren<BattleFightMagicEffect>(true ) );
+		m_effects = new List<BattleFightMagicEffect> ( this.GetComponentsInChildren<BattleFightMagicEffect>(true) );
 		for (int i = 0; i < m_effects.Count; i++) {
 			m_effects[i].Magic = this;
 		}
@@ -46,12 +51,13 @@ public class BattleFightMagic : MonoBehaviour {
 	}
 
 	#region LAUNCH
-	public void Launch(BattleActor _caster, BattleActor _target, int _duelID){
+	public void Launch(BattleActor _caster, BattleActor _target, int _duelID, HitAccuracy _noteAcuracy){
 		gameObject.SetActive(true);
 		m_launched = true;
 		m_target = _target;
 		m_caster = _caster;
 		m_duelID = _duelID;
+        m_noteAccuracy = _noteAcuracy;
 		//replace magic on the user
 		Transform t = transform;
 		float z = t.position.z;
@@ -95,7 +101,7 @@ public class BattleFightMagic : MonoBehaviour {
 
 	/** Called by an effect when it has hit its target(s) */
 	virtual public void OnHit(){
-		int damage = this.m_power;
+        int damage = m_caster.GetAppliedMagicAttackPower(m_noteAccuracy);
 		damage = m_target.TakeMagicDamage (damage,this);
 		m_target.FightDuel.OnActorTakeDamage (m_target, damage);
 		//play main sound if any
