@@ -309,7 +309,6 @@ public class BattleFightManager : MonoBehaviour {
 			for (int i=0; i < m_defenders.Count; i++) {
 				defender = m_defenders[i];
 				//int damage = defender.TakeMagicDamage (totalDamage, magic);
-                Debug.Log("onAttack");
                 //text
                 //m_damageTextManager.LaunchDamage(defender.gameObject,damage,false);
 			}

@@ -97,8 +97,7 @@ public class BattleTrack : MonoBehaviour {
 		if (_forceRemove) {
 			OnNoteKill (_note, _slot);
 		}
-		//add note to the manager
-		HitAccuracy acc = m_manager.AddNote (_note);
+        HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
 		//kill note
 		_note.Hit (_slot);
 		//play text on slot
@@ -117,10 +116,10 @@ public class BattleTrack : MonoBehaviour {
 	/// Use this trigger the action induced by hitting the note
 	/// </summary>
 	public void OnNoteTriggerAction(BattleNote _note, BattleSlot _slot, bool _isMagic){
-		//add note to the manager
-		HitAccuracy acc = m_manager.AddNote (_note);
 
-		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);
+        HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
+
+        var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);
 		noteEvent.IsMagic = _isMagic;		
 		m_manager.RaiseNoteActionEvent (noteEvent);
 
@@ -146,15 +145,12 @@ public class BattleTrack : MonoBehaviour {
         //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
         foreach(var note in notesToDelete)
             m_notes.Remove (note);
-
-		//add note to the manager
-		HitAccuracy acc = m_manager.AddNote (_note);
-
+        
 		//raise note miss event
 		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, HitAccuracy.MISS,_note.IsFinal));
 
 		//play text on slot
-		m_currentSlot.PlayTextAccuracy (acc);
+		m_currentSlot.PlayTextAccuracy (HitAccuracy.MISS);
 		m_currentLongNote = null;
 	}
     

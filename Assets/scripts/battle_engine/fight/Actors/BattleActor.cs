@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BattleActor : MonoBehaviour {
 		
@@ -21,6 +22,7 @@ public class BattleActor : MonoBehaviour {
     protected Stats m_maxStats = new Stats();
 
 	[SerializeField] protected BattleFightMagic m_currentMagic = null;
+    protected List<BattleFightMagic> m_magics = new List<BattleFightMagic>();
 
 	//UI
 	[SerializeField] protected UIBattleLifeBar m_lifeGauge;

@@ -163,15 +163,7 @@ public class BattleEngine : MonoBehaviour {
 	}
 
     #endregion
-
-    /// <summary>
-    /// Called by the TracksManager when a note is hit or missed
-    /// </summary>
-    public HitAccuracy AddNote( NoteData _note, float _accuracy){
-		_note.HitAccuracy = m_scoreManager.AddNote (_accuracy);
-		return _note.HitAccuracy;
-	}
-    
+        
     #region GETTERS
 
     public static BattleEngine instance {

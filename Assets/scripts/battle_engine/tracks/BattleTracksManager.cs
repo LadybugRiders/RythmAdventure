@@ -348,16 +348,6 @@ public class BattleTracksManager : MonoBehaviour {
 	}
     #endregion
     
-    ///<summary>
-    /// Adds the performed note to the engine, even if missed, so that it can be processed
-    ///</summary>
-    public HitAccuracy AddNote(BattleNote _note){
-		CheckCurrentTrack ();
-		if (_note == null)
-			return HitAccuracy.GOOD;
-		return m_engine.AddNote (_note.Data, _note.Accuracy);
-	}
-
 	#region EVENTS
 
 	public void RaiseNoteEvent(NoteEventInfo _eventNote)
@@ -375,7 +365,6 @@ public class BattleTracksManager : MonoBehaviour {
 			if( replcmtTrack != null )
 				RedirectTrack (track.Id,replcmtTrack.Id);
 		}
-		CheckCurrentTrack();
 	}
 
 	public void RaiseNoteActionEvent(NoteEventInfo _eventNote){
@@ -384,8 +373,9 @@ public class BattleTracksManager : MonoBehaviour {
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
 			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
 			actionEventHandler.Invoke(this, _eventNote);
-		}
-	}
+        }
+        CheckCurrentTrack();
+    }
 	#endregion
 
     /// <summary>

@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattleScoreManager : MonoBehaviour {
-    	
+
+    static BattleScoreManager _instance = null;
 	//Accuracy variables
 	[SerializeField] private float m_accuPerfect = 80f;
 	[SerializeField] private float m_accuGreat = 50f;
@@ -22,6 +23,7 @@ public class BattleScoreManager : MonoBehaviour {
     void Awake()
     {
         InitScoresData();
+        _instance = this;
     }
 
 	// Use this for initialization
@@ -96,6 +98,14 @@ public class BattleScoreManager : MonoBehaviour {
                     e.ToString();
                 }
             }
+        }
+    }
+
+    public static BattleScoreManager instance
+    {
+        get
+        {
+            return _instance;
         }
     }
 }

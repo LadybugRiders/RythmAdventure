@@ -68,7 +68,7 @@ public class ProfileManager : MonoBehaviour {
         string path = Application.dataPath + "/Resources/database/defaultProfile.json";
         string text = JsonUtility.ToJson(profile);
 
-        File.WriteAllText(path, text);
+        System.IO.File.WriteAllText(path, text);
         AssetDatabase.Refresh();
     }
 #endif
