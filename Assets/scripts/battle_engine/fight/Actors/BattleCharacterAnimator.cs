@@ -4,11 +4,7 @@ using System.Collections;
 public class BattleCharacterAnimator : MonoBehaviour {
 
 	[SerializeField] Animator m_animator;
-
-	[SerializeField] SpriteRenderer m_body;
-	[SerializeField] SpriteRenderer m_eyebrows;
-	[SerializeField] SpriteRenderer m_arm;
-	[SerializeField] SpriteRenderer m_eyes;
+    [SerializeField] CharacterBuild m_build;
 
 	// Use this for initialization
 	void Start () {
@@ -41,28 +37,5 @@ public class BattleCharacterAnimator : MonoBehaviour {
 			m_animator.SetTrigger ("hitTrigger");
 		}
 	}
-
-	#region RENDERING
-
-	public void SetColor( Color _color){
-		m_body.color = _color;
-		m_arm.color = _color;
-		//m_eyebrows.color = _color;
-	}
-
-	public void LoadSprites(string _characterName){
-		//change color
-		JSONObject colorObject = DataManager.instance.GameData.GetField ("playerColor");
-        if( colorObject != null)
-        {
-            Color c = new Color();
-            c.r = colorObject[0].n;
-            c.g = colorObject[1].n;
-            c.b = colorObject[2].n;
-            c.a = 1;
-            SetColor(c);
-        }
-	}
-
-	#endregion
+	
 }

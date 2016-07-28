@@ -9,13 +9,19 @@ public class DataCharManager : DatabaseLoader
         base.LoadDatabase();
 
         JSONObject tempJson;
+        //levelup
         tempJson = LoadDataJSON("characters/characters_levelup_database");
-        m_database.Add("levelup", tempJson);        
+        m_database.Add("levelup", tempJson);
+        //equipement
+        tempJson = LoadDataJSON("characters/equipement_database");
+        m_database.Add("equipment", tempJson);
     }
-    
+
+    #region LEVEL
+
     public LevelUpData GetLevelByXp(string _category, int _xp)
     {
-        JSONObject levelupDB = m_database["levelup"];
+        JSONObject levelupDB = LevelUpDatabase;
         JSONObject levelsForPlayerJSON = levelupDB[_category];
 
         //Get base stats from leveling (db)
@@ -34,7 +40,7 @@ public class DataCharManager : DatabaseLoader
 
     public LevelUpData GetLevel(string _category, int _level)
     {
-        JSONObject levelupDB = m_database["levelup"];
+        JSONObject levelupDB = LevelUpDatabase;
         JSONObject levelsForPlayerJSON = levelupDB[_category];
 
         //Get base stats from leveling (db)
@@ -56,7 +62,7 @@ public class DataCharManager : DatabaseLoader
     /// </summary>
     public LevelUpData GetNextLevelByXp(string _category, int _xp)
     {
-        JSONObject levelupDB = m_database["levelup"];
+        JSONObject levelupDB = LevelUpDatabase;
         JSONObject levelsForPlayerJSON = levelupDB[_category];
 
         //Get base stats from leveling (db)
@@ -79,7 +85,7 @@ public class DataCharManager : DatabaseLoader
     /// </summary>
     public LevelUpData GetNextLevel(string _category, int _level)
     {
-        JSONObject levelupDB = m_database["levelup"];
+        JSONObject levelupDB = LevelUpDatabase;
         JSONObject levelsForPlayerJSON = levelupDB[_category];
 
         //Get base stats from leveling (db)
@@ -96,10 +102,32 @@ public class DataCharManager : DatabaseLoader
         }
         return levelUpData;
     }
-
-    #region LEVELUP
-
     #endregion
+
+    #region EQUIPEMENT
+
+    public EquipementData GetEquipement( EquipmentType _type, string _id)
+    {
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
+
+        if (jsonObject != null)
+        {
+            return new EquipementData(jsonObject, _type);
+        }
+        return null;
+    }
+
+    public EquipementData GetEquipement(string _type, string _id)
+    {
+        EquipmentType enumType = (EquipmentType) System.Enum.Parse(typeof(EquipmentType), _type);
+        return GetEquipement(enumType, _id);
+    }
+    
+    #endregion
+
+    JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
+    JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
 
     /// <summary>
     /// Data used to stored levels 
@@ -113,6 +141,24 @@ public class DataCharManager : DatabaseLoader
         {
             XpNeeded = (int)json.GetField("xp").f;
             Stats = new Stats(json);
+        }
+    }
+
+    public class EquipementData
+    {
+        public string Id;
+        public string Name = "NoName_Equipment";
+        public string Prefab;
+        public int Level = 1;
+        public EquipmentType type;
+
+        public EquipementData(JSONObject _json, EquipmentType _type)
+        {
+            Id = _json.GetField("id").str;
+            Level = (int)_json.GetField("level").f;
+            Name = _json.GetField("name").str;
+            Prefab = _json.GetField("prefab").str;
+            type = _type;
         }
     }
 }

@@ -154,6 +154,8 @@ public class ProfileManager : MonoBehaviour {
 
     }
 
+    #region PROFILE_DATA_CLASSES
+
     [System.Serializable]
     public class CharacterData
     {
@@ -161,14 +163,41 @@ public class ProfileManager : MonoBehaviour {
         public string Name = "temp";
         public int Xp = 0;
         public string Category = "warrior";
-        
+
         //public CharacterBuild Build; // skins
 
         //Equipment
+        public List<BuildData> Equipments;
 
         public CharacterData(string _id)
         {
             Id = _id;
+            Equipments = new List<BuildData>()
+            {
+                new BuildData(EquipmentType.HAT, null),
+                new BuildData(EquipmentType.WEAPON, null),
+                new BuildData(EquipmentType.ACCESSORY, null),
+            };
+        }
+
+        public string GetEquipmentId(EquipmentType _equipmentType)
+        {
+            return Equipments.Find(x => x.Type == _equipmentType).Id;
+        }
+
+        [System.Serializable]
+        public class BuildData
+        {
+            public string Id;
+            public EquipmentType Type;
+
+            public BuildData(EquipmentType _type, string id)
+            {
+                Id = id;
+                Type = _type;
+            }
         }
     }
+
+    #endregion
 }

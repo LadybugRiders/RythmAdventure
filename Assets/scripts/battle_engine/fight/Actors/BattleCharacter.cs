@@ -4,7 +4,7 @@ using System.Collections;
 public class BattleCharacter : BattleActor {
 
 	[SerializeField] BattleCharacterAnimator m_charAnimator;
-
+    [SerializeField] CharacterBuild m_build;
 
 	override protected void Start () {
 		base.Start ();
@@ -19,7 +19,8 @@ public class BattleCharacter : BattleActor {
 	override public void Load(string _name){
         base.Load(_name);
 
-		m_charAnimator.LoadSprites(_name);
+		m_build.Load(_name);
+
         var charData = ProfileManager.instance.GetCharacter(_name);
         var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Category, charData.Xp);
         if(charData != null && levelupData.Stats != null)
