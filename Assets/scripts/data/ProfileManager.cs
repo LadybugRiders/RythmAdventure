@@ -129,6 +129,22 @@ public class ProfileManager : MonoBehaviour {
 
     #endregion
 
+    #region MAPS
+
+    public Map GetMapData(string _mapName)
+    {
+        foreach( var map in profile.Maps)
+        {
+            if( map.Name.ToUpper() == _mapName.ToUpper() )
+            {
+                return map;
+            }
+        }
+        return null;
+    }
+
+    #endregion
+
     [System.Serializable]
     public class Profile
     {
@@ -139,6 +155,9 @@ public class ProfileManager : MonoBehaviour {
         [SerializeField] public List<CharacterData> Characters = new List<CharacterData>();
 
         [SerializeField] public List<string> CurrentTeam;
+
+        //Progression
+        [SerializeField] public List<Map> Maps = new List<Map>();
 
         public Profile()
         {
@@ -196,6 +215,20 @@ public class ProfileManager : MonoBehaviour {
                 Id = id;
                 Type = _type;
             }
+        }
+    }
+
+    [System.Serializable]
+    public class Map
+    {
+        public string Name = "";
+        public List<Level> Levels = new List<Level>();
+
+        [System.Serializable]
+        public class Level
+        {
+            public string Id;
+            public int Score = 0;
         }
     }
 
