@@ -46,30 +46,39 @@ public class BattleSlot : MonoBehaviour {
 	public void ResetInput(){
 		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
 		m_pendingNote = null;
+        Debug.Log("reset1");
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
-		
-		if (m_active == false ) 
+        Debug.Log(_inputMethod);
+        var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
+
+        if (m_active == false ) 
 			return;
 		//EXCEPTION CASES
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
 		if (_inputMethod == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null) {
 			AbortPendingSlide ();
-			return;
+            debugText.text = "Error1";
+
+            return;
 		}
 		//if a slide is done but no press, this is a remain from a previous track input
-		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS) {
-			return;
+		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS)
+        {
+            debugText.text = "Error2";
+            return;
 		}
 
 		//else we hit the first note that has collided
 		BattleNote note = WaitingForSlide ? m_pendingNote : GetFirstAliveCollidingNote();
 
 		//if no note is colliding (miss)
-		if (note == null) {            
-			//send an error to BattleTrack
-			Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
+		if (note == null)
+        {
+            debugText.text = "Error3";
+            //send an error to BattleTrack
+            Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
 			ApplyError(_inputMethod);
 			return;
 		}
@@ -169,7 +178,9 @@ public class BattleSlot : MonoBehaviour {
 		if (m_pendingNote != null) {
 			m_track.OnNoteKill (m_pendingNote, this);
 			m_pendingNote = null;
-		}
+
+            Debug.Log("reset2 -- " + m_track.Id);
+        }
         //clean timers
         TimerEngine.instance.StopAll("OnPendingSlideTimerOver", this.gameObject);
     }

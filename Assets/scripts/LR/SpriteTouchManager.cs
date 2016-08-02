@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// When the input is manipulated, treats the info and check the first collider touched in the scene.
+/// You can narrow the colliders by setting a tag.
+/// It is not recommended to have more than one insance in a scene.
+/// </summary>
 public class SpriteTouchManager : MonoBehaviour {
 
     [SerializeField] public string m_touchableTag = null;
@@ -47,18 +52,18 @@ public class SpriteTouchManager : MonoBehaviour {
             //compute position pressed
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(CustomGetTouchPosition());
             Vector2 touchPos = new Vector2(worldPoint.x, worldPoint.y);
+            var currentCollider = Physics2D.OverlapPoint(touchPos);
 
             //compute delta vector from first press point to actual pressed point
             m_deltaSlide = touchPos - m_positionPressed;
             //if just released
             if (IsJustReleased())
             {
-                var currentCollider = Physics2D.OverlapPoint(touchPos);
                 m_pressed = false;
                 if (m_sliding)
                 {
                     //slide end
-                    OnSlid(m_pressedCollider, currentCollider);
+                    OnSlidReleased(m_pressedCollider, currentCollider);
                     m_pressedCollider = null;
                 }
                 else
@@ -71,29 +76,30 @@ public class SpriteTouchManager : MonoBehaviour {
             }
             else
             {
-                //Still pressing => check slide
-                if (( m_timePressed <= m_slideMaxTime || m_slideMaxTime == 0.0f  ) && !m_sliding && m_deltaSlide.magnitude >= m_slideMinLength)
+                //already sliding
+                if( m_sliding)
                 {
-                    m_sliding = true;
+                    OnSliding(m_pressedCollider, currentCollider);
+                }
+                else
+                {
+                    //no slide but Still pressing => check slide
+                    if ((m_timePressed <= m_slideMaxTime || m_slideMaxTime == 0.0f) && !m_sliding && m_deltaSlide.magnitude >= m_slideMinLength)
+                    {
+                        m_sliding = true;
+                    }
                 }
             }
         }
     }
 
-    protected virtual void OnPressed(Collider2D _collider)
-    {
+    protected virtual void OnPressed(Collider2D _collider) { }
 
-    }
+    protected virtual void OnReleased(Collider2D _collider) { }
 
-    protected virtual void OnReleased(Collider2D _startCollider)
-    {
+    protected virtual void OnSlidReleased(Collider2D _startCollider, Collider2D _endCollider) { }
 
-    }
-
-    protected virtual void OnSlid(Collider2D _startCollider, Collider2D _endCollider)
-    {
-
-    }
+    protected virtual void OnSliding(Collider2D _startCollider, Collider2D _endCollider) { }
 
     Vector2 CustomGetTouchPosition()
     {
