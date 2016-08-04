@@ -2,8 +2,8 @@
     "hat": [
         {
             "id": 0,
-            "name": "simple hat",
-            "prefab": "simple_hat",
+            "name": "cap",
+            "prefab": "cap",
             "level": 1,
             "type": "hat",
             "hp": 0,
@@ -23,13 +23,49 @@
             "defense": 0,
             "magic": 1,
             "speed": 0
+        },
+        {
+            "id": 2,
+            "name": "helmet",
+            "prefab": "helmet",
+            "level": 1,
+            "type": "hat",
+            "hp": 0,
+            "attack": 0,
+            "defense": 3,
+            "magic": 0,
+            "speed": 0
+        },
+        {
+            "id": 3,
+            "name": "bandana",
+            "prefab": "bandana",
+            "level": 1,
+            "type": "hat",
+            "hp": 0,
+            "attack": 1,
+            "defense": 1,
+            "magic": 0,
+            "speed": 1
+        },
+        {
+            "id": 4,
+            "name": "kiki",
+            "prefab": "kiki",
+            "level": 1,
+            "type": "hat",
+            "hp": 0,
+            "attack": 0,
+            "defense": 1,
+            "magic": 1,
+            "speed": 0
         }
     ],
     "weapon": [
         {
             "id": 0,
-            "name": "wooden sword",
-            "prefab": "wood_sword",
+            "name": "wooden_bat",
+            "prefab": "wooden_bat",
             "level": 1,
             "type": "sword",
             "hp": 0,
@@ -40,15 +76,77 @@
         },
         {
             "id": 1,
-            "name": "old staff",
-            "prefab": "old_staff",
+            "name": "knife",
+            "prefab": "knife",
             "level": 1,
             "type": "staff",
+            "hp": 0,
+            "attack": 2,
+            "defense": 0,
+            "magic": 2,
+            "speed": 0
+        },
+        {
+            "id": 2,
+            "name": "axe",
+            "prefab": "axe",
+            "level": 1,
+            "hp": 0,
+            "attack": 2,
+            "defense": 0,
+            "magic": 0,
+            "speed": 0
+        },
+        {
+            "id": 3,
+            "name": "wand",
+            "prefab": "wand",
+            "level": 1,
             "hp": 0,
             "attack": 0,
             "defense": 0,
             "magic": 2,
             "speed": 0
+        },
+        {
+            "id": 4,
+            "name": "belt_knife",
+            "prefab": "belt_knife",
+            "level": 1,
+            "hp": 0,
+            "attack": 1,
+            "defense": 0,
+            "magic": 0,
+            "speed": 1
+        }
+    ],
+    "accessory": [
+        {
+            "id": 0,
+            "name": "backpack",
+            "prefab": "backpack",
+            "level": 1,
+            "hp": 2,
+            "attack": 0,
+            "defense": 0,
+            "magic": 0,
+            "speed": 0
+        }
+    ],
+    "eyes": [
+        {
+            "id": 0,
+            "name": "normal eyes",
+            "prefab": "normal_eyes",
+            "level": 1,
+            "type": "eyes"
+        },
+        {
+            "id": 1,
+            "name": "angry eyes",
+            "prefab": "angry_eyes",
+            "level": 1,
+            "type": "eyes"
         }
     ]
 }
