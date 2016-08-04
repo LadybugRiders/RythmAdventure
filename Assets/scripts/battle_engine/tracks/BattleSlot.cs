@@ -46,7 +46,6 @@ public class BattleSlot : MonoBehaviour {
 	public void ResetInput(){
 		m_lastInputMethod = BattleNote.HIT_METHOD.NONE;
 		m_pendingNote = null;
-        Debug.Log("reset1");
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
@@ -125,10 +124,16 @@ public class BattleSlot : MonoBehaviour {
 			}
 		}
 
-		//Debug.Log ("HIT " + _inputMethod + transform.parent.parent.name);
 
-		bool forceRemove = CurrentLongNote != null;
-		m_track.OnNoteHit (note,this, forceRemove );
+        //Debug.Log("HIT " + _inputMethod + transform.parent.parent.name + " fr" );
+        bool forceRemove = CurrentLongNote != null;
+        m_track.OnNoteHit (note,this, forceRemove );
+
+        //Trigger action if the current long note is on ( note tail is hit )
+        if( CurrentLongNote != null && _inputMethod == BattleNote.HIT_METHOD.RELEASE)
+        {
+            m_track.OnNoteTriggerAction(note, this, false);
+        }
 
 		m_collidingNotes.RemoveAt (0);
 
@@ -177,9 +182,7 @@ public class BattleSlot : MonoBehaviour {
     {
 		if (m_pendingNote != null) {
 			m_track.OnNoteKill (m_pendingNote, this);
-			m_pendingNote = null;
-
-            Debug.Log("reset2 -- " + m_track.Id);
+			m_pendingNote = null;            
         }
         //clean timers
         TimerEngine.instance.StopAll("OnPendingSlideTimerOver", this.gameObject);

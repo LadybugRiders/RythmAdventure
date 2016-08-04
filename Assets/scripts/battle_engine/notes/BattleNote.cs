@@ -129,6 +129,9 @@ public class BattleNote : MonoBehaviour {
 		this.CurrentState = State.HIT;
 	}
 
+    /// <summary>
+    /// Makes a note miss. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
 	virtual public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
 		Die ();
@@ -136,14 +139,16 @@ public class BattleNote : MonoBehaviour {
         return new BattleNote[] { this };
 	}
 
-	/** Makes the note die if needs to be. If the note can be killed, return true */
-	virtual public bool Die(){
+	/// <summary>
+    /// Makes the note die. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
+	virtual public BattleNote[] Die(){
 		this.CurrentState = State.DEAD;
 		Utils.SetLocalPositionY (m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
 		if (m_magicEffect)
 			Utils.SetAlpha (m_magicEffect, 0.0f);
-		return true;
+		return new BattleNote[] { this }; ;
 	}
 
 	public void Pause(){

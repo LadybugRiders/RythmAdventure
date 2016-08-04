@@ -58,11 +58,9 @@ public class BattleNoteLong : BattleNote {
 		this.CurrentState = State.HIT;
 		if (IsHead) {
 			Utils.SetPositionX(m_transform, _slot.transform.position.x);
-		} else {
+		} /*else {
 			Die ();
-			//notify the head
-			m_pairNote.SecondHit();
-		}
+		}*/
 	}
 
 	// Miss: If HEAD, kill itself and tail ( if launched )
@@ -76,22 +74,24 @@ public class BattleNoteLong : BattleNote {
 		return new BattleNote[]{this, m_pairNote};
 	}
 
-	/** Called by the tail when it is hit*/
-	public void SecondHit(){
-		Die ();
-	}
-	
-	/** Makes the note die if needs to be. If the note can be killed, return true */
-	override public bool Die(){
+    /// <summary>
+    /// Makes the note die. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
+    override public BattleNote[] Die(){
 		this.CurrentState = State.DEAD;
+        //hide body
 		if (IsHead) {
 			Utils.SetAlpha (m_bodySprite, 0.0f);
 			Utils.SetLocalPositionY(m_bodyTransform,-10000);
-		}
-		Utils.SetLocalPositionY(m_transform,-10000);
+        }
+        //Make pair note die if not already
+        if( ! m_pairNote.IsDead)
+            m_pairNote.Die();
+        //Hide note
+        Utils.SetLocalPositionY(m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
-		return true;
-	}
+        return new BattleNote[] { this, m_pairNote };
+    }
 
 	#endregion
 

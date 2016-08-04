@@ -351,7 +351,8 @@ public class BattleTracksManager : MonoBehaviour {
 	#region EVENTS
 
 	public void RaiseNoteEvent(NoteEventInfo _eventNote)
-	{		
+	{
+        Debug.Log("HIT note event");
 		if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
@@ -367,8 +368,10 @@ public class BattleTracksManager : MonoBehaviour {
 		}
 	}
 
-	public void RaiseNoteActionEvent(NoteEventInfo _eventNote){
-		if (noteEventHandler != null)
+	public void RaiseNoteActionEvent(NoteEventInfo _eventNote)
+    {
+        Debug.Log("HIT note action");
+        if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
 			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current

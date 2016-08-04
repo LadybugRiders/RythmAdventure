@@ -130,9 +130,11 @@ public class BattleTrack : MonoBehaviour {
 	/// Use this to kill a note
 	/// </summary>
 	public void OnNoteKill(BattleNote _note, BattleSlot _slot){		
-		m_notes.Remove (_note);
-		_note.Die ();
-	}
+		var notesToDelete = _note.Die ();
+        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
+        foreach (var note in notesToDelete)
+            m_notes.Remove(note);
+    }
 		
 	/// <summary>
 	/// Called directly by BattleSlot if a note is missed ( went past the slot )
