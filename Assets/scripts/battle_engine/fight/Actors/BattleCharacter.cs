@@ -22,7 +22,7 @@ public class BattleCharacter : BattleActor {
 		m_build.Load(_name);
 
         var charData = ProfileManager.instance.GetCharacter(_name);
-        var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Category, charData.Xp);
+        var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Job, charData.Xp);
         if(charData != null && levelupData.Stats != null)
         {
             m_maxStats = new Stats(levelupData.Stats);

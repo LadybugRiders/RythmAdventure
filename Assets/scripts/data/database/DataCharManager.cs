@@ -19,10 +19,10 @@ public class DataCharManager : DatabaseLoader
 
     #region LEVEL
 
-    public LevelUpData GetLevelByXp(string _category, int _xp)
+    public LevelUpData GetLevelByXp(Job _job, int _xp)
     {
         JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -38,10 +38,10 @@ public class DataCharManager : DatabaseLoader
         return levelUpData;
     }
 
-    public LevelUpData GetLevel(string _category, int _level)
+    public LevelUpData GetLevel(Job _job, int _level)
     {
         JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -60,10 +60,10 @@ public class DataCharManager : DatabaseLoader
     /// <summary>
     /// Returns the level data of the next level
     /// </summary>
-    public LevelUpData GetNextLevelByXp(string _category, int _xp)
+    public LevelUpData GetNextLevelByXp(Job _job, int _xp)
     {
         JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -106,22 +106,41 @@ public class DataCharManager : DatabaseLoader
 
     #region EQUIPEMENT
 
-    public EquipementData GetEquipement( EquipmentType _type, string _id)
+    public EquipmentData GetEquipement( EquipmentType _type, string _id)
     {
         JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
         var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
 
         if (jsonObject != null)
         {
-            return new EquipementData(jsonObject, _type);
+            return new EquipmentData(jsonObject, _type);
         }
         return null;
     }
 
-    public EquipementData GetEquipement(string _type, string _id)
+    public EquipmentData GetEquipement(string _type, string _id)
     {
         EquipmentType enumType = (EquipmentType) System.Enum.Parse(typeof(EquipmentType), _type);
         return GetEquipement(enumType, _id);
+    }
+
+    public LooksData GetLooks( LooksType _type, string _id)
+    {
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        Debug.Log(_id);
+        var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
+
+        if (jsonObject != null)
+        {
+            return new LooksData(jsonObject, _type);
+        }
+        return null;
+    }
+
+    public LooksData GetLooks(string _type, string _id)
+    {
+        LooksType lookType = (LooksType)System.Enum.Parse(typeof(LooksType), _type);
+        return GetLooks(lookType, _id);
     }
     
     #endregion
@@ -144,16 +163,15 @@ public class DataCharManager : DatabaseLoader
         }
     }
 
-    public class EquipementData
+    public class BuildData
     {
         public string Id;
         public string Name = "NoName_Equipment";
         public string Prefab;
         public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
         public int Level = 1;
-        public EquipmentType type;
 
-        public EquipementData(JSONObject _json, EquipmentType _type)
+        public BuildData(JSONObject _json)
         {
             Id = _json.GetField("id").str;
             Level = (int)_json.GetField("level").f;
@@ -167,8 +185,6 @@ public class DataCharManager : DatabaseLoader
             {
                 Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
             }
-
-            type = _type;
         }
 
         public bool IsCompatible(EquipCompatibility _type)
@@ -177,6 +193,26 @@ public class DataCharManager : DatabaseLoader
                 if (comp == _type)
                     return true;
             return false;
+        }
+    }
+
+    public class EquipmentData : BuildData
+    {
+        public EquipmentType type;
+
+        public EquipmentData(JSONObject _json, EquipmentType _type) : base(_json)
+        {
+            type = _type;
+        }
+    }
+
+    public class LooksData : BuildData
+    {
+        public LooksType type;
+
+        public LooksData(JSONObject _json, LooksType _type) : base(_json)
+        {
+            type = _type;
         }
     }
 }

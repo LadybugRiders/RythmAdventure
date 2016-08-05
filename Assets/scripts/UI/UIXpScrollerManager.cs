@@ -172,7 +172,7 @@ public class UIXpScrollerManager : MonoBehaviour {
             //Build all data needed to scroll several levels experiences
             for (int l = oldLevel + 1; l <= newLevel; l++)
             {
-                var levelupdata = charManager.GetLevel(mate.Category, l);
+                var levelupdata = charManager.GetLevel(mate.Job, l);
                 //add start
                 int startValue = (l == oldLevel + 1) ? (oldXpRequired - oldXp) : levelupdata.XpNeeded;
                 beginNumbers.Add(startValue);

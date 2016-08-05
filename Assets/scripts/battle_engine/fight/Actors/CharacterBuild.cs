@@ -32,21 +32,23 @@ public class CharacterBuild : MonoBehaviour {
 
     public void Load(string _characterId)
     {
-        LoadEquipment(_characterId);
+        var chara = ProfileManager.instance.GetCharacter(_characterId);
+        LoadEquipment(chara);
+        LoadAppearance(chara);
     }
 
-    void LoadEquipment(string _characterId)
+    void LoadEquipment(ProfileManager.CharacterData _chara)
     {
-        var chara = ProfileManager.instance.GetCharacter(_characterId);
-        foreach( var equ in chara.Equipments)
+        foreach( var equ in _chara.Equipments)
         {
-            var eqData = DataManager.instance.CharacterManager.GetEquipement(equ.Type, equ.Id);
+            if (equ == null)
+                continue;
+            var eqData = DataManager.instance.CharacterManager.GetEquipement(equ.EquipmentType, equ.Id);
             if( eqData != null)
             {
-                string pathToPrefab = "prefabs/equipments/" + equ.Type.ToString().ToLower();
+                string pathToPrefab = "prefabs/equipments/" + equ.EquipmentType.ToString().ToLower();
                 pathToPrefab += "/" + eqData.Prefab;
                 //Load prefab
-                Debug.Log(eqData.Prefab);
                 GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
                 if( go != null)
                 {
@@ -56,18 +58,30 @@ public class CharacterBuild : MonoBehaviour {
         }
     }
 
-    void LoadAppearance()
+    void LoadAppearance(ProfileManager.CharacterData _chara)
     {
-        //change color
-        JSONObject colorObject = DataManager.instance.GameData.GetField("playerColor");
-        if (colorObject != null)
+        foreach( var look in _chara.Looks )
         {
-            Color c = new Color();
-            c.r = colorObject[0].n;
-            c.g = colorObject[1].n;
-            c.b = colorObject[2].n;
-            c.a = 1;
-            SetColor(c);
+            if (look.Id == null)
+                continue;
+            var lookData = DataManager.instance.CharacterManager.GetLooks(look.LooksType, look.Id);
+            if( lookData != null)
+            {
+                string pathToImage = "images/equipments" + look.LooksType.ToString().ToLower();
+                pathToImage += "/" + lookData.Prefab;
+                var sprite = Resources.Load(pathToImage) as Sprite;
+                switch(lookData.type)
+                {
+                    case LooksType.EYES:
+                        m_eyes.sprite = sprite;
+                        break;
+                    case LooksType.EYEBROWS:
+                        m_eyebrows.sprite = sprite;
+                        break;
+                    case LooksType.FACE:
+                        break;
+                }
+            }
         }
     }
 

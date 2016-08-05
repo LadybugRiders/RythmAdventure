@@ -92,7 +92,7 @@ public class BattleEndManager : MonoBehaviour {
         {
             CharacterXpInfo chara = m_characters[i];
             var mate = teamMates[i];            
-            var levelUpData = m_charManager.GetNextLevelByXp(mate.Category, mate.Xp);
+            var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
 
             if (mate != null)
             {
@@ -114,7 +114,7 @@ public class BattleEndManager : MonoBehaviour {
             UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(charaSave.Id);
             m_storedStats.Add(data);
 
-            var levelupdata = m_charManager.GetNextLevelByXp(charaSave.Category, charaSave.Xp);
+            var levelupdata = m_charManager.GetNextLevelByXp(charaSave.Job, charaSave.Xp);
             if( levelupdata == null)
             {
                 data.isMaxLevel = true;
@@ -128,7 +128,7 @@ public class BattleEndManager : MonoBehaviour {
             charaSave.Xp += _xp;
 
             //new values for ui
-            var newLevelupdata = m_charManager.GetNextLevelByXp(charaSave.Category, charaSave.Xp);
+            var newLevelupdata = m_charManager.GetNextLevelByXp(charaSave.Job, charaSave.Xp);
             data.newXp = charaSave.Xp;
             if (newLevelupdata != null)
             {

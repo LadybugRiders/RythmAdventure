@@ -3,12 +3,17 @@
     PERFECT, GREAT, GOOD, MISS
 }
 
+public enum Job
+{
+    WARRIOR, MAGUS, THIEF
+}
+
 public enum EquipmentType
 {
     HAT, WEAPON, ACCESSORY
 }
 
-public enum LOOKS
+public enum LooksType
 {
     EYES, EYEBROWS, FACE
 }
