@@ -8,12 +8,13 @@ public enum EquipmentType
     HAT, WEAPON, ACCESSORY
 }
 
-public enum WeaponType
+public enum LOOKS
 {
-    SWORD, STAFF, DAGGER
+    EYES, EYEBROWS, FACE
 }
 
-public enum HatType
+public enum EquipCompatibility
 {
-    HAT, HELM, CAP
+    ALL, LIGHT, MEDIUM, HEAVY
 }
+

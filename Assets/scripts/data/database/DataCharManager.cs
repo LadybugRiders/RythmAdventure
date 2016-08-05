@@ -149,6 +149,7 @@ public class DataCharManager : DatabaseLoader
         public string Id;
         public string Name = "NoName_Equipment";
         public string Prefab;
+        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
         public int Level = 1;
         public EquipmentType type;
 
@@ -158,7 +159,24 @@ public class DataCharManager : DatabaseLoader
             Level = (int)_json.GetField("level").f;
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
+
+            //Compat
+            Compatibilities.Add( (EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper())) ;
+            var compat2 = _json.GetField("compat2");
+            if( compat2 != null)
+            {
+                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
+            }
+
             type = _type;
+        }
+
+        public bool IsCompatible(EquipCompatibility _type)
+        {
+            foreach (var comp in Compatibilities)
+                if (comp == _type)
+                    return true;
+            return false;
         }
     }
 }

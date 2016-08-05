@@ -187,6 +187,8 @@ public class ProfileManager : MonoBehaviour {
 
         //Equipment
         public List<BuildData> Equipments;
+        //Appearance
+        public List<BuildData> Looks;
 
         public CharacterData(string _id)
         {

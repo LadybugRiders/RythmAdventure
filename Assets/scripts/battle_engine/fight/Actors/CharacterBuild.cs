@@ -46,6 +46,7 @@ public class CharacterBuild : MonoBehaviour {
                 string pathToPrefab = "prefabs/equipments/" + equ.Type.ToString().ToLower();
                 pathToPrefab += "/" + eqData.Prefab;
                 //Load prefab
+                Debug.Log(eqData.Prefab);
                 GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
                 if( go != null)
                 {
