@@ -62,23 +62,26 @@ public class CharacterBuild : MonoBehaviour {
     {
         foreach( var look in _chara.Looks )
         {
-            if (look.Id == null)
+			if (string.IsNullOrEmpty(look.Id))
                 continue;
             var lookData = DataManager.instance.CharacterManager.GetLooks(look.LooksType, look.Id);
             if( lookData != null)
             {
-                string pathToImage = "images/equipments" + look.LooksType.ToString().ToLower();
-                pathToImage += "/" + lookData.Prefab;
-                var sprite = Resources.Load(pathToImage) as Sprite;
+                string pathToPrefab = "prefabs/looks/" + look.LooksType.ToString().ToLower();
+                pathToPrefab += "/" + lookData.Prefab;
+				var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
                 switch(lookData.type)
                 {
                     case LooksType.EYES:
-                        m_eyes.sprite = sprite;
+                        Destroy(m_eyes);
+                        go.transform.SetParent(this.transform,false);
                         break;
                     case LooksType.EYEBROWS:
-                        m_eyebrows.sprite = sprite;
+                        Destroy(m_eyebrows);
+                        go.transform.SetParent(this.transform,false);
                         break;
                     case LooksType.FACE:
+                        go.transform.SetParent(this.transform,false);
                         break;
                 }
             }

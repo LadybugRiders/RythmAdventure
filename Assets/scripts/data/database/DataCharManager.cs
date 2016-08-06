@@ -127,7 +127,6 @@ public class DataCharManager : DatabaseLoader
     public LooksData GetLooks( LooksType _type, string _id)
     {
         JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
-        Debug.Log(_id);
         var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
 
         if (jsonObject != null)

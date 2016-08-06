@@ -5,7 +5,7 @@
             "name": "cap",
             "prefab": "cap",
             "level": 1,
-            "compat": "ALL",
+            "compat": "all",
             "hp": 0,
             "attack": 0,
             "defense": 1,
@@ -17,7 +17,7 @@
             "name": "magic hat",
             "prefab": "magic_hat",
             "level": 1,
-            "compat": "LIGHT",
+            "compat": "light",
             "hp": 0,
             "attack": 0,
             "defense": 0,
@@ -29,7 +29,7 @@
             "name": "helmet",
             "prefab": "helmet",
             "level": 1,
-            "compat": "HEAVY",
+            "compat": "heavy",
             "hp": 0,
             "attack": 0,
             "defense": 3,
@@ -41,7 +41,7 @@
             "name": "bandana",
             "prefab": "bandana",
             "level": 1,
-            "compat": "ALL",
+            "compat": "all",
             "hp": 0,
             "attack": 1,
             "defense": 1,
@@ -53,8 +53,8 @@
             "name": "kiki",
             "prefab": "kiki",
             "level": 1,
-            "compat": "LIGHT",
-            "compat2": "MEDIUM",
+            "compat": "light",
+            "compat2": "medium",
             "hp": 0,
             "attack": 0,
             "defense": 1,
@@ -132,7 +132,7 @@
             "name": "backpack",
             "prefab": "backpack",
             "level": 1,
-            "compat": "ALL",
+            "compat": "all",
             "hp": 2,
             "attack": 0,
             "defense": 0,
@@ -194,7 +194,7 @@
         {
             "id": 0,
             "name": "normal eyebrow",
-            "prefab": "eyebrow",
+            "prefab": "eyebrows",
             "level": 1,
             "compat": "all",
             "hp": 0,
@@ -206,7 +206,7 @@
         {
             "id": 1,
             "name": "suspect eyebrows",
-            "prefab": "eyebrow_2",
+            "prefab": "eyebrows_2",
             "level": 1,
             "compat": "all",
             "hp": 0,
@@ -218,7 +218,7 @@
         {
             "id": 2,
             "name": "surprised eyebrow",
-            "prefab": "eyebrow_3",
+            "prefab": "eyebrows_3",
             "level": 1,
             "compat": "all",
             "hp": 0,
@@ -230,7 +230,7 @@
         {
             "id": 3,
             "name": "furry eyebrow",
-            "prefab": "eyebrow_4",
+            "prefab": "eyebrows_4",
             "level": 1,
             "compat": "all",
             "hp": 1,
@@ -242,7 +242,7 @@
         {
             "id": 4,
             "name": "angry eyebrow",
-            "prefab": "eyebrow_5",
+            "prefab": "eyebrows_5",
             "level": 1,
             "compat": "all",
             "hp": 1,
@@ -250,6 +250,70 @@
             "defense": 0,
             "magic": 0,
             "speed": 0
+        }
+    ],
+    "face": [
+        {
+            "id": 0,
+            "name": "mustache",
+            "prefab": "mustache",
+            "level": 1,
+            "compat": "all",
+            "hp": 0,
+            "attack": 1,
+            "defense": 0,
+            "magic": 0,
+            "speed": 0
+        }
+    ],
+    "body_colors": [
+        {
+            "id": 0,
+            "name": "rose",
+            "red": 234,
+            "green": 79,
+            "blue": 150,
+            "level": 1
+        },
+        {
+            "id": 1,
+            "name": "green",
+            "red": 135,
+            "green": 219,
+            "blue": 14,
+            "level": 1
+        },
+        {
+            "id": 2,
+            "name": "blue",
+            "red": 21,
+            "green": 221,
+            "blue": 221,
+            "level": 1
+        },
+        {
+            "id": 3,
+            "name": "jaune",
+            "red": 247,
+            "green": 200,
+            "blue": 0,
+            "level": 1
+        },
+        {
+            "id": 4,
+            "name": "orange",
+            "red": 234,
+            "green": 83,
+            "blue": 7,
+            "level": 1
+        },
+        {
+            "id": 5,
+            "name": "dark_blue",
+            "red": 36,
+            "green": 73,
+            "blue": 94,
+            "level": 1
         }
     ]
 }
