@@ -18,10 +18,11 @@ public class BattleCharacter : BattleActor {
 	#region LOADING 
 	override public void Load(string _name){
         base.Load(_name);
-
-		m_build.Load(_name);
-
+        
         var charData = ProfileManager.instance.GetCharacter(_name);
+        //Load equipement and looks
+        m_build.Load(charData);
+
         var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Job, charData.Xp);
         if(charData != null && levelupData.Stats != null)
         {

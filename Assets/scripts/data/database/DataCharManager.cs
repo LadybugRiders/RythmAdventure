@@ -141,7 +141,26 @@ public class DataCharManager : DatabaseLoader
         LooksType lookType = (LooksType)System.Enum.Parse(typeof(LooksType), _type);
         return GetLooks(lookType, _id);
     }
-    
+
+    #endregion
+
+    #region COLOR
+
+    public Color GetBodyColor(string _colorId)
+    {
+        Color color = new Color();
+        color.a = 1.0f;
+        JSONObject colorDB = EquipementDatabase["body_colors"];
+        var jsonObject = colorDB.list.Find(x => x.GetField("id").ToString() == _colorId);
+        if( jsonObject != null)
+        {
+            color.r = jsonObject.GetField("red").f / 255;
+            color.g = jsonObject.GetField("green").f / 255;
+            color.b = jsonObject.GetField("blue").f / 255;
+        }
+        return color;
+    }
+
     #endregion
 
     JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }

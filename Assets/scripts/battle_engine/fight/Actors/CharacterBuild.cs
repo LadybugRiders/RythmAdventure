@@ -23,11 +23,11 @@ public class CharacterBuild : MonoBehaviour {
 	}
     #region RENDERING
 
-    public void SetColor(Color _color)
+    public void SetColor(string _colorId)
     {
-        m_body.color = _color;
-        m_arm.color = _color;
-        //m_eyebrows.color = _color;
+        var color = DataManager.instance.CharacterManager.GetBodyColor(_colorId);
+        m_body.color = color;
+        m_arm.color = color;
     }
 
     public void Load(string _characterId)
@@ -35,6 +35,12 @@ public class CharacterBuild : MonoBehaviour {
         var chara = ProfileManager.instance.GetCharacter(_characterId);
         LoadEquipment(chara);
         LoadAppearance(chara);
+    }
+
+    public void Load(ProfileManager.CharacterData _chara)
+    {
+        LoadEquipment(_chara);
+        LoadAppearance(_chara);
     }
 
     void LoadEquipment(ProfileManager.CharacterData _chara)
@@ -86,6 +92,8 @@ public class CharacterBuild : MonoBehaviour {
                 }
             }
         }
+        //color
+        SetColor(_chara.ColorId);
     }
 
     #endregion

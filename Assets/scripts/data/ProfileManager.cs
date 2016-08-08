@@ -190,7 +190,7 @@ public class ProfileManager : MonoBehaviour {
         //Appearance
         public List<LooksData> Looks;
 
-        public Color color;
+        public string ColorId = "0";
 
         public CharacterData(string _id)
         {
