@@ -166,6 +166,32 @@ public class DataCharManager : DatabaseLoader
     JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
     JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
 
+    #region CHARACTER_GENERATION
+
+    public ProfileManager.CharacterData GenerateCharacter(Job _job)
+    {
+        ProfileManager.CharacterData chara = new ProfileManager.CharacterData("Jeanjean");
+        chara.Job = _job;
+        return chara;
+    }
+
+    public LooksData GetRandomLooks(Job _job, LooksType _type)
+    {
+        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
+        int r = Random.Range(0, listOfLooks.Count - 1);
+        return new LooksData(listOfLooks[r],_type);
+    }
+
+    public EquipmentData GetRandomEquipment(Job _job, EquipmentType _type)
+    {
+        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
+        int r = Random.Range(0, listOfLooks.Count - 1);
+        return new EquipmentData(listOfLooks[r], _type);
+    }
+
+    #endregion
+
+    #region DATA
     /// <summary>
     /// Data used to stored levels 
     /// </summary>
@@ -233,4 +259,6 @@ public class DataCharManager : DatabaseLoader
             type = _type;
         }
     }
+
+    #endregion
 }

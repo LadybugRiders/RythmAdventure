@@ -53,7 +53,8 @@ public partial class MapNodesManager : SpriteTouchManager {
     {
         base.OnReleased(_collider);
         MapNode node = GetNodeTouched(_collider);
-        OnNodeTouchRelease(node);
+        if( node != null )
+            OnNodeTouchRelease(node);
     }
 
     void OnNodeTouchRelease(MapNode _node)
