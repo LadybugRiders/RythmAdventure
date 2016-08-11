@@ -170,8 +170,22 @@ public class DataCharManager : DatabaseLoader
 
     public ProfileManager.CharacterData GenerateCharacter(Job _job)
     {
-        ProfileManager.CharacterData chara = new ProfileManager.CharacterData("Jeanjean");
+        ProfileManager.CharacterData chara = new ProfileManager.CharacterData(""+ProfileManager.instance.profile.Characters.Count);
         chara.Job = _job;
+        //Add random equipements
+        for(int i = 0; i< Utils.EnumCount(EquipmentType.ACCESSORY); i++)
+        {
+            EquipmentType type = (EquipmentType)i;
+            var randomEqpmnt = GetRandomEquipment(_job, type );
+            chara.AddEquipement(randomEqpmnt.Id, type);
+        }
+        //Add random looks
+        for (int i = 0; i < Utils.EnumCount(LooksType.EYEBROWS); i++)
+        {
+            LooksType type = (LooksType)i;
+            var randomLooks = GetRandomLooks(_job, type);
+            chara.AddLooks(randomLooks.Id, type);
+        }
         return chara;
     }
 
@@ -217,7 +231,7 @@ public class DataCharManager : DatabaseLoader
 
         public BuildData(JSONObject _json)
         {
-            Id = _json.GetField("id").str;
+            Id = _json.GetField("id").ToString();
             Level = (int)_json.GetField("level").f;
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;

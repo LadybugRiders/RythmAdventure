@@ -16,10 +16,10 @@ public class BattleCharacter : BattleActor {
     }
 
 	#region LOADING 
-	override public void Load(string _name){
-        base.Load(_name);
+	override public void Load(string _id){
+        base.Load(_id);
         
-        var charData = ProfileManager.instance.GetCharacter(_name);
+        var charData = ProfileManager.instance.GetCharacter(_id);
         //Load equipement and looks
         m_build.Load(charData);
 

@@ -25,23 +25,23 @@ public partial class ProfileManager {
         public CharacterData(string _id)
         {
             Id = _id;
-            Equipments = new List<EquipmentData>()
-            {
-                new EquipmentData(EquipmentType.HAT, null),
-                new EquipmentData(EquipmentType.WEAPON, null),
-                new EquipmentData(EquipmentType.ACCESSORY, null),
-            };
-            Looks = new List<LooksData>()
-            {
-                new LooksData(LooksType.EYES, null),
-                new LooksData(LooksType.EYEBROWS, null),
-                new LooksData(LooksType.FACE, null),
-            };
+            Equipments = new List<EquipmentData>();
+            Looks = new List<LooksData>();
         }
 
         public string GetEquipmentId(EquipmentType _equipmentType)
         {
             return Equipments.Find(x => x.EquipmentType == _equipmentType).Id;
+        }
+
+        public void AddEquipement(string _id, EquipmentType _type)
+        {
+            Equipments.Add(new EquipmentData(_id, _type));
+        }
+        
+        public void AddLooks(string _id, LooksType _type)
+        {
+            Looks.Add(new LooksData(_id, _type));
         }
 
         [System.Serializable]
@@ -50,7 +50,7 @@ public partial class ProfileManager {
             public string Id;
             public EquipmentType EquipmentType;
 
-            public EquipmentData(EquipmentType _type, string id)
+            public EquipmentData(string id, EquipmentType _type)
             {
                 Id = id;
                 EquipmentType = _type;
@@ -64,7 +64,7 @@ public partial class ProfileManager {
             public string Id;
             public LooksType LooksType;
 
-            public LooksData(LooksType _type, string id)
+            public LooksData(string id, LooksType _type)
             {
                 Id = id;
                 LooksType = _type;

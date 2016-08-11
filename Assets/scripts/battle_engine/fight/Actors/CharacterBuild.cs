@@ -75,7 +75,13 @@ public class CharacterBuild : MonoBehaviour {
             {
                 string pathToPrefab = "prefabs/looks/" + look.LooksType.ToString().ToLower();
                 pathToPrefab += "/" + lookData.Prefab;
-				var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+                var prefab = Resources.Load(pathToPrefab);
+                if( prefab == null)
+                {
+                    Debug.LogError("Prefab not found at : " + pathToPrefab);
+                    continue;
+                }
+                var go = Instantiate(prefab) as GameObject;
                 switch(lookData.type)
                 {
                     case LooksType.EYES:
