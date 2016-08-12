@@ -13,6 +13,7 @@ public class DebugMixiRandomizer : MonoBehaviour {
             var newchara = charamanager.GenerateCharacter((Job)i);
             newchara.Id = "" + i;
             profile.Characters[i] = newchara;
+            profile.CurrentTeam[i] = newchara.Id;
         }
 	}
 	

@@ -44,7 +44,7 @@ public class CharacterBuild : MonoBehaviour {
     }
 
     void LoadEquipment(ProfileManager.CharacterData _chara)
-    {
+    {        
         foreach( var equ in _chara.Equipments)
         {
             if (equ == null)
