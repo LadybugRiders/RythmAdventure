@@ -79,6 +79,6 @@ public class BattleSlotExplosion : MonoBehaviour {
 
 	void OnTweenEnd(object _o){
 		GameObject go = (GameObject)_o;
-		go.transform.localScale = new Vector3 (m_minScale, m_minScale, 1);
+		go.transform.localScale = new Vector3 (0.01f, 0.01f, 1);
 	}
 }
