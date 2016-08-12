@@ -145,7 +145,7 @@ public class BattleSlot : MonoBehaviour {
 
 	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
 	{
-		//Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+		Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
 
 		m_track.OnInputError(_method, _note);
 
