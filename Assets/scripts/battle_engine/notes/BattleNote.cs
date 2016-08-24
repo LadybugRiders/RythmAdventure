@@ -26,13 +26,17 @@ public class BattleNote : MonoBehaviour {
 	protected SpriteRenderer m_renderer;
 	protected Transform m_transform;
 
-	/** Distance done by the note from its starting point */
-	protected float m_distanceDone = 0;
+    /// <summary>
+    /// Distance done by the note from its starting point 
+    /// </summary>
+    protected float m_distanceDone = 0;
 
 	public float Accuracy{ get; set; }
-
-	/** Distance where the alpha of the note will reach 1.Of */
-	protected float m_alphaDist = 5.0f;
+    
+    /// <summary>
+    /// Distance where the alpha of the note will reach 1.Of
+    /// </summary>
+    [SerializeField] protected float m_alphaDist = 3.0f;
 
 	protected Vector3 m_startPos;
 
