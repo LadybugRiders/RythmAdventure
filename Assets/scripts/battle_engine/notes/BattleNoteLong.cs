@@ -120,6 +120,7 @@ public class BattleNoteLong : BattleNote {
         //set sprite
         if ( m_isHead )
         {
+            UpdateBody();
             Utils.SetAlpha(m_bodySprite, 0.0f);
             if ( m_track.TracksManager.IsAttacking ){
 				m_renderer.sprite = m_attackSprite;
