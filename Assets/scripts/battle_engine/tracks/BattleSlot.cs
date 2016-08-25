@@ -197,7 +197,7 @@ public class BattleSlot : MonoBehaviour {
 			return;
 		if( _collider.gameObject.layer == 8 ){
 			BattleNote note = _collider.gameObject.GetComponent<BattleNote>();
-			if( note ){
+			if( note && !m_collidingNotes.Contains(note) ){
 				//Debug.Log( "Adding New note");
 				m_collidingNotes.Add(note);
 			}

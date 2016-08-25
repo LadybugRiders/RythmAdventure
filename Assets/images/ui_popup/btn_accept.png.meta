@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 2a6963f969d726641bfc17c6bf0cf0db
-timeCreated: 1469469006
+timeCreated: 1472049326
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -56,12 +56,12 @@ TextureImporter:
       name: btn_accept_0
       rect:
         serializedVersion: 2
-        x: 113
-        y: 18
-        width: 285
-        height: 92
+        x: 61
+        y: 66
+        width: 397
+        height: 129
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
     outline: []

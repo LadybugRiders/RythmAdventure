@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 76e2f91094c9b8e4ba0249d1a7966bde
-timeCreated: 1469469085
+timeCreated: 1472049264
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -56,12 +56,12 @@ TextureImporter:
       name: btn_decline_0
       rect:
         serializedVersion: 2
-        x: 115
-        y: 18
-        width: 283
-        height: 92
+        x: 63
+        y: 65
+        width: 395
+        height: 129
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
     outline: []
