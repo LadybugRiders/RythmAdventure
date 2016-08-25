@@ -49,7 +49,7 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
-        Debug.Log(_inputMethod);
+
         var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
 
         if (m_active == false ) 

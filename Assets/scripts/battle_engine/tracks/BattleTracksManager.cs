@@ -256,6 +256,8 @@ public class BattleTracksManager : MonoBehaviour {
     /// </summary>
     public void OnInputTriggered(int _id, BattleNote.HIT_METHOD _method)
     {
+        CheckCurrentTrack();
+        Debug.Log("CURRENT TRACK : " + m_currentTrackID);
         if (CheckInputState(_id))
 		{
             m_tracks[m_currentTrackID].OnInputTriggered(_method);
@@ -352,7 +354,7 @@ public class BattleTracksManager : MonoBehaviour {
 
 	public void RaiseNoteEvent(NoteEventInfo _eventNote)
 	{
-        Debug.Log("HIT note event");
+        //Debug.Log("HIT note event "+ _eventNote.Accuracy.ToString() + " t=" + _eventNote.NoteHit.TimeBegin + " " + m_currentTrackID);
 		if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;

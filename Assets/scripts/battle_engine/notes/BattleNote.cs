@@ -25,7 +25,7 @@ public class BattleNote : MonoBehaviour {
 	//references to components used in updates
 	protected SpriteRenderer m_renderer;
 	protected Transform m_transform;
-
+    
     /// <summary>
     /// Distance done by the note from its starting point 
     /// </summary>
