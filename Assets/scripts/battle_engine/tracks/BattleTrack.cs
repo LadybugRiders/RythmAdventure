@@ -116,7 +116,7 @@ public class BattleTrack : MonoBehaviour {
 	/// Use this trigger the action induced by hitting the note
 	/// </summary>
 	public void OnNoteTriggerAction(BattleNote _note, BattleSlot _slot, bool _isMagic){
-
+        
         HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
 
         var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);

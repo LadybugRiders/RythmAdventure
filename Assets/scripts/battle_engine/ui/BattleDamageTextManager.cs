@@ -46,13 +46,13 @@ public class BattleDamageTextManager : MonoBehaviour {
 
 	void LaunchText(GameObject _go, TextMesh _text){
 		//poisition text on gameobject
-		Utils.SetPositionX (_text.transform, _go.transform.position.x +Random.Range (-1.0f, 0.8f));
+		Utils.SetPositionX (_text.transform, _go.transform.position.x +Random.Range (-0.8f, 0.8f));
 		Utils.SetPositionY (_text.transform, _go.transform.position.y);
 		//make it appear
 		Utils.SetAlpha (_text,1.0f);
 		//prepare and launch tween
 		Vector3 dest = _text.transform.localPosition;
-		dest.y += 1.0f + (float)Random.Range (0.0f, 1.5f);
+		dest.y += 0.5f + (float)Random.Range (0.0f, 0.2f);
 		TweenEngine.TweenTransform tween =
 			TweenEngine.instance.PositionTo (_text.transform, dest, 0.1f, "OnTweenTextEnded");
 		tween.CallbackObject = this.gameObject;

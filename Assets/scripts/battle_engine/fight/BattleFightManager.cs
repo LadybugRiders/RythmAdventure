@@ -116,6 +116,8 @@ public class BattleFightManager : MonoBehaviour {
 
 	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
 
+        /*if( eventInfo.NoteHit.TimeBegin > 8.0f)
+            Debug.Log("RECEIVE ACTION " + eventInfo.NoteHit.TimeBegin);*/
 		//nothing for missed notes
 		if (eventInfo.Accuracy == HitAccuracy.MISS)
 			return;

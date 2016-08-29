@@ -66,7 +66,7 @@ public class BattleEnemy : BattleActor {
 	override protected bool Die(){
 		m_smokeAnimator.SetTrigger ("explodeTrigger");
 		base.Die ();
-		m_sprite.enabled = false;
+        gameObject.SetActive(false);
 		return true;
 	}
 }

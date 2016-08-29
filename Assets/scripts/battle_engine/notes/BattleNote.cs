@@ -111,8 +111,10 @@ public class BattleNote : MonoBehaviour {
 		return Launch ();
 	}
 
-	virtual protected bool Launch(){
-		this.CurrentState = State.LAUNCHED;
+	virtual protected bool Launch()
+    {
+        IsFinal = false; //failsafe : a note cannot be launched on a disabled track, so cant be launched as final
+        this.CurrentState = State.LAUNCHED;
 		//set sprite & color
 		if (m_track.TracksManager.IsAttacking) {
 			m_renderer.sprite = m_attackSprite;
@@ -148,6 +150,7 @@ public class BattleNote : MonoBehaviour {
     /// </summary>
 	virtual public BattleNote[] Die(){
 		this.CurrentState = State.DEAD;
+        IsFinal = false;
 		Utils.SetLocalPositionY (m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
 		if (m_magicEffect)

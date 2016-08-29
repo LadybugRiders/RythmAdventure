@@ -64,6 +64,8 @@ public class BattleTracksManager : MonoBehaviour {
             Success = _success;
             Accuracy = _acc;
 			IsFinal = _isFinal;
+            if (IsFinal)
+                IsFinal.ToString();
         }
     }
 
@@ -371,7 +373,7 @@ public class BattleTracksManager : MonoBehaviour {
 
 	public void RaiseNoteActionEvent(NoteEventInfo _eventNote)
     {
-        //Debug.Log("HIT note action");
+        Debug.Log("HIT note action");
         if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;

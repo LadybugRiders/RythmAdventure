@@ -55,15 +55,16 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
-        //Debug.Log(_inputMethod);
+        
         //var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
 
         if (m_active == false ) 
 			return;
 		//EXCEPTION CASES
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
-		if (_inputMethod == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null) {
+		if( (_inputMethod == BattleNote.HIT_METHOD.RELEASE && ( CurrentLongNote == null && m_pendingNote == null) )){
 			AbortPendingSlide ();
+            Debug.Log(m_track.Id + "abort from 1");
             //debugText.text = "Error1";
 
             return;
@@ -71,6 +72,7 @@ public class BattleSlot : MonoBehaviour {
 		//if a slide is done but no press, this is a remain from a previous track input
 		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS)
         {
+            Debug.Log(m_track.Id + "abort from 2");
             //debugText.text = "Error2";
             return;
 		}
@@ -81,10 +83,11 @@ public class BattleSlot : MonoBehaviour {
 		//if no note is colliding (miss)
 		if (note == null)
         {
+            Debug.Log(m_track.Id + "abort from 3");
             //debugText.text = "Error3";
             //send an error to BattleTrack
             //Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
-			ApplyError(_inputMethod);
+            ApplyError(_inputMethod);
 			return;
 		}
 
@@ -93,6 +96,7 @@ public class BattleSlot : MonoBehaviour {
 		//set accuracy if note isn't dead
 		if( !note.IsDead )
 			note.Accuracy = accuracy;
+
 
 		//If the note can be slid 
 		if (note.CanSlide) {
