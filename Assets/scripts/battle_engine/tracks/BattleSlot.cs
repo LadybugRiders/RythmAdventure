@@ -13,6 +13,11 @@ public class BattleSlot : MonoBehaviour {
 
     [SerializeField] protected float m_slideErrorDelay = 0.6f;
 
+    /// <summary>
+    /// Basically : when a colliding is that far from the slot, it dies (miss)
+    /// </summary>
+    [SerializeField] protected float m_noteDeltaLifeDistance = 1;
+
     BattleNote.HIT_METHOD m_lastInputMethod = BattleNote.HIT_METHOD.RELEASE;    
 	BattleNote m_pendingNote;
 
@@ -32,6 +37,7 @@ public class BattleSlot : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        CheckCollidingNotes();
 	}
 
 	public void Activate(){
@@ -49,8 +55,8 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
-
-        var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
+        //Debug.Log(_inputMethod);
+        //var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
 
         if (m_active == false ) 
 			return;
@@ -58,14 +64,14 @@ public class BattleSlot : MonoBehaviour {
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
 		if (_inputMethod == BattleNote.HIT_METHOD.RELEASE && CurrentLongNote == null) {
 			AbortPendingSlide ();
-            debugText.text = "Error1";
+            //debugText.text = "Error1";
 
             return;
 		}
 		//if a slide is done but no press, this is a remain from a previous track input
 		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS)
         {
-            debugText.text = "Error2";
+            //debugText.text = "Error2";
             return;
 		}
 
@@ -75,9 +81,9 @@ public class BattleSlot : MonoBehaviour {
 		//if no note is colliding (miss)
 		if (note == null)
         {
-            debugText.text = "Error3";
+            //debugText.text = "Error3";
             //send an error to BattleTrack
-            Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
+            //Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
 			ApplyError(_inputMethod);
 			return;
 		}
@@ -145,7 +151,7 @@ public class BattleSlot : MonoBehaviour {
 
 	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
 	{
-		Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+		//Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
 
 		m_track.OnInputError(_method, _note);
 
@@ -192,9 +198,31 @@ public class BattleSlot : MonoBehaviour {
 
     #region COLLISIONS
 
+    void CheckCollidingNotes()
+    {
+        if (m_active == false)
+            return;
+        for(int i= m_collidingNotes.Count -1; i >= 0; --i)
+        {
+            var collidingNote = m_collidingNotes[i];
+            //distance between the note and slot centers
+            float diff = collidingNote.transform.position.x - transform.position.x;
+            bool tooLong = Mathf.Abs(diff) >= m_noteDeltaLifeDistance;
+            bool pastRight = tooLong && m_attack && diff > 0;
+            bool pastLeft = tooLong && !m_attack && diff < 0;
+
+            if (pastRight || pastLeft)
+            {
+                m_track.OnNoteMiss(collidingNote);
+                m_collidingNotes.RemoveAt(i);
+            }
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D _collider){
 		if (m_active == false ) 
 			return;
+        //when a colliding note leaves the area of collision with the slot
 		if( _collider.gameObject.layer == 8 ){
 			BattleNote note = _collider.gameObject.GetComponent<BattleNote>();
 			if( note && !m_collidingNotes.Contains(note) ){
