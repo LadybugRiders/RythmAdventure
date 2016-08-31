@@ -194,17 +194,13 @@ public class BattleTrack : MonoBehaviour {
         }            
         
     }
+    
+    #endregion
+    
+    #region LONG_NOTES
 
-	public void OnLaunchAction( BattleTracksManager.NoteEventInfo _noteInfo ){
-
-	}
-
-	#endregion
-
-	#region LONG_NOTES
-
-	/** Check current Long Note and affect m_currentLongNote */
-	void CheckLongNoteHit(BattleNote _note){
+    /** Check current Long Note and affect m_currentLongNote */
+    void CheckLongNoteHit(BattleNote _note){
 		//keep note if the note is long and the head
 		if (_note.Type == NoteData.NoteType.LONG) {
 			BattleNoteLong noteLong = (BattleNoteLong)_note;

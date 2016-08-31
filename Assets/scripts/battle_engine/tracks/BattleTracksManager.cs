@@ -220,7 +220,7 @@ public class BattleTracksManager : MonoBehaviour {
 				}
 			}
 			if (note == null) {
-				Debug.LogError ("No Available Note found ");
+				Debug.LogError ("No Available Long Note found -- trying to add an head");
 				return false;
 			}
 			//Launch the note on the right track
@@ -283,7 +283,7 @@ public class BattleTracksManager : MonoBehaviour {
 			return (_id < 0 && m_switchState == BattleState.ATTACK) || (_id > 0 && m_switchState == BattleState.DEFEND);
 		return (_id < 0 && m_state == BattleState.DEFEND) || (_id > 0 && m_state == BattleState.ATTACK);
 	}
-
+        
 	#endregion
 
 	#region FIND_NOTES
@@ -373,7 +373,7 @@ public class BattleTracksManager : MonoBehaviour {
 
 	public void RaiseNoteActionEvent(NoteEventInfo _eventNote)
     {
-        Debug.Log("HIT note action");
+        //Debug.Log("HIT note action");
         if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;

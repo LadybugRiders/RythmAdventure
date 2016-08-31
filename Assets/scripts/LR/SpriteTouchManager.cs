@@ -112,31 +112,33 @@ public class SpriteTouchManager : MonoBehaviour {
 
     bool IsJustPressed()
     {
-#if UNITY_STANDALONE || UNITY_EDITOR
-        return Input.GetMouseButtonDown(0);
-#else
-		bool b = false;
-        for (int i = 0; i < Input.touches.Length; i++) {
+#if UNITY_ANDROID
+        bool b = false;
+        for (int i = 0; i < Input.touches.Length; i++)
+        {
             b = Input.touches[i].phase == TouchPhase.Began;
             if (b)
                 break;
         }
         return b;
+#else        
+        return Input.GetMouseButtonDown(0);
 #endif
     }
 
     bool IsJustReleased()
     {
-#if UNITY_STANDALONE || UNITY_EDITOR
-        return Input.GetMouseButtonUp(0);
-#else
-	    bool b = false;
-        for (int i = 0; i < Input.touches.Length; i++) {
+#if UNITY_ANDROID
+        bool b = false;
+        for (int i = 0; i < Input.touches.Length; i++)
+        {
             b = Input.touches[i].phase == TouchPhase.Ended;
             if (b)
                 break;
         }
         return b;
+#else        
+        return Input.GetMouseButtonUp(0);
 #endif
     }
 

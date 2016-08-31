@@ -55,8 +55,10 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
-        
+
         //var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
+        if (_inputMethod == BattleNote.HIT_METHOD.RELEASE)
+            _inputMethod.ToString();
 
         if (m_active == false ) 
 			return;
@@ -64,7 +66,7 @@ public class BattleSlot : MonoBehaviour {
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
 		if( (_inputMethod == BattleNote.HIT_METHOD.RELEASE && ( CurrentLongNote == null && m_pendingNote == null) )){
 			AbortPendingSlide ();
-            Debug.Log(m_track.Id + "abort from 1");
+            Debug.Log(m_track.Id + " abort input : released but no long note / pending note");
             //debugText.text = "Error1";
 
             return;
@@ -72,24 +74,27 @@ public class BattleSlot : MonoBehaviour {
 		//if a slide is done but no press, this is a remain from a previous track input
 		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS)
         {
-            Debug.Log(m_track.Id + "abort from 2");
+            Debug.Log(m_track.Id + "abord input : slide but no press done " );
             //debugText.text = "Error2";
             return;
 		}
 
 		//else we hit the first note that has collided
 		BattleNote note = WaitingForSlide ? m_pendingNote : GetFirstAliveCollidingNote();
-
+        Debug.Log("noteActive " + note);
 		//if no note is colliding (miss)
 		if (note == null)
         {
-            Debug.Log(m_track.Id + "abort from 3");
+            Debug.Log(m_track.Id + "apply error : no note active/colliding/pending");
             //debugText.text = "Error3";
             //send an error to BattleTrack
             //Debug.Log("ERROR trigger no note"+transform.parent.parent.name);
             ApplyError(_inputMethod);
 			return;
 		}
+
+        //Either it's a miss or a hit, we can clean the past note of the queue (past the slot)
+        RemovePastNotes(note);
 
 		//hit note and compute accuracy
 		float accuracy = ComputeAccuracy (note);
@@ -133,9 +138,9 @@ public class BattleSlot : MonoBehaviour {
 				return;
 			}
 		}
-
-
+        
         //Debug.Log("HIT " + _inputMethod + transform.parent.parent.name + " fr" );
+        //We auto remove the note if it's a long note's head ( we don't want further collisions with it )
         bool forceRemove = CurrentLongNote != null;
         m_track.OnNoteHit (note,this, forceRemove );
 
@@ -155,7 +160,7 @@ public class BattleSlot : MonoBehaviour {
 
 	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
 	{
-		//Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+		Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
 
 		m_track.OnInputError(_method, _note);
 
@@ -249,17 +254,40 @@ public class BattleSlot : MonoBehaviour {
 	}
 
 	BattleNote GetFirstAliveCollidingNote(){
+        //here we 'll try to find the first colliding note, but also the note that has the best accuracy
+        //that is to say, the note that is more collinding with the slot
+        float bestAccuracy = float.MinValue;
+        BattleNote bestNote = null;
 		foreach (var note in m_collidingNotes) {
-			if (!note.IsDead) {
-				return note;
+            var acc = ComputeAccuracy(note);
+            if (!note.IsDead && acc > bestAccuracy) {
+                bestAccuracy = acc;
+                bestNote = note;
 			}
 		}
-		return null;
+		return bestNote;
 	}
 
-	#endregion
+    /// <summary>
+    /// Checks all the notes and remove the ones that are past the one given in parameter.
+    /// Best called when a note is hit/missed to clean the queue.
+    /// </summary>
+    void RemovePastNotes(BattleNote _note)
+    {
+        for (int i = m_collidingNotes.Count - 1; i >= 0; --i)
+        {
+            var note = m_collidingNotes[i];
+            if (note != CurrentLongNote && note.Data.TimeBegin < _note.Data.TimeBegin)
+            {
+                m_collidingNotes.RemoveAt(i);
+                m_track.OnNoteMiss(note);
+            }
+        }
+    }
 
-	public void PlayTextAccuracy(HitAccuracy _accuracy){
+    #endregion
+
+    public void PlayTextAccuracy(HitAccuracy _accuracy){
 		//Find dead text
 		for (int i=0; i < m_textsAcc.Count; i++) {
 			if( m_textsAcc[i].IsAvailable ){
