@@ -3,25 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattleSlotExplosion : MonoBehaviour {
-
-	//[SerializeField] SpriteRenderer m_renderer;
-
-	[SerializeField] float m_minScale = 1.0f;
-	[SerializeField] float m_maxScale = 2.5f;
-	[SerializeField] float m_longScale = 2.0f;
-
+    
 	TweenEngine.Tween m_currentLongTween;
     Transform m_transform;
+    Animator m_animator;
 
     void Awake()
     {
         m_transform = transform;
+        m_animator = GetComponent<Animator>();
     }
-
-	// Use this for initialization
-	void Start () {
-	}
-	
+    	
 	// Update is called once per frame
 	void Update () {
 	
@@ -44,30 +36,23 @@ public class BattleSlotExplosion : MonoBehaviour {
 
 	}
 
-	void PlaySimple(){
-        //Reset transform
-        transform.localScale = new Vector3 (m_minScale, m_minScale, 1);
-		Utils.SetLocalAngleZ (transform, 0.0f);
-		//Tween
-		TweenEngine.Tween tween = TweenEngine.instance.ScaleTo (m_transform, new Vector3(m_maxScale,m_maxScale,1), 0.25f,"OnTweenEnd" );
-		TweenEngine.instance.RotateAroundZTo (m_transform, 30.0f, 0.3f );
-		tween.CallbackObject = this.gameObject;
-	}
+	void PlaySimple()
+    {
+        m_animator.ResetTrigger("stopTrigger");
+        m_animator.SetTrigger("simpleTrigger");
+    }
 
 	void PlayLong()
     {
-        //Reset transform
-        m_transform.localScale = new Vector3 (m_minScale, m_minScale, 1);
-		Utils.SetLocalAngleZ (m_transform, 0.0f);
-		//Tween
-		//TweenEngine.instance.ScaleTo (m_explosion.transform, new Vector3(m_longScale,m_longScale,1), 0.1f );
-
-		m_currentLongTween = TweenEngine.instance.RotateAroundZTo (m_transform, 360.0f, 0.8f,false,int.MaxValue,null );
-		m_currentLongTween.CallbackObject = this.gameObject;
+        m_animator.ResetTrigger("stopTrigger");
+        m_animator.SetTrigger("rotateTrigger");
 	}
 
-	public void Stop(){
-		if (m_currentLongTween != null) {            
+	public void Stop()
+    {
+        m_animator.ResetTrigger("stopTrigger");
+        m_animator.SetTrigger("stopTrigger");
+        if (m_currentLongTween != null) {            
 			m_currentLongTween.Stop(true);
             m_currentLongTween = null;
         }

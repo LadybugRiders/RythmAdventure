@@ -66,7 +66,7 @@ public class BattleSlot : MonoBehaviour {
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
 		if( (_inputMethod == BattleNote.HIT_METHOD.RELEASE && ( CurrentLongNote == null && m_pendingNote == null) )){
 			AbortPendingSlide ();
-            //Debug.Log(m_track.Id + " abort input : released but no long note / pending note");
+            Debug.Log(m_track.Id + " abort input : released but no long note / pending note");
             //debugText.text = "Error1";
 
             return;
@@ -74,7 +74,7 @@ public class BattleSlot : MonoBehaviour {
 		//if a slide is done but no press, this is a remain from a previous track input
 		if (_inputMethod == BattleNote.HIT_METHOD.SLIDE && m_lastInputMethod != BattleNote.HIT_METHOD.PRESS)
         {
-            //Debug.Log(m_track.Id + "abord input : slide but no press done " );
+            Debug.Log(m_track.Id + "abord input : slide but no press done " );
             //debugText.text = "Error2";
             return;
 		}
@@ -85,7 +85,7 @@ public class BattleSlot : MonoBehaviour {
 		//if no note is colliding (miss)
 		if (note == null)
         {
-            //Debug.Log(m_track.Id + "apply error : no note active/colliding/pending");
+            Debug.Log(m_track.Id + "apply error : no note active/colliding/pending");
             //debugText.text = "Error3";
             //send an error to BattleTrack
             ApplyError(_inputMethod);
@@ -149,7 +149,7 @@ public class BattleSlot : MonoBehaviour {
             m_track.OnNoteTriggerAction(note, this, false);
         }
 
-		m_collidingNotes.RemoveAt (0);
+        m_collidingNotes.Remove(note);
 
 		//play explosion
 		m_explosion.Play (note);
@@ -159,7 +159,7 @@ public class BattleSlot : MonoBehaviour {
 
 	public void ApplyError(BattleNote.HIT_METHOD _method, BattleNote _note = null)
 	{
-		//Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
+		Debug.Log ("APPLY error"+ this.gameObject.name+ " " + _method + m_lastInputMethod + " " + ( _note != null ? _note.HitMethod.ToString() : "") );
 
 		m_track.OnInputError(_method, _note);
 

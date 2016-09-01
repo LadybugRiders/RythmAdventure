@@ -129,11 +129,14 @@ public class BattleTrack : MonoBehaviour {
 	/// <summary>
 	/// Use this to kill a note
 	/// </summary>
-	public void OnNoteKill(BattleNote _note, BattleSlot _slot){		
+	public void OnNoteKill(BattleNote _note, BattleSlot _slot){
+        //Debug.Log("NOTE KILL");
 		var notesToDelete = _note.Die ();
         //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
         foreach (var note in notesToDelete)
             m_notes.Remove(note);
+        //we could check the type of the note, but it's safer like this after all
+        m_currentLongNote = null;
     }
 		
 	/// <summary>
