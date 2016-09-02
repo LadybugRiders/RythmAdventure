@@ -13,8 +13,9 @@ public class Stats {
 	protected int m_attack = 20;
 	protected int m_defense = 10;
 	protected int m_magic = 10;
+    private int m_speed = 10;
 
-	public float blockPerfectModifier = 0.9f;
+    public float blockPerfectModifier = 0.9f;
 	public float blockGreatModifier = 0.6f;
 	public float blockGoodModifier = 0.3f;
 	public float blockBadModifier = -0.3f;
@@ -33,6 +34,9 @@ public class Stats {
         Attack = (int)json.GetField("attack").f;
         Defense = (int)json.GetField("defense").f;
         Magic = (int)json.GetField("magic").f;
+        HP = (int)json.GetField("hp").f;
+        MP = (int)json.GetField("mp").f;
+        Speed = (int)json.GetField("speed").f;
     }
 
 	public int Level {
@@ -88,5 +92,17 @@ public class Stats {
 			m_magic = value;
 		}
 	}
-    
+
+    public int Speed
+    {
+        get
+        {
+            return m_speed;
+        }
+
+        set
+        {
+            m_speed = value;
+        }
+    }
 }

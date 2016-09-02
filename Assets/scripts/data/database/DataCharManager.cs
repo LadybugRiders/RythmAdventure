@@ -17,6 +17,13 @@ public class DataCharManager : DatabaseLoader
         m_database.Add("equipment", tempJson);
     }
 
+    public Stats ComputeStats(ProfileManager.CharacterData _charData)
+    {
+        Stats stats = new Stats();
+        stats.Attack = 190;
+        return stats;
+    }
+
     #region LEVEL
 
     public LevelUpData GetLevelByXp(Job _job, int _xp)

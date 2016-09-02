@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class CharacterBuild : MonoBehaviour {
     
     [SerializeField] SpriteRenderer m_body;
