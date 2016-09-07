@@ -20,7 +20,9 @@ public class DataCharManager : DatabaseLoader
     public Stats ComputeStats(ProfileManager.CharacterData _charData)
     {
         Stats stats = new Stats();
-        stats.Attack = 190;
+        //Get Class Stats
+        var levelupStats = GetLevelByXp(_charData.Job, _charData.Xp).Stats;
+        stats.Add(levelupStats);
         return stats;
     }
 

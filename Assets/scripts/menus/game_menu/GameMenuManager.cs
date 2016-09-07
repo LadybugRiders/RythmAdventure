@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,5 +21,10 @@ public class GameMenuManager : MonoBehaviour {
     void OnButtonPressed()
     {
 
+    }
+
+    public void OnBackButtonClicked()
+    {
+        SceneManager.LoadScene("world1");
     }
 }

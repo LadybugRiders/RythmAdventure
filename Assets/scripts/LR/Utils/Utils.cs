@@ -200,4 +200,12 @@ public partial class Utils  {
     public static int EnumCount( Enum _enum ){        
         return Enum.GetNames(_enum.GetType()).Length;
     }
+
+    public static void SetLayerRecursively(GameObject go, int layerNumber)
+    {
+        foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
+        {
+            trans.gameObject.layer = layerNumber;
+        }
+    }
 }

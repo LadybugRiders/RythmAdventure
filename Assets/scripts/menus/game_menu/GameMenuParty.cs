@@ -42,6 +42,7 @@ public class GameMenuParty : GameMenu {
             charaInfo.m_stats.Load(stats);
             //load appearance
             charaInfo.m_build.Load(charaData);
+            Utils.SetLayerRecursively(charaInfo.m_build.gameObject, LayerMask.NameToLayer("SpriteUI"));
         }
     }
 
@@ -49,7 +50,7 @@ public class GameMenuParty : GameMenu {
     {
         base.Deactivate();
     }
-
+    
     [System.Serializable]
     public class CharacterInfos
     {

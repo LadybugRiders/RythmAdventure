@@ -47,6 +47,10 @@ public partial class MapNodesManager : SpriteTouchManager {
         Utils.Set2DPosition(m_player.transform, m_starterNode.transform.position);
     }
 
+    public void OnGoToGameMenu()
+    {
+        SceneManager.LoadScene("game_menu");
+    }
     #region TOUCH
 
     protected override void OnReleased(Collider2D _collider)

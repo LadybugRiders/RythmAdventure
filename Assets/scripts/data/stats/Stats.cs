@@ -6,14 +6,14 @@ public class Stats {
 
 	protected int m_level = 1;
 
-	protected int m_HP= 100;
+	protected int m_HP= 0;
 
-	protected int m_MP = 100;
+	protected int m_MP = 0;
 
-	protected int m_attack = 20;
-	protected int m_defense = 10;
-	protected int m_magic = 10;
-    private int m_speed = 10;
+	protected int m_attack = 0;
+	protected int m_defense = 0;
+	protected int m_magic = 0;
+    private int m_speed = 0;
 
     public float blockPerfectModifier = 0.9f;
 	public float blockGreatModifier = 0.6f;
@@ -39,7 +39,29 @@ public class Stats {
         Speed = (int)json.GetField("speed").f;
     }
 
-	public int Level {
+    public Stats Add(Stats _stats)
+    {
+        Attack += _stats.Attack;
+        Defense += _stats.Defense;
+        Magic += _stats.Magic;
+        HP += _stats.HP;
+        MP += _stats.MP;
+        Speed += _stats.Speed;
+        return this;
+    }
+
+    public Stats Subtract(Stats _stats)
+    {
+        Attack -= _stats.Attack;
+        Defense -= _stats.Defense;
+        Magic -= _stats.Magic;
+        HP -= _stats.HP;
+        MP -= _stats.MP;
+        Speed -= _stats.Speed;
+        return this;
+    }
+
+    public int Level {
 		get {
 			return m_level;
 		}
