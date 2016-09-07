@@ -191,7 +191,7 @@ public class BattleActor : MonoBehaviour {
 		if (m_lifeGauge == null)
 			return;
 
-		float hpPercent = (float)CurrentStats.HP / (float)MaxStats.HP;
+		float hpPercent = MaxStats.HP == 0 ? 0 : (float)CurrentStats.HP / (float)MaxStats.HP;
 		m_lifeGauge.SetValue( hpPercent );
 	}
 
@@ -199,9 +199,15 @@ public class BattleActor : MonoBehaviour {
 		if (m_manaGauge == null)
 			return;
 
-		float mpPercent = (float)CurrentStats.MP / (float)MaxStats.MP;
+		float mpPercent = MaxStats.MP == 0 ? 0 : (float)CurrentStats.MP / (float)MaxStats.MP;
 		m_manaGauge.SetValue( mpPercent );
 	}
+
+    public void RefreshUI()
+    {
+        RefreshLifeGauge();
+        RefreshManaGauge();
+    }
 
 	#endregion ui
 

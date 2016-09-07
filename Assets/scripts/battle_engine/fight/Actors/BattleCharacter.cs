@@ -23,14 +23,14 @@ public class BattleCharacter : BattleActor {
         //Load equipement and looks
         m_build.Load(charData);
 
-        var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Job, charData.Xp);
-        if(charData != null && levelupData.Stats != null)
+        //Get Stats
+        var stats = DataManager.instance.CharacterManager.ComputeStats(charData);
+        if(charData != null )
         {
-            m_maxStats = new Stats(levelupData.Stats);
-            m_currentStats = new Stats(levelupData.Stats);
+            m_maxStats = new Stats(stats);
+            m_currentStats = new Stats(stats);
         }
-		CurrentStats.MP = 0;
-        RefreshManaGauge();
+        RefreshUI();
     }
 	#endregion
 

@@ -6,7 +6,6 @@ public class BattleFightMagic : MonoBehaviour {
 	
 	[SerializeField] protected BattleFightMagicManager m_magicManager;
 	
-	[SerializeField] protected SpriteRenderer m_casterEffect;
 	[SerializeField] protected List<BattleFightMagicEffect> m_effects;
 
 	[SerializeField] protected AudioClip m_mainSoundClip;
@@ -69,9 +68,6 @@ public class BattleFightMagic : MonoBehaviour {
 
 	/** Override this to launch the magic */
 	virtual protected void Launch(){
-		//Effect around the caster
-		Utils.SetAlpha (m_casterEffect, 1f);
-		m_casterEffect.gameObject.GetComponent<Animation> ().Play ();
 
         //Launch effect 
         BattleFightMagicEffect effect = GetFreeEffect();
@@ -87,10 +83,6 @@ public class BattleFightMagic : MonoBehaviour {
 		if (m_launched) {
 			m_magicManager.OnMagicEnded (this);
 		}
-		//kill caster effect
-		Utils.SetAlpha (m_casterEffect, 0.0f);
-		//kill effects
-		Utils.SetAlpha (m_casterEffect, 0f);
 		for (int i=0; i < m_effects.Count; i++) {			
 			m_effects[i].Die();       
 		}
@@ -177,13 +169,7 @@ public class BattleFightMagic : MonoBehaviour {
 			return m_power;
 		}
 	}
-
-	public SpriteRenderer CasterEffect{
-		get{
-			return m_casterEffect;
-		}
-	}
-
+    
 	public int FillRate {
 		get {
 			return m_fillRate;

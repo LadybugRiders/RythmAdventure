@@ -8,7 +8,6 @@ public class UIBattleLifeBar : UIGauge {
     float m_aroundRatio = 1.1f;
 
 	Color m_baseColor;
-	TweenEngine.Tween m_tweenBlink;
 
 	override protected void Awake(){
 		m_baseColor = m_gaugeSpr.color;
@@ -25,15 +24,7 @@ public class UIBattleLifeBar : UIGauge {
 	override public void SetValue(float _value, bool _fill = false, float _fillDuration = 1.0f, int _fillCount = 0)
     {
 		base.SetValue (_value);
-
-        //blinking
-		if (_value >= 1.0f && m_isMana) {
-			m_tweenBlink = TweenEngine.instance.ColorTo (m_gaugeSpr, Color.white, 0.5f, true, int.MaxValue, null);
-		} else if (m_tweenBlink != null) {
-			m_tweenBlink.Stop(false);
-			m_tweenBlink = null;
-			m_gaugeSpr.color = m_baseColor;
-		}
+        
         if( m_aroundSprite != null)
         {
             if (m_orientation == ORIENTATION.HORIZONTAL)
