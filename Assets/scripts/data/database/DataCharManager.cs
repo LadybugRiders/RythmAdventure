@@ -118,7 +118,7 @@ public class DataCharManager : DatabaseLoader
     public EquipmentData GetEquipement( EquipmentType _type, string _id)
     {
         JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
-        var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
+        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
 
         if (jsonObject != null)
         {
@@ -136,7 +136,7 @@ public class DataCharManager : DatabaseLoader
     public LooksData GetLooks( LooksType _type, string _id)
     {
         JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
-        var jsonObject = database.list.Find(x => x.GetField("id").ToString() == _id);
+        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
 
         if (jsonObject != null)
         {
@@ -223,10 +223,10 @@ public class DataCharManager : DatabaseLoader
         public int XpNeeded = 0;
         public Stats Stats = new Stats();
 
-        public LevelUpData(JSONObject json)
+        public LevelUpData(JSONObject _json)
         {
-            XpNeeded = (int)json.GetField("xp").f;
-            Stats = new Stats(json);
+            XpNeeded = (int)_json.GetField("xp").f;
+            Stats = new Stats(_json);
         }
     }
 
@@ -240,7 +240,7 @@ public class DataCharManager : DatabaseLoader
 
         public BuildData(JSONObject _json)
         {
-            Id = _json.GetField("id").ToString();
+            Id = _json.GetField("id").str;
             Level = (int)_json.GetField("level").f;
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;

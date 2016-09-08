@@ -99,5 +99,10 @@ public class DataManager : DatabaseLoader {
         get { return GetComponent<DataEnemiesManager>(); }
     }
 
+    public DataInventoryManager InventoryManager
+    {
+        get { return GetComponent<DataInventoryManager>(); }
+    }
+
     #endregion
 }

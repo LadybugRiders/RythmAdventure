@@ -20,6 +20,11 @@ public partial class ProfileManager {
         //Appearance
         public List<LooksData> Looks;
 
+        //Attack
+        public ActionData Attack;
+        //Magics
+        public List<ActionData> Magics;
+
         public string ColorId = "0";
 
         public CharacterData(string _id)
@@ -68,6 +73,18 @@ public partial class ProfileManager {
             {
                 Id = id;
                 LooksType = _type;
+            }
+        }
+
+        [System.Serializable]
+        public class ActionData
+        {
+            public string Id;
+            public bool equipped = false;
+
+            public ActionData(string _id)
+            {
+                Id = _id;
             }
         }
     }

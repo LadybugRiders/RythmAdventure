@@ -33,23 +33,38 @@ public class BattleCharacter : BattleActor {
         RefreshUI();
 
         //Load Attacks & Magics
-        string pathToPrefab = "prefabs/battle/"+ "attack/" + "sword_attack";
-        //Load prefab
-        GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
-        if (go != null)
+        var inventory = DataManager.instance.InventoryManager;
+        if (charData.Attack != null && !string.IsNullOrEmpty( charData.Attack.Id ) )
         {
-            go.transform.SetParent(m_attacksGroup, false);
-            m_attack = go.GetComponent<BattleAction>();
-            //
+            var attackData = inventory.GetActionData(charData.Attack.Id, "attack");
+            string pathToPrefab = "prefabs/battle/" + "attack/" + attackData.Prefab ;
+            //Load prefab
+            GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+            if (go != null)
+            {
+                go.transform.SetParent(m_attacksGroup, false);
+                m_attack = go.GetComponent<BattleAction>();
+            }
         }
-        pathToPrefab = "prefabs/battle/" + "magic/" + "fireball";
-        //Load prefab
-        go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
-        if (go != null)
+        if( charData.Magics != null && charData.Magics.Count > 0)
         {
-            go.transform.SetParent(m_attacksGroup, false);
-            m_magics[0] = go.GetComponent<BattleMagic>();
-            m_magics[1] = go.GetComponent<BattleMagic>();
+            for(int i=0; i < charData.Magics.Count; i++)
+            {
+                var magic = charData.Magics[i];
+                if(!string.IsNullOrEmpty(magic.Id) && magic.equipped)
+                {
+                    var magicData = inventory.GetActionData(magic.Id, "magic");
+                    var pathToPrefab = "prefabs/battle/" + "magic/" + magicData.Prefab;
+                    //Load prefab
+                    var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+                    if (go != null)
+                    {
+                        go.transform.SetParent(m_attacksGroup, false);
+                        m_magics[0] = go.GetComponent<BattleMagic>();
+                        m_magics[1] = go.GetComponent<BattleMagic>();
+                    }
+                }
+            }
         }
     }
 	#endregion
