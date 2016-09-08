@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleActorAction : MonoBehaviour {
+public class BattleMagicHoming : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -12,9 +12,4 @@ public class BattleActorAction : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    public virtual void Launch()
-    {
-
-    }
 }

@@ -31,6 +31,26 @@ public class BattleCharacter : BattleActor {
             m_currentStats = new Stats(stats);
         }
         RefreshUI();
+
+        //Load Attacks & Magics
+        string pathToPrefab = "prefabs/battle/"+ "attack/" + "sword_attack";
+        //Load prefab
+        GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+        if (go != null)
+        {
+            go.transform.SetParent(m_attacksGroup, false);
+            m_attack = go.GetComponent<BattleAction>();
+            //
+        }
+        pathToPrefab = "prefabs/battle/" + "magic/" + "fireball";
+        //Load prefab
+        go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+        if (go != null)
+        {
+            go.transform.SetParent(m_attacksGroup, false);
+            m_magics[0] = go.GetComponent<BattleMagic>();
+            m_magics[1] = go.GetComponent<BattleMagic>();
+        }
     }
 	#endregion
 

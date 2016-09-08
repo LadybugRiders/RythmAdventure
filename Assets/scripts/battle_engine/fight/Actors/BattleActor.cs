@@ -3,8 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattleActor : MonoBehaviour {
-		
-	public enum State{ IDLE, ATTACKING, DEFENDING, HIT, DEAD };
+
+    //Main Sprite
+    [SerializeField] protected SpriteRenderer m_sprite;
+    //UI
+    [SerializeField] protected UIBattleLifeBar m_lifeGauge;
+    [SerializeField] protected UIBattleLifeBar m_manaGauge;
+
+    [SerializeField] protected Transform m_attacksGroup; 
+
+    public enum State{ IDLE, ATTACKING, DEFENDING, HIT, DEAD };
 	protected State m_state = State.IDLE;
 
 	public enum ActorType { CHARACTER, ENEMY };
@@ -13,21 +21,16 @@ public class BattleActor : MonoBehaviour {
 	//Battle Fight references
 	protected BattleFightManager m_fightManager;
 	protected BattleFightManager.FightDuel m_fightDuel;
-
-	//Main Sprite
-	[SerializeField] protected SpriteRenderer m_sprite;
-
+    
     //STATS
     protected Stats m_currentStats = new Stats();
     protected Stats m_maxStats = new Stats();
 
-	[SerializeField] protected BattleFightMagic m_currentMagic = null;
-    protected List<BattleFightMagic> m_magics = new List<BattleFightMagic>();
+    protected BattleMagic m_currentMagic = null;
 
-	//UI
-	[SerializeField] protected UIBattleLifeBar m_lifeGauge;
-	[SerializeField] protected UIBattleLifeBar m_manaGauge;
-
+    protected BattleAction m_attack;
+    protected List<BattleMagic> m_magics = new List<BattleMagic>();
+    
 	protected bool m_dead = false;
 
 	protected Transform m_transform;
@@ -48,6 +51,7 @@ public class BattleActor : MonoBehaviour {
 
     void Init()
     {
+        m_magics = new List<BattleMagic>(2) { null, null };
         //find fight manager and ui stuff
         m_fightManager = BattleFightManager.instance;
 
@@ -112,7 +116,7 @@ public class BattleActor : MonoBehaviour {
 		return damage;
 	}
 
-	virtual public int TakeMagicDamage( int _damage, BattleFightMagic _magic){
+	virtual public int TakeMagicDamage( int _damage, BattleMagic _magic){
 
 		_damage -= CurrentStats.Magic ;
 		if (_damage < 0)
@@ -160,9 +164,12 @@ public class BattleActor : MonoBehaviour {
     /// <summary>
     /// Launches the magic on the target
     /// </summary>
-	virtual public BattleFightMagic LaunchMagic(BattleActor _target, int _duelID, HitAccuracy _accuracy){
-		if (m_currentMagic != null)
-			m_currentMagic.Launch (this, _target,_duelID,_accuracy);
+	virtual public BattleMagic LaunchMagic(BattleActor _target, int _duelID, HitAccuracy _accuracy){
+        m_currentMagic = GetMagic(true);
+        if (m_currentMagic == null)
+            return null;
+
+        m_currentMagic.Launch (this, _target,_duelID,_accuracy);
         
         //drain mp
         CurrentStats.MP -= m_currentMagic.CostByUse;
@@ -182,8 +189,17 @@ public class BattleActor : MonoBehaviour {
     /// </summary>
 	virtual public void OnDismissMagic(){
 		RefreshManaGauge ();
-		m_currentMagic.Dismiss ();
+		m_currentMagic.Die ();
 	}
+
+    public BattleMagic GetMagic(bool _attacking)
+    {
+        if( _attacking)
+        {
+            return m_magics[0];
+        }
+        return m_magics[1];
+    }
 	#endregion
 
 	#region UI
@@ -209,9 +225,10 @@ public class BattleActor : MonoBehaviour {
         RefreshManaGauge();
     }
 
-	#endregion ui
+    #endregion ui
 
-	public ActorType Type {
+    #region PROPERTIES
+    public ActorType Type {
 		get {
 			return m_type;
 		}
@@ -244,7 +261,7 @@ public class BattleActor : MonoBehaviour {
 		}
 	}
 
-	public BattleFightMagic CurrentMagic {
+	public BattleMagic CurrentMagic {
 		get {
 			return m_currentMagic;
 		}
@@ -265,4 +282,5 @@ public class BattleActor : MonoBehaviour {
             return m_currentStats;
         }        
     }
+    #endregion
 }

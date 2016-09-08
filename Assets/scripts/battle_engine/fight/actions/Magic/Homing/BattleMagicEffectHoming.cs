@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleFightMagicEffectHoming : BattleFightMagicEffect {
+public class BattleMagicEffectHoming : BattleMagicEffect {
 
 	[SerializeField] protected SpriteRenderer m_destructionSprite;
 

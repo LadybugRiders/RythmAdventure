@@ -146,10 +146,10 @@ public class BattleEngine : MonoBehaviour {
 
 	#region FIGHT
 
-	public void OnLaunchMagic(BattleFightMagic _magic){
+	public void OnLaunchMagic(BattleMagic _magic){
 	}
 
-	public void OnMagicEnded(BattleFightMagic _magic){
+	public void OnMagicEnded(BattleMagic _magic){
 	}
 
 	/** Called by the FightManager when a group of actor is dead on one side/

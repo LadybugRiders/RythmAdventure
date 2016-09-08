@@ -2,14 +2,10 @@
 using System.Collections;
 
 /** Visual effect of the magic, such as a fire ball or cure drop */ 
-public class BattleFightMagicEffect : MonoBehaviour {
-
-	[SerializeField] protected SpriteRenderer m_effectSprite;
-
-	protected bool m_launched = false;
-
+public class BattleMagicEffect : BattleActionEffect {
+    
 	/** Set by the BattleFightMagic when started */
-	protected BattleFightMagic m_magic;
+	protected BattleMagic m_magic;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +17,7 @@ public class BattleFightMagicEffect : MonoBehaviour {
 	
 	}
 
-	virtual public void Launch(Vector3 _origin, Vector3 _destination){	
+	override public void Launch(Vector3 _origin, Vector3 _destination){	
 		m_launched = true;
 		Utils.SetAlpha (m_effectSprite, 1f);
 		transform.position = _destination;
@@ -29,18 +25,13 @@ public class BattleFightMagicEffect : MonoBehaviour {
 		tween.CallbackObject = gameObject;
 	}
 
-	virtual public void Die(){
-		m_launched = false;
+	override public void Die(){
+        base.Die();
 		Utils.SetAlpha (m_effectSprite, 0f);
 	}
 
-	public bool IsLaunched {
-		get {
-			return m_launched;
-		}
-	}
 
-	public BattleFightMagic Magic {
+	public BattleMagic Magic {
 		get {
 			return m_magic;
 		}
