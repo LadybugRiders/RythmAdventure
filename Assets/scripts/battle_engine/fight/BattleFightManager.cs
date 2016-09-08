@@ -7,7 +7,6 @@ public class BattleFightManager : MonoBehaviour {
     static BattleFightManager _instance;
 
 	[SerializeField] BattleEngine m_engine;
-	[SerializeField] BattleFightMagicManager m_magicManager;
 	[SerializeField] BattleDamageTextManager m_damageTextManager;
 
 	[SerializeField] List<BattleCharacter> m_party;
@@ -87,6 +86,9 @@ public class BattleFightManager : MonoBehaviour {
                         go.transform.position = position;
                         //load
                         m_enemies[i].Load(battleData.Enemies[i].Name, battleData.Enemies[i].Level);
+                    }else
+                    {
+                        Debug.LogError("Enemy Prefab was null");
                     }
                 }
             }
@@ -133,7 +135,8 @@ public class BattleFightManager : MonoBehaviour {
 		} else {
 			//check magic
 			if (eventInfo.IsMagic) {
-                duel.MagicAttack (m_engine.IsAttacking, eventInfo.NoteHit);
+                //force attacking state ( our input doesnt trigger enemy magic )
+                duel.MagicAttack (true, eventInfo.NoteHit);
 			} else {
                 duel.RegularAttack (m_engine.IsAttacking, eventInfo.NoteHit);
 			}
@@ -187,14 +190,14 @@ public class BattleFightManager : MonoBehaviour {
 	/// <summary>
     /// Launched by the duel. When a magic is done, the duel call this method to effectively launch the magic ( graphically )
     /// </summary>
-	public BattleFightMagic LaunchMagic(BattleActor _actor, List<BattleActor> _targets,FightDuel _duel, HitAccuracy _accuracy){
-		BattleFightMagic magic = _actor.LaunchMagic (_targets[0],_duel.ID,_accuracy);
+	public BattleMagic LaunchMagic(BattleActor _actor, List<BattleActor> _targets,FightDuel _duel, HitAccuracy _accuracy){
+		BattleMagic magic = _actor.LaunchMagic (_targets[0],_duel.ID,_accuracy);
 		if( magic != null )
 			m_engine.OnLaunchMagic (magic);
         return magic;
 	}
 
-	public void OnMagicEnded( BattleFightMagic _magic){
+	public void OnMagicEnded( BattleMagic _magic){
 		m_engine.OnMagicEnded (_magic);
 	}
 
@@ -292,7 +295,7 @@ public class BattleFightManager : MonoBehaviour {
 			m_defenders = _fromPlayer ? m_enemies : m_characters;
 
 			int totalDamage = 0;
-            BattleFightMagic magic = null;
+            BattleMagic magic = null;
 
 			//Begin attack process == actually find the real caster
 			BattleActor attacker = null;
@@ -326,7 +329,7 @@ public class BattleFightManager : MonoBehaviour {
 
         #endregion
 
-        public void OnActorTakeDamage( BattleFightMagic _magic )
+        public void OnActorTakeDamage( BattleMagic _magic )
         {
             //MAGIC DAMAGE
             int damage = _magic.Target.TakeMagicDamage(_magic.Caster.CurrentStats.Magic, _magic);
