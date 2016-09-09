@@ -108,7 +108,7 @@ public class BattleTrack : MonoBehaviour {
 		//Audio
 		PlayAudio (_note);
 
-		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);
+		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, _note.Offensive, acc, _note.IsFinal);
 		m_manager.RaiseNoteEvent(noteEvent);
     }
 
@@ -119,7 +119,7 @@ public class BattleTrack : MonoBehaviour {
         
         HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
 
-        var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, acc, _note.IsFinal);
+        var noteEvent = new BattleTracksManager.NoteEventInfo(_note.Data, true, _note.Offensive, acc, _note.IsFinal);
 		noteEvent.IsMagic = _isMagic;		
 		m_manager.RaiseNoteActionEvent (noteEvent);
 
@@ -152,7 +152,7 @@ public class BattleTrack : MonoBehaviour {
             m_notes.Remove (note);
         
 		//raise note miss event
-		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false, HitAccuracy.MISS,_note.IsFinal));
+		m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false,_note.Offensive, HitAccuracy.MISS,_note.IsFinal));
 
 		//play text on slot
 		m_currentSlot.PlayTextAccuracy (HitAccuracy.MISS);
@@ -192,7 +192,7 @@ public class BattleTrack : MonoBehaviour {
             }
             else
             {
-				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false));
+				m_manager.RaiseNoteEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false,_note.Offensive));
             }
         }            
         

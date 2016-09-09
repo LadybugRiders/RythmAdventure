@@ -32,22 +32,27 @@ public class BattleEnemy : BattleActor {
         }
         CurrentStats.MP = 0;
     }
-	#endregion
+    #endregion
 
-	#region ACTION
-	
-	override public int GetAppliedAttackingPower(NoteData _noteData){
-		m_state = State.ATTACKING;
+    #region ACTION
 
-		if( Utils.IsAnimationStateRunning(m_animator,"attack") ){
-			m_animator.Play("attack",0,0.0f);
-		}else{
-			m_animator.SetTrigger ("attackTrigger");
-		}
+    public override void Attack(BattleActor _target, int _damage)
+    {
+        base.Attack(_target, _damage);
 
-		return CurrentStats.Attack;
+        if (Utils.IsAnimationStateRunning(m_animator, "attack"))
+        {
+            m_animator.Play("attack", 0, 0.0f);
+        }
+        else
+        {
+            m_animator.SetTrigger("attackTrigger");
+        }
+    }
 
-	}
+    override public int GetAppliedAttackingPower(NoteData _noteData){
+        return CurrentStats.Attack;
+    }
 		
 	#endregion
 

@@ -20,6 +20,16 @@ public class DataInventoryManager : DatabaseLoader
         return new ActionData(actionJSON);
     }
 
+    public ActionData GetAttackActionData(string _id)
+    {
+        return GetActionData(_id, "attack");
+    }
+
+    public ActionData GetMagicActionData(string _id)
+    {
+        return GetActionData(_id, "magic");
+    }
+
     JSONObject Database { get { return m_database["inventory"]; } }
 
     public class ActionData
@@ -28,7 +38,7 @@ public class DataInventoryManager : DatabaseLoader
         public string Name;
         public string Prefab;
         public int Power;
-        public string Type;
+        public bool Offense;
 
         public ActionData(JSONObject _json)
         {
@@ -36,7 +46,9 @@ public class DataInventoryManager : DatabaseLoader
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
             Power = (int)_json.GetField("power").f;
-            Type = _json.GetField("type").str;
+            //type
+            string strType = _json.GetField("type").str;
+            Offense = strType == "offense" ? true : false;
         }
     }
 }

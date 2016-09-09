@@ -19,7 +19,9 @@ public class BattleCharacter : BattleActor {
 	override public void Load(string _id){
         base.Load(_id);
         
+        //Characer Data form the profile
         var charData = ProfileManager.instance.GetCharacter(_id);
+
         //Load equipement and looks
         m_build.Load(charData);
 
@@ -33,37 +35,16 @@ public class BattleCharacter : BattleActor {
         RefreshUI();
 
         //Load Attacks & Magics
-        var inventory = DataManager.instance.InventoryManager;
-        if (charData.Attack != null && !string.IsNullOrEmpty( charData.Attack.Id ) )
+        if (charData.Attack != null)
         {
-            var attackData = inventory.GetActionData(charData.Attack.Id, "attack");
-            string pathToPrefab = "prefabs/battle/" + "attack/" + attackData.Prefab ;
-            //Load prefab
-            GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
-            if (go != null)
-            {
-                go.transform.SetParent(m_attacksGroup, false);
-                m_attack = go.GetComponent<BattleAction>();
-            }
+            AddAttack(charData.Attack.Id);
         }
         if( charData.Magics != null && charData.Magics.Count > 0)
         {
-            for(int i=0; i < charData.Magics.Count; i++)
+            for (int i = 0; i < charData.Magics.Count; i++)
             {
                 var magic = charData.Magics[i];
-                if(!string.IsNullOrEmpty(magic.Id) && magic.equipped)
-                {
-                    var magicData = inventory.GetActionData(magic.Id, "magic");
-                    var pathToPrefab = "prefabs/battle/" + "magic/" + magicData.Prefab;
-                    //Load prefab
-                    var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
-                    if (go != null)
-                    {
-                        go.transform.SetParent(m_attacksGroup, false);
-                        m_magics[0] = go.GetComponent<BattleMagic>();
-                        m_magics[1] = go.GetComponent<BattleMagic>();
-                    }
-                }
+                AddMagic(magic.Id);
             }
         }
     }
@@ -73,17 +54,15 @@ public class BattleCharacter : BattleActor {
 
 	}
 
-	#region ACTION
+    #region ACTION
 
-	override public int GetAppliedAttackingPower( NoteData _noteData){
-		m_state = State.ATTACKING;
-
-		m_charAnimator.Attack ();
-
-		this.AddMP (5);
-
-		return CurrentStats.Attack;
-	}
+    public override void Attack(BattleActor _target,int _damage)
+    {
+        base.Attack(_target,_damage);
+        m_charAnimator.Attack();
+        m_attack.Launch(this, _target, _damage);
+        BattleFightManager.instance.RaiseActorDamageEvent(_target, _damage);
+    }
 
 	override public int TakeDamage(int _damage, NoteData _note){
 		int damage = _damage;

@@ -8,17 +8,17 @@ public class BattleMagicEffect : BattleActionEffect {
 	protected BattleMagic m_magic;
 
 	// Use this for initialization
-	void Start () {
-	
+	protected override void Start () {
+        base.Start();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	protected override void Update () {
+        base.Update();
 	}
 
-	override public void Launch(Vector3 _origin, Vector3 _destination){	
-		m_launched = true;
+	override public void Launch(Vector3 _origin, Vector3 _destination){
+        base.Launch(_origin,_destination);
 		Utils.SetAlpha (m_effectSprite, 1f);
 		transform.position = _destination;
 		TweenEngine.Tween tween = TweenEngine.instance.RotateAroundZTo (m_effectSprite.transform, 360.0f, 0.3f, false, 1, "Die");

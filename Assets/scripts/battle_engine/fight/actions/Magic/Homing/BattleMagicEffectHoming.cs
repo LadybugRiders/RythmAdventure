@@ -5,20 +5,20 @@ public class BattleMagicEffectHoming : BattleMagicEffect {
 
 	[SerializeField] protected SpriteRenderer m_destructionSprite;
 
-	Animation m_animationComponent;
 	Animator m_destructionAnimator;
 
 	private string m_state = "idle";
 
 	// Use this for initialization
-	void Start () {
-		m_animationComponent = GetComponent<Animation>();
+	protected override void Start () {
+        base.Start();
 		m_destructionAnimator = m_destructionSprite.GetComponent<Animator> ();
 		m_destructionSprite.enabled = false;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected override void Update () {
+        base.Update();
 		if (m_launched) {
 			switch( m_state ){
 			    case "homing": UpdateHoming(); break;
@@ -45,8 +45,8 @@ public class BattleMagicEffectHoming : BattleMagicEffect {
 		}
 	}
 
-	override public void Launch(Vector3 _origin, Vector3 _destination){	
-		m_launched = true;
+	override public void Launch(Vector3 _origin, Vector3 _destination){
+        base.Launch(_origin,_destination);
 		Utils.SetAlpha (m_effectSprite, 1f);
 		transform.position = _destination;
 		//launch animation

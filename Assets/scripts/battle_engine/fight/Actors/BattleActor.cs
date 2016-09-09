@@ -20,18 +20,17 @@ public class BattleActor : MonoBehaviour {
 
 	//Battle Fight references
 	protected BattleFightManager m_fightManager;
-	protected BattleFightManager.FightDuel m_fightDuel;
     
     //STATS
     protected Stats m_currentStats = new Stats();
     protected Stats m_maxStats = new Stats();
 
-    protected BattleMagic m_currentMagic = null;
-
+    //MOVES
     protected BattleAction m_attack;
     protected List<BattleMagic> m_magics = new List<BattleMagic>();
+    protected BattleMagic m_currentMagic = null;
     
-	protected bool m_dead = false;
+    protected bool m_dead = false;
 
 	protected Transform m_transform;
 
@@ -89,6 +88,11 @@ public class BattleActor : MonoBehaviour {
 	#endregion
 	
 	#region ACTIONS
+
+    virtual public void Attack(BattleActor _target, int _damage)
+    {
+        m_state = State.ATTACKING;
+    }
 	
 	virtual public int GetAppliedAttackingPower( NoteData _noteData ){
 		m_state = State.ATTACKING;
@@ -153,7 +157,7 @@ public class BattleActor : MonoBehaviour {
 
 	virtual protected bool Die(){
 		m_dead = true;
-		m_fightDuel.OnActorDead(this);
+        BattleFightManager.instance.OnActorDead(this);
 		return true;
 	}
 	
@@ -164,25 +168,18 @@ public class BattleActor : MonoBehaviour {
     /// <summary>
     /// Launches the magic on the target
     /// </summary>
-	virtual public BattleMagic LaunchMagic(BattleActor _target, int _duelID, HitAccuracy _accuracy){
-        m_currentMagic = GetMagic(true);
+	virtual public BattleMagic LaunchMagic(BattleActor _target, int _damage, bool _offensive){
+        m_currentMagic = GetMagic(_offensive);
         if (m_currentMagic == null)
             return null;
-
-        m_currentMagic.Launch (this, _target,_duelID,_accuracy);
+        
+        m_currentMagic.Launch (this, _target,_damage);
         
         //drain mp
         CurrentStats.MP -= m_currentMagic.CostByUse;
         RefreshManaGauge ();
         return m_currentMagic;
-	}
-    
-    /// <summary>
-    /// Called when a magic attack is cast. USe MP and return magic power
-    /// </summary>
-	virtual public int GetAppliedMagicAttackPower(HitAccuracy _accuracy){
-		return CurrentStats.Magic;
-	}
+	}    
 
     /// <summary>
     /// Called when the magic is dismissed
@@ -196,10 +193,50 @@ public class BattleActor : MonoBehaviour {
     {
         if( _attacking)
         {
-            return m_magics[0];
+            return m_magics[1];
         }
-        return m_magics[1];
+        return m_magics[0];
     }
+
+    protected void AddAttack(string _attackId)
+    {
+
+        var inventory = DataManager.instance.InventoryManager;
+
+        if (!string.IsNullOrEmpty(_attackId))
+        {
+            var attackData = inventory.GetAttackActionData(_attackId);
+            string pathToPrefab = "prefabs/battle/" + "attack/" + attackData.Prefab;
+            //Load prefab
+            GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+            if (go != null)
+            {
+                go.transform.SetParent(m_attacksGroup, false);
+                m_attack = go.GetComponent<BattleAction>();
+            }
+        }
+    }
+
+    protected void AddMagic(string _magicId)
+    {
+        var inventory = DataManager.instance.InventoryManager;
+        if (!string.IsNullOrEmpty(_magicId))
+        {
+            var magicData = inventory.GetMagicActionData(_magicId);
+            var pathToPrefab = "prefabs/battle/" + "magic/" + magicData.Prefab;
+            //Load prefab
+            var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+            if (go != null)
+            {
+                go.transform.SetParent(m_attacksGroup, false);
+                if(magicData.Offense)
+                    m_magics[1] = go.GetComponent<BattleMagic>();
+                else
+                    m_magics[0] = go.GetComponent<BattleMagic>();
+            }
+        }
+    }
+
 	#endregion
 
 	#region UI
@@ -233,16 +270,7 @@ public class BattleActor : MonoBehaviour {
 			return m_type;
 		}
 	}
-
-	public BattleFightManager.FightDuel FightDuel {
-		get {
-			return m_fightDuel;
-		}
-		set {
-			m_fightDuel = value;
-		}
-	}
-
+    
 	public bool isCasting{
 		get{
 			return m_currentMagic != null && m_currentMagic.IsLaunched;
@@ -281,6 +309,11 @@ public class BattleActor : MonoBehaviour {
         {
             return m_currentStats;
         }        
+    }
+
+    public BattleAction AttackAction
+    {
+        get { return m_attack; }
     }
     #endregion
 }

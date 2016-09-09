@@ -52,18 +52,20 @@ public class BattleTracksManager : MonoBehaviour {
         public bool Success { get; private set; }
         public HitAccuracy Accuracy { get; private set; }
 		public bool IsMagic { get; set; }
+        public bool Offensive { get; set; }
 
 		/// <summary>
 		/// Tells if the note is on a disabled track
 		/// </summary>
 		public bool IsFinal { get; set; }
 
-		public NoteEventInfo(NoteData _notehit, bool _success, HitAccuracy _acc = HitAccuracy.MISS, bool _isFinal = false)
+		public NoteEventInfo(NoteData _notehit, bool _success, bool _offensive, HitAccuracy _acc = HitAccuracy.MISS, bool _isFinal = false)
         {
             NoteHit = _notehit;
             Success = _success;
             Accuracy = _acc;
 			IsFinal = _isFinal;
+            Offensive = _offensive;
             if (IsFinal)
                 IsFinal.ToString();
         }
@@ -232,6 +234,7 @@ public class BattleTracksManager : MonoBehaviour {
     /// Every BattleNote added to the track pass in there
     /// </summary>
     bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
+        _note.Offensive = (m_state == BattleState.ATTACK);
 		//keep track of launched notes
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote

@@ -25,7 +25,16 @@ public partial class Utils  {
 		tmpVector.z = _newValue;
 		_t.localPosition = tmpVector;
 		return _t.localPosition;
-	}
+    }
+
+    public static Vector3 SetLocalPositionXY(Transform _t, float _x, float _y)
+    {
+        Vector3 tmpVector = _t.localPosition;
+        tmpVector.x = _x;
+        tmpVector.y = _y;
+        _t.localPosition = tmpVector;
+        return _t.localPosition;
+    }
 
     /// <summary>
     /// Sets the local position without the Z axis

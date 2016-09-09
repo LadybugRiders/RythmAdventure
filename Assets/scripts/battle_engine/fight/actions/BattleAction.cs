@@ -14,12 +14,11 @@ public class BattleAction : MonoBehaviour {
 
     protected BattleActor m_caster;
     protected BattleActor m_target;
-
-    protected int m_duelID = -1;
+    
     /// <summary>
-    /// Accuracy of the note hit for this magic action
+    /// If damage < 0, it's a miss
     /// </summary>
-    protected HitAccuracy m_noteAccuracy = HitAccuracy.MISS;
+    protected int m_damage = -1;
         
     protected int m_power = 20;
     protected int m_costByUse = 35;
@@ -35,22 +34,34 @@ public class BattleAction : MonoBehaviour {
 	
 	// Update is called once per frame
 	virtual protected void Update () {
-	
 	}
 
-    public void Launch(BattleActor _caster, BattleActor _target, int _duelID, HitAccuracy _noteAcuracy)
+    public void Launch(BattleActor _caster, BattleActor _target, int _damage)
     {
         gameObject.SetActive(true);
         m_launched = true;
         m_target = _target;
         m_caster = _caster;
-        m_duelID = _duelID;
-        m_noteAccuracy = _noteAcuracy;
+        m_damage = _damage;
         Launch();
     }
 
     virtual protected void Launch()
     {
+        //replace magic on the user
+        /*Transform t = transform;
+        float z = t.position.z;
+        t.position = m_caster.transform.position;
+        Utils.SetPositionZ(t, z);*/
+
+        //Launch effect 
+        var effect = GetFreeEffect();
+        if (effect == null)
+        {
+            Debug.Log("no effect");
+            return;
+        }
+        effect.Launch(m_caster.transform.position, m_target.transform.position);
     }
 
     /// <summary>
@@ -58,6 +69,13 @@ public class BattleAction : MonoBehaviour {
     /// </summary>
     virtual public void OnHit()
     {
+        BattleFightManager.instance.RaiseActorDamageEvent(Target, m_damage);
+        //play main sound if any
+        if (m_mainSoundClip)
+        {
+            m_audioSource.clip = m_mainSoundClip;
+            m_audioSource.Play();
+        }
     }
 
     public BattleActionEffect GetFreeEffect()
@@ -121,15 +139,7 @@ public class BattleAction : MonoBehaviour {
             return m_dead;
         }
     }
-
-    public int DuelID
-    {
-        get
-        {
-            return m_duelID;
-        }
-    }
-
+    
     public int Power
     {
         get

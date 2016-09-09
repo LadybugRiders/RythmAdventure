@@ -9,6 +9,8 @@ public class BattleNote : MonoBehaviour {
 	protected State m_state = State.DEAD;
 
     public enum HIT_METHOD { PRESS, RELEASE, SLIDE, NONE };
+
+    private bool m_offensive = false;
     
 	[SerializeField] protected HIT_METHOD m_hitMethod = HIT_METHOD.PRESS;
 
@@ -261,6 +263,12 @@ public class BattleNote : MonoBehaviour {
 			m_canSlide = value;
 		}
 	}
+
+    public bool Offensive
+    {
+        get { return m_offensive; }
+        set { m_offensive = value; }
+    }
 
 	#endregion
 }
