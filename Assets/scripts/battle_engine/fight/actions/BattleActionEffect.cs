@@ -11,7 +11,7 @@ public class BattleActionEffect : MonoBehaviour {
     protected Animator m_animator;
 
     // Use this for initialization
-    protected virtual void Start () {
+    protected virtual void Awake () {
         m_animationComponent = GetComponent<Animation>();
         m_animator = GetComponent<Animator>();
     }

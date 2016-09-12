@@ -8,8 +8,8 @@ public class BattleMagicEffect : BattleActionEffect {
 	protected BattleMagic m_magic;
 
 	// Use this for initialization
-	protected override void Start () {
-        base.Start();
+	protected override void Awake () {
+        base.Awake();
 	}
 	
 	// Update is called once per frame

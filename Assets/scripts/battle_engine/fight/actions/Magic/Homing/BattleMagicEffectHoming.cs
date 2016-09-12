@@ -10,8 +10,8 @@ public class BattleMagicEffectHoming : BattleMagicEffect {
 	private string m_state = "idle";
 
 	// Use this for initialization
-	protected override void Start () {
-        base.Start();
+	protected override void Awake () {
+        base.Awake();
 		m_destructionAnimator = m_destructionSprite.GetComponent<Animator> ();
 		m_destructionSprite.enabled = false;
 	}
