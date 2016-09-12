@@ -14,6 +14,9 @@ public class BattleAction : MonoBehaviour {
 
     protected BattleActor m_caster;
     protected BattleActor m_target;
+
+    public enum ActionType { ATTACK, SPECIAL };
+    public ActionType m_type = ActionType.ATTACK;
     
     /// <summary>
     /// If damage < 0, it's a miss
@@ -166,6 +169,11 @@ public class BattleAction : MonoBehaviour {
         {
             return m_costByUse;
         }
+    }
+
+    public ActionType Type
+    {
+        get { return m_type; }
     }
     #endregion
 }

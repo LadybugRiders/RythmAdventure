@@ -60,40 +60,20 @@ public class BattleCharacter : BattleActor {
     {
         base.Attack(_target,_damage);
         m_charAnimator.Attack();
-        m_attack.Launch(this, _target, _damage);
-        BattleFightManager.instance.RaiseActorDamageEvent(_target, _damage);
     }
 
-	override public int TakeDamage(int _damage, NoteData _note){
-		int damage = _damage;
-		damage -= CurrentStats.Defense ;
-		//Reduce damage by blocking
-		switch(_note.HitAccuracy){
-			case HitAccuracy.PERFECT :
-				damage = damage - (int) (damage * CurrentStats.blockPerfectModifier);
-				break;
-			case HitAccuracy.GREAT :
-				damage = damage - (int) (damage * CurrentStats.blockGreatModifier);
-				break;
-			case HitAccuracy.GOOD :
-				damage = damage - (int) (damage * CurrentStats.blockGoodModifier);
-				break;
-			case HitAccuracy.MISS :
-				damage = damage - (int) (damage * CurrentStats.blockBadModifier);
-				break;
-		}
-
-		if (damage < 0)
-			damage = 0;
-		CurrentStats.HP -=  damage;
+	override public void TakeDamage(int _damage){
+		
+		if (_damage < 0)
+			_damage = 0;
+		CurrentStats.HP -=  _damage;
 
 		m_charAnimator.TakeHit ();
 
 		RefreshLifeGauge ();
 
 		CheckDeath ();
-
-		return damage;
+        
 	}
 
 	#endregion

@@ -56,8 +56,9 @@ public class BattleEnemy : BattleActor {
 		
 	#endregion
 
-	override public int TakeDamage(int _damage, NoteData _note){
-		int damage = base.TakeDamage (_damage, _note);
+	override public void TakeDamage(int _damage){
+		base.TakeDamage (_damage);
+
 		if( Utils.IsAnimationStateRunning(m_animator,"hit") ){
 			m_animator.Play("hit",0,0.0f);
 		}else{
@@ -65,7 +66,6 @@ public class BattleEnemy : BattleActor {
 		}
 
 		CheckDeath ();
-		return damage;
 	}
 
 	override protected bool Die(){

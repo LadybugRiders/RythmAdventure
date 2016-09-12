@@ -114,10 +114,26 @@ public class BattleFightManager : MonoBehaviour {
 
     #region DAMAGE_DEALING
 
-    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target)
-    {
-        var type = _action.GetType();
-        return _caster.CurrentStats.Attack;
+    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _multiplier = 1.0f)
+    {        
+        if(_action == null)
+        {
+            return _caster.CurrentStats.Attack;
+        }
+        int damage = 0;
+        if (_action.Type == BattleAction.ActionType.ATTACK)
+        {
+            damage += _caster.CurrentStats.Attack + _action.Power;
+            damage -= _target.CurrentStats.Defense;
+        }
+        else
+        {
+            damage += _caster.CurrentStats.Magic + _action.Power;
+            damage -= _target.CurrentStats.Magic;
+        }
+        
+        damage =(int) (damage * _multiplier);
+        return damage;
     }
 
     #endregion
@@ -128,44 +144,43 @@ public class BattleFightManager : MonoBehaviour {
 		
 	}
 
-	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo eventInfo){
-        
+	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo _eventInfo){
+
         /*if( eventInfo.NoteHit.TimeBegin > 8.0f)
             Debug.Log("RECEIVE ACTION " + eventInfo.NoteHit.TimeBegin);*/
-		//nothing for missed notes
-		if (eventInfo.Accuracy == HitAccuracy.MISS)
-			return;
+         
 		//no attack for long note's head
-		if (eventInfo.NoteHit.Type == NoteData.NoteType.LONG && eventInfo.NoteHit.Head)
+		if (_eventInfo.NoteHit.Type == NoteData.NoteType.LONG && _eventInfo.NoteHit.Head)
 			return;
 
         //Get the duel
-        int trackId = eventInfo.NoteHit.TrackID;
+        int trackId = _eventInfo.NoteHit.TrackID;
+
+        BattleActor caster = _eventInfo.IsPlayerAttack ? (BattleActor)m_party[trackId] : m_enemies[trackId];
+        BattleActor target = _eventInfo.IsPlayerAttack ? (BattleActor)m_enemies[trackId] : m_party[trackId];
         
-		//If final note, no action is done
-		if (eventInfo.IsFinal) {
+        //If final note, no action is done but bonus action
+        if (_eventInfo.IsFinal || caster == null || target == null ) {
 			//duel.BlankNoteBonus (eventInfo.NoteHit);
 		} else {
+            var multiplier = 1.0f;
             //in offense, the player always attacks 
-            if( eventInfo.Offensive)
-            {
-                //Get caster
-                BattleActor caster = m_party[trackId];
+            if( _eventInfo.IsPlayerAttack) {
+                multiplier = caster.CurrentStats.GetAttackingBonus(_eventInfo.Accuracy);
                 //check magic
-                if (eventInfo.IsMagic)
-                {
-                    //force attacking state ( our input doesnt trigger enemy magic )
-                    SpecialAction(caster, trackId);
+                if (_eventInfo.IsSpecialAction) {
+                    SpecialOffensiveAction(caster, trackId,_eventInfo,multiplier); //special
+                } else {
+                    RegularOffensiveAction(caster, trackId, _eventInfo,multiplier); //regular
                 }
-                else
-                {
-                    RegularAction(caster, trackId);
-                }
+                RegularDefensiveAction(target, trackId, _eventInfo);
             }
-            else // in defense, we can launch a magic back
+            else
             {
-                BattleActor caster = m_enemies[trackId];
-                RegularAction(caster, trackId);
+                multiplier = target.CurrentStats.GetBlockerBonus(_eventInfo.Accuracy);
+                //enemy attack
+                RegularOffensiveAction(caster, trackId, _eventInfo, multiplier);
+                RegularDefensiveAction(target, trackId, _eventInfo);
             }
 		}
 	}
@@ -194,14 +209,14 @@ public class BattleFightManager : MonoBehaviour {
 
     #region ACTIONS
 
-    void RegularAction(BattleActor _caster, int _trackId)
+    void RegularOffensiveAction(BattleActor _caster, int _trackId, BattleTracksManager.NoteEventInfo _eventInfo, float _multiplier=1.0f)
     {
         BattleActor target = _caster.Type == BattleActor.ActorType.ENEMY ? (BattleActor) m_party[_trackId] : m_enemies[_trackId];
-        int damage = ComputeDamage(_caster.AttackAction, _caster, target);
+        int damage = ComputeDamage(_caster.AttackAction, _caster, target, _multiplier);
         _caster.Attack(target, damage);
     }
 
-    void SpecialAction(BattleActor _caster, int _trackId)
+    void SpecialOffensiveAction(BattleActor _caster, int _trackId, BattleTracksManager.NoteEventInfo _eventInfo, float _multiplier = 1.0f)
     {
         BattleMagic magic = _caster.GetMagic(_caster.Type == BattleActor.ActorType.CHARACTER);
         if (magic == null)
@@ -210,13 +225,24 @@ public class BattleFightManager : MonoBehaviour {
             return;
         }
         BattleActor target = m_enemies[_trackId];
-        int damage = ComputeDamage(magic, _caster, target);
+        int damage = ComputeDamage(magic, _caster, target, _multiplier);
         _caster.LaunchMagic(target, damage, true);
     }
+    
+    void RegularDefensiveAction(BattleActor _caster, int _trackId, BattleTracksManager.NoteEventInfo _eventInfo, float _multiplier = 1.0f)
+    {
+
+    }
+
+    void SpecialDefensiveAction(BattleActor _caster, int _trackId, BattleTracksManager.NoteEventInfo _eventInfo, float _multiplier = 1.0f)
+    {
+
+    }
+
     #endregion
 
     #region ACTOR_DIE
-    
+
     public void OnActorDead(BattleActor _actor){
 
         int index = FindActorIndex(_actor);

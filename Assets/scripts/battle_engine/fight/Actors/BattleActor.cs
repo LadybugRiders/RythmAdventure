@@ -92,6 +92,11 @@ public class BattleActor : MonoBehaviour {
     virtual public void Attack(BattleActor _target, int _damage)
     {
         m_state = State.ATTACKING;
+        //launch prefab attack
+        if (m_attack)
+            m_attack.Launch(this, _target, _damage);
+        _target.TakeDamage(_damage);
+        BattleFightManager.instance.RaiseActorDamageEvent(_target, _damage);
     }
 	
 	virtual public int GetAppliedAttackingPower( NoteData _noteData ){
@@ -103,12 +108,10 @@ public class BattleActor : MonoBehaviour {
 		this.m_state = State.IDLE; 
 	}
 
-	virtual public int TakeDamage(int _damage, NoteData _note){
-		int damage = _damage;
-		damage -= CurrentStats.Defense ;
-		if (damage < 0)
-			damage = 0;
-		CurrentStats.HP -=  damage;
+	virtual public void TakeDamage(int _damage){
+		if (_damage < 0)
+			_damage = 0;
+		CurrentStats.HP -=  _damage;
 		RefreshLifeGauge ();
 
 		//Notify manager if dead
@@ -116,8 +119,6 @@ public class BattleActor : MonoBehaviour {
 		if (CurrentStats.HP <= 0) {
 			Die ();
 		}
-
-		return damage;
 	}
 
 	virtual public int TakeMagicDamage( int _damage, BattleMagic _magic){
@@ -263,6 +264,8 @@ public class BattleActor : MonoBehaviour {
     }
 
     #endregion ui
+
+    
 
     #region PROPERTIES
     public ActorType Type {

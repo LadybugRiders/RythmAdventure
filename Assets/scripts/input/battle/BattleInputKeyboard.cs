@@ -50,12 +50,8 @@ public class BattleInputKeyboard : MonoBehaviour {
     {
         if(Input.GetKeyDown(m_inputSlide) ){
             int phase = m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK ? 1 : -1;
-            m_tracksManager.OnInputTriggered(phase, BattleNote.HIT_METHOD.PRESS);
-        }
-        else if(Input.GetKeyUp(m_inputSlide))
-        {
-            int phase = m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK ? 1 : -1;
-            m_tracksManager.OnInputTriggered(phase, BattleNote.HIT_METHOD.RELEASE);
+            m_tracksManager.OnInputTriggered(phase, BattleNote.HIT_METHOD.SLIDE);
+            return true;
         }
         return false;
     }

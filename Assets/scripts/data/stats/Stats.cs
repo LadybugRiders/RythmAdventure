@@ -15,10 +15,15 @@ public class Stats {
 	protected int m_magic = 0;
     private int m_speed = 0;
 
-    public float blockPerfectModifier = 0.9f;
-	public float blockGreatModifier = 0.6f;
-	public float blockGoodModifier = 0.3f;
-	public float blockBadModifier = -0.3f;
+    public float attackPerfectModifier = 1.4f;
+	public float attackGreatModifier = 1.2f;
+	public float attackGoodModifier = 1.0f;
+	public float attackBadModifier = 0.8f;
+
+    public float blockPerfectModifier = 0.8f;
+    public float blockGreatModifier = 0.9f;
+    public float blockGoodModifier = 1.0f;
+    public float blockBadModifier = 1.1f;
 
     public Stats() { }
 
@@ -59,6 +64,38 @@ public class Stats {
         MP -= _stats.MP;
         Speed -= _stats.Speed;
         return this;
+    }
+
+    public float GetBlockerBonus(HitAccuracy _accuracy)
+    {
+        switch (_accuracy)
+        {
+            case HitAccuracy.PERFECT:
+                return blockPerfectModifier;
+            case HitAccuracy.GREAT:
+                return blockGreatModifier;
+            case HitAccuracy.GOOD:
+                return blockGoodModifier;
+            case HitAccuracy.MISS:
+                return blockBadModifier;
+        }
+        return 1.0f;
+    }
+
+    public float GetAttackingBonus(HitAccuracy _accuracy)
+    {
+        switch (_accuracy)
+        {
+            case HitAccuracy.PERFECT:
+                return attackPerfectModifier;
+            case HitAccuracy.GREAT:
+                return attackGreatModifier;
+            case HitAccuracy.GOOD:
+                return attackGoodModifier;
+            case HitAccuracy.MISS:
+                return attackBadModifier;
+        }
+        return 1.0f;
     }
 
     public int Level {

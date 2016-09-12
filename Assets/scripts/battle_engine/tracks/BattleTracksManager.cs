@@ -51,8 +51,8 @@ public class BattleTracksManager : MonoBehaviour {
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
         public HitAccuracy Accuracy { get; private set; }
-		public bool IsMagic { get; set; }
-        public bool Offensive { get; set; }
+		public bool IsSpecialAction { get; set; }
+        public bool IsPlayerAttack { get; set; }
 
 		/// <summary>
 		/// Tells if the note is on a disabled track
@@ -65,7 +65,7 @@ public class BattleTracksManager : MonoBehaviour {
             Success = _success;
             Accuracy = _acc;
 			IsFinal = _isFinal;
-            Offensive = _offensive;
+            IsPlayerAttack = _offensive;
             if (IsFinal)
                 IsFinal.ToString();
         }
