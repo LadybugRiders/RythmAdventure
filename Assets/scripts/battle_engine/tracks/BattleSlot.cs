@@ -144,7 +144,7 @@ public class BattleSlot : MonoBehaviour {
         m_track.OnNoteHit (note,this, forceRemove );
 
         //Trigger action if the current long note is on ( note tail is hit )
-        if( CurrentLongNote != null && _inputMethod == BattleNote.HIT_METHOD.RELEASE)
+        if(forceRemove && _inputMethod == BattleNote.HIT_METHOD.RELEASE)
         {
             m_track.OnNoteTriggerAction(note, this, false);
         }

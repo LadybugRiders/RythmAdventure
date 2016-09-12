@@ -94,6 +94,7 @@ public class BattleTrack : MonoBehaviour {
 	/// Hit a note. Use forceRemove to force the removal from the track list
 	/// </summary>
 	public void OnNoteHit(BattleNote _note, BattleSlot _slot, bool _forceRemove = false){
+
 		if (_forceRemove) {
 			OnNoteKill (_note, _slot);
 		}
@@ -116,7 +117,6 @@ public class BattleTrack : MonoBehaviour {
 	/// Use this trigger the action induced by hitting the note
 	/// </summary>
 	public void OnNoteTriggerAction(BattleNote _note, BattleSlot _slot, bool _isMagic){
-        
         HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
 
         var noteEvent = new BattleTracksManager.NoteEventInfo(_note.Data, true, _note.Offensive, acc, _note.IsFinal);
