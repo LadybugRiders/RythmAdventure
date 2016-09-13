@@ -43,8 +43,6 @@ public class BattleMagicEffectHoming : BattleMagicEffect {
 		//wait for the animation of the explosion to finish
 		if ( Utils.IsAnimationStateRunning(m_destructionAnimator, "idle") ) {			
 			Die ();
-			m_state = "idle";
-			m_destructionSprite.enabled = false;
 		}
 	}
 
@@ -61,6 +59,8 @@ public class BattleMagicEffectHoming : BattleMagicEffect {
 
 	override public void Die(){
 		base.Die ();
-		m_destructionSprite.enabled = false;
+        m_state = "idle";
+        m_destructionSprite.enabled = false;
+        m_effectSprite.enabled = false;
 	}
 }

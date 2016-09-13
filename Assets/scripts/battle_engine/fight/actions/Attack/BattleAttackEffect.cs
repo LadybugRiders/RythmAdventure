@@ -11,4 +11,16 @@ public class BattleAttackEffect : BattleActionEffect {
         Utils.Set2DPosition(transform.parent, _destination);
         m_animator.SetTrigger("attack");
     }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (m_launched)
+        {
+            if( Utils.IsAnimationStateRunning(m_animator, "idle"))
+            {
+                Die();
+            }
+        }
+    }
 }
