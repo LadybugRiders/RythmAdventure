@@ -101,7 +101,6 @@ public class BattleSlot : MonoBehaviour {
 		if( !note.IsDead )
 			note.Accuracy = accuracy;
 
-
 		//If the note can be slid 
 		if (note.CanSlide) {
 			switch (_inputMethod) {

@@ -19,17 +19,12 @@ public class BattleMagicEffect : BattleActionEffect {
 
 	override public void Launch(Vector3 _origin, Vector3 _destination){
         base.Launch(_origin,_destination);
-		Utils.SetAlpha (m_effectSprite, 1f);
 		transform.position = _destination;
-		TweenEngine.Tween tween = TweenEngine.instance.RotateAroundZTo (m_effectSprite.transform, 360.0f, 0.3f, false, 1, "Die");
-		tween.CallbackObject = gameObject;
 	}
 
 	override public void Die(){
         base.Die();
-		Utils.SetAlpha (m_effectSprite, 0f);
 	}
-
 
 	public BattleMagic Magic {
 		get {

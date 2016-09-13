@@ -170,6 +170,7 @@ public class BattleActor : MonoBehaviour {
     /// Launches the magic on the target
     /// </summary>
 	virtual public BattleMagic LaunchMagic(BattleActor _target, int _damage, bool _offensive){
+        Debug.Log("LAUNCH MAGIC");
         m_currentMagic = GetMagic(_offensive);
         if (m_currentMagic == null)
             return null;
