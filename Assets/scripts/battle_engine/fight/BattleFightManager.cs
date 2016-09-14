@@ -14,6 +14,8 @@ public class BattleFightManager : MonoBehaviour {
 
     [SerializeField] SpriteRenderer m_backgroundSprite;
 
+    [SerializeField] bool m_noDeath = false;
+
 	//Event for death
 	public event System.EventHandler<ActorDeadEventInfo> actorDeadEventHandler;
 	public class ActorDeadEventInfo : System.EventArgs{
@@ -115,7 +117,9 @@ public class BattleFightManager : MonoBehaviour {
     #region DAMAGE_DEALING
 
     public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _multiplier = 1.0f)
-    {        
+    {
+        if (m_noDeath)
+            return 0;
         if(_action == null)
         {
             return _caster.CurrentStats.Attack;
