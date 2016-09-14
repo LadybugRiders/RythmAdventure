@@ -27,6 +27,7 @@ public class BattleNote : MonoBehaviour {
 	//references to components used in updates
 	protected SpriteRenderer m_renderer;
 	protected Transform m_transform;
+    protected Animator m_animator;
     
     /// <summary>
     /// Distance done by the note from its starting point 
@@ -54,6 +55,7 @@ public class BattleNote : MonoBehaviour {
 	// Use this for initialization
 	virtual protected void Start () {
 		m_renderer = GetComponent<SpriteRenderer> ();
+        m_animator = GetComponent<Animator>();
 		m_transform = transform;
 		Die ();
 	}
@@ -67,6 +69,9 @@ public class BattleNote : MonoBehaviour {
 					UpdateSpeed();
 					UpdateAlpha();
 				break;
+            case State.MISS:
+                UpdateMiss();
+                break;
 		}
 	}
 
@@ -101,6 +106,13 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+    protected virtual void UpdateMiss()
+    {
+        if (Utils.IsAnimationStateRunning(m_animator, "idle"))
+        {
+            Die();
+        }
+    }
 
 	#endregion
 
@@ -142,7 +154,8 @@ public class BattleNote : MonoBehaviour {
     /// </summary>
 	virtual public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
-		Die ();
+        Die();
+        m_animator.SetTrigger("die");
         //some notes (like long notes) needs to return several notes when then are missed
         return new BattleNote[] { this };
 	}
@@ -204,7 +217,7 @@ public class BattleNote : MonoBehaviour {
 
 	virtual public bool IsHittable {
 		get{
-			return m_state == State.LAUNCHED;
+            return m_state == State.LAUNCHED ;
 		}
 	}
 
