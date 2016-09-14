@@ -6,7 +6,7 @@ public class NoteData {
 
 	[SerializeField] protected float m_timeBegin;
 	
-	public enum NoteType{ SIMPLE, LONG, SLIDE };
+	public enum NoteType{ SIMPLE, LONG };
 	[SerializeField] protected NoteType m_type = NoteType.SIMPLE;
 
 	[SerializeField] protected int m_trackID= 0;
@@ -18,7 +18,7 @@ public class NoteData {
 	[SerializeField] protected bool m_head = true;
 
 	/** Use to store the accuracy of a hit note. Unused outside battle */
-	protected BattleScoreManager.Accuracy m_hitAccuracy;
+	protected HitAccuracy m_hitAccuracy;
 
 	public NoteData Clone(){
 		NoteData noteData = new NoteData ();
@@ -78,7 +78,7 @@ public class NoteData {
 	}
 	
 
-	public BattleScoreManager.Accuracy HitAccuracy {
+	public HitAccuracy HitAccuracy {
 		get {
 			return m_hitAccuracy;
 		}

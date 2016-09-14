@@ -9,11 +9,17 @@ public class BattleNoteLong : BattleNote {
 	[SerializeField] protected BattleNoteLong m_pairNote;
 	[SerializeField] protected SpriteRenderer m_bodySprite;
 
+    /// <summary>
+    /// Distance where the alpha of the body will reach 1.Of
+    /// </summary>
+    [SerializeField] protected float m_bodyAlphaDist = 1.0f;
+
 	protected float m_bodyScaleMultiplier = 1.0f;
 	protected Transform m_bodyTransform;
 
 	// Use this for initialization
 	override protected void Start () {
+		m_canSlide = false;
 		m_bodyScaleMultiplier = m_bodySprite.sprite.bounds.extents.x * 2;
 		m_bodyTransform = m_bodySprite.gameObject.transform;
 		base.Start ();
@@ -45,8 +51,9 @@ public class BattleNoteLong : BattleNote {
 		//Change scale
 		deltaX = Mathf.Abs (deltaX);
 		Utils.SetLocalScaleX( m_bodyTransform, deltaX + deltaX * m_bodyScaleMultiplier);
-		//change alpha
-		Utils.SetAlpha (m_bodySprite, m_renderer.color.a);
+        //compute alpha from the beginning
+        float newAlpha = (m_distanceDone / m_bodyAlphaDist) * 1.0f;
+        Utils.SetAlpha (m_bodySprite, newAlpha);
 	}
 
 	#region ACTIONS
@@ -57,11 +64,9 @@ public class BattleNoteLong : BattleNote {
 		this.CurrentState = State.HIT;
 		if (IsHead) {
 			Utils.SetPositionX(m_transform, _slot.transform.position.x);
-		} else {
+		} /*else {
 			Die ();
-			//notify the head
-			m_pairNote.SecondHit();
-		}
+		}*/
 	}
 
 	// Miss: If HEAD, kill itself and tail ( if launched )
@@ -75,22 +80,24 @@ public class BattleNoteLong : BattleNote {
 		return new BattleNote[]{this, m_pairNote};
 	}
 
-	/** Called by the tail when it is hit*/
-	public void SecondHit(){
-		Die ();
-	}
-	
-	/** Makes the note die if needs to be. If the note can be killed, return true */
-	override public bool Die(){
+    /// <summary>
+    /// Makes the note die. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
+    override public BattleNote[] Die(){
 		this.CurrentState = State.DEAD;
+        //hide body
 		if (IsHead) {
 			Utils.SetAlpha (m_bodySprite, 0.0f);
 			Utils.SetLocalPositionY(m_bodyTransform,-10000);
-		}
-		Utils.SetLocalPositionY(m_transform,-10000);
+        }
+        //Make pair note die if not already
+        if( ! m_pairNote.IsDead)
+            m_pairNote.Die();
+        //Hide note
+        Utils.SetLocalPositionY(m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
-		return true;
-	}
+        return new BattleNote[] { this, m_pairNote };
+    }
 
 	#endregion
 
@@ -101,8 +108,9 @@ public class BattleNoteLong : BattleNote {
 		if (IsHead == false && m_pairNote.IsDead) {
 			Die ();
 			return false;
-		}
-		this.CurrentState = State.LAUNCHED;
+        }
+
+        this.CurrentState = State.LAUNCHED;
 		Utils.SetLocalPositionY (m_bodyTransform, m_transform.localPosition.y);
 
         //color
@@ -110,8 +118,11 @@ public class BattleNoteLong : BattleNote {
         Color color = ColorManager.instance.GetColor(colorName);
 
         //set sprite
-        if ( m_isHead ) {
-			if( m_track.TracksManager.IsAttacking ){
+        if ( m_isHead )
+        {
+            UpdateBody();
+            Utils.SetAlpha(m_bodySprite, 0.0f);
+            if ( m_track.TracksManager.IsAttacking ){
 				m_renderer.sprite = m_attackSprite;
                 //change body color
                 m_bodySprite.color = color;

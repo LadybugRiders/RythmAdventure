@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
-public partial class MapNodesManager : MonoBehaviour {
+public partial class MapNodesManager : SpriteTouchManager {
     //nodes building
     [SerializeField] Transform m_poolNodesObject;
     List<MapNode> m_nodes;
@@ -27,7 +27,7 @@ public partial class MapNodesManager : MonoBehaviour {
         ListNodes();
         BuildPaths();
         SetStartNode();
-        OnStartTouch();
+        DataCheck();
     }
 
     void SetStartNode()
@@ -47,22 +47,55 @@ public partial class MapNodesManager : MonoBehaviour {
         Utils.Set2DPosition(m_player.transform, m_starterNode.transform.position);
     }
 
-    void OnNodeTouchDown(MapNode node)
+    public void OnGoToGameMenu()
     {
+        SceneManager.LoadScene("game_menu");
+    }
+    #region TOUCH
+
+    protected override void OnReleased(Collider2D _collider)
+    {
+        base.OnReleased(_collider);
+        MapNode node = GetNodeTouched(_collider);
+        if( node != null )
+            OnNodeTouchRelease(node);
     }
 
-    void OnNodeTouchRelease(MapNode node)
+    void OnNodeTouchRelease(MapNode _node)
     {
+        if (_node.Locked)
+            return;
+
         //build the path of nodes
         m_nodesPath = new List<MapNode>();
         //Launch the walking
-        m_nodesPath = CreatePathProcess(node);
-        m_state = State.MOVING;
-        m_targetNode = node;
+        m_nodesPath = CreatePathProcess(_node);
+        m_targetNode = _node;
+        if( m_currentNode == m_targetNode)
+        {
+            OnPlayerReachedNode(m_targetNode);
+        }else
+        {
+            m_state = State.MOVING;
+        }
     }
 
+    MapNode GetNodeTouched(Collider2D _colliderTouched)
+    {
+        for (int i = 0; i < m_nodes.Count; ++i)
+        {
+            if (m_nodes[i].gameObject.GetComponent<Collider2D>() == _colliderTouched)
+            {
+                return m_nodes[i];
+            }
+        }
+        return null;
+    }
+
+    #endregion
+
     void Update() {
-        UpdateTouch();
+        ProcessTouch();
         switch (m_state)
         {
             case State.MOVING: Moving(); break;
@@ -85,9 +118,9 @@ public partial class MapNodesManager : MonoBehaviour {
         }
     }
 
-    public void OnPlayerReachedNode(MapNode node)
+    public void OnPlayerReachedNode(MapNode _node)
     {
-        if (node == m_targetNode)
+        if (_node == m_targetNode)
         {
             m_state = State.IDLE;
             var uiPopup = UIManager.instance.Popup();
@@ -207,4 +240,23 @@ public partial class MapNodesManager : MonoBehaviour {
 
     }
     #endregion
+
+    public void DataCheck()
+    {
+        var mapData = ProfileManager.instance.GetMapData("World1");
+        foreach(var node in m_nodes)
+        {
+            var levelData = mapData.Levels.Find(x => x.Id == node.Id);
+            if( levelData != null)
+            {
+                node.Score = levelData.Score;
+                if( levelData.Score > 0 )
+                {
+                    node.Unlock();
+                }
+            }
+            if (node.Parents.Count == 0)
+                node.Unlock();
+        }
+    }
 }

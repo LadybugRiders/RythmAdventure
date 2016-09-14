@@ -19,11 +19,9 @@ public class BattleTracksManager : MonoBehaviour {
 	/** GameObject containing all simple notes */
 	[SerializeField] public GameObject m_simpleNotesGroup;
     [SerializeField] public GameObject m_longNotesGroup;
-    [SerializeField] public GameObject m_slideNotesGroup;
     /** List of notes scripts */
     private List<BattleNote> m_simpleNotes;
 	private List<BattleNote> m_longNotes;
-    private List<BattleNote> m_slideNotes;
 
     //COLOR
     public Color attackColor;
@@ -38,23 +36,38 @@ public class BattleTracksManager : MonoBehaviour {
 	private float m_currentSpeed = 5.0f;
 
     //EVENTS
+	/// <summary>
+	/// Called when a note is hit
+	/// </summary>
 	public event System.EventHandler<NoteEventInfo> noteEventHandler;
+	/// <summary>
+	/// Called when an action has to be performed. Basically a note has been hit and completely verified.
+	/// This is different from noteEventHandler, in the way that a note hit doesn't always means an action (slide delay)
+	/// </summary>
+	public event System.EventHandler<NoteEventInfo> actionEventHandler;
+
     public class NoteEventInfo : System.EventArgs{
         public NoteData NoteHit { get; private set; }
         public NoteData NextNote { get; set; }
         public bool Success { get; private set; }
-        public BattleScoreManager.Accuracy Accuracy { get; private set; }
+        public HitAccuracy Accuracy { get; private set; }
+		public bool IsSpecialAction { get; set; }
+        public bool IsPlayerAttack { get; set; }
+
 		/// <summary>
 		/// Tells if the note is on a disabled track
 		/// </summary>
 		public bool IsFinal { get; set; }
 
-		public NoteEventInfo(NoteData _notehit, bool _success, BattleScoreManager.Accuracy _acc = BattleScoreManager.Accuracy.MISS, bool _isFinal = false)
+		public NoteEventInfo(NoteData _notehit, bool _success, bool _offensive, HitAccuracy _acc = HitAccuracy.MISS, bool _isFinal = false)
         {
             NoteHit = _notehit;
             Success = _success;
             Accuracy = _acc;
 			IsFinal = _isFinal;
+            IsPlayerAttack = _offensive;
+            if (IsFinal)
+                IsFinal.ToString();
         }
     }
 
@@ -156,7 +169,6 @@ public class BattleTracksManager : MonoBehaviour {
 		switch (_data.Type) {
 			case NoteData.NoteType.SIMPLE : success = LaunchNote(_data, m_simpleNotes); break;
 			case NoteData.NoteType.LONG : success = LaunchLongNote(_data); break;
-            case NoteData.NoteType.SLIDE: success = LaunchNote(_data, m_slideNotes); break;
 		}
 		if (success) {
 			m_engine.OnNoteLaunched (_data);
@@ -210,7 +222,7 @@ public class BattleTracksManager : MonoBehaviour {
 				}
 			}
 			if (note == null) {
-				Debug.LogError ("No Available Note found ");
+				Debug.LogError ("No Available Long Note found -- trying to add an head");
 				return false;
 			}
 			//Launch the note on the right track
@@ -222,6 +234,7 @@ public class BattleTracksManager : MonoBehaviour {
     /// Every BattleNote added to the track pass in there
     /// </summary>
     bool LaunchNoteOnTrack(BattleNote _note,NoteData _data){
+        _note.Offensive = (m_state == BattleState.ATTACK);
 		//keep track of launched notes
 		m_lastNoteLaunched = _note;
 		//Affect data to BattleNote
@@ -248,13 +261,20 @@ public class BattleTracksManager : MonoBehaviour {
     /// </summary>
     public void OnInputTriggered(int _id, BattleNote.HIT_METHOD _method)
     {
+        CheckCurrentTrack();
         if (CheckInputState(_id))
-        {
+		{
             m_tracks[m_currentTrackID].OnInputTriggered(_method);
+			//Abort ongoing input (slide/presslong) on other tracks
+			for (int i = 0; i < m_tracks.Count; ++i) {
+				if (m_tracks [i].Id != m_currentTrackID) {
+					m_tracks [i].ResetInput ();
+				}
+			}
         }
         else
-        {
-            m_tracks[m_currentTrackID].OnInputError(_method);
+		{
+            m_tracks[m_currentTrackID].OnInputError(_method,null);
         }
     }
 
@@ -266,25 +286,7 @@ public class BattleTracksManager : MonoBehaviour {
 			return (_id < 0 && m_switchState == BattleState.ATTACK) || (_id > 0 && m_switchState == BattleState.DEFEND);
 		return (_id < 0 && m_state == BattleState.DEFEND) || (_id > 0 && m_state == BattleState.ATTACK);
 	}
-
-    public void RaiseNoteEvent(NoteEventInfo _eventNote)
-    {		
-        if (noteEventHandler != null)
-        {
-            CheckCurrentTrack();
-            var nextNote = m_tracks[m_currentTrackID].CurrentNote;
-            _eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
-            noteEventHandler.Invoke(this, _eventNote);
-        }
-		//check redirection
-		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
-		if (!track.IsActive && track.IsEmpty) {
-			var replcmtTrack = GetReplacementTrack ();
-			if( replcmtTrack != null )
-				RedirectTrack (track.Id,replcmtTrack.Id);
-		}
-    }
-
+        
 	#endregion
 
 	#region FIND_NOTES
@@ -295,9 +297,6 @@ public class BattleTracksManager : MonoBehaviour {
         //Long notes
 		notes = m_longNotesGroup.GetComponentsInChildren<BattleNote> (true);
 		m_longNotes = new List<BattleNote> (notes);
-        //Slide notes
-        notes = m_slideNotesGroup.GetComponentsInChildren<BattleNote>(true);
-        m_slideNotes = new List<BattleNote>(notes);
     }
 
     #endregion
@@ -355,13 +354,38 @@ public class BattleTracksManager : MonoBehaviour {
 	}
     #endregion
     
-    ///<summary>
-    /// Adds the performed note to the engine, even if missed, so that it can be processed
-    ///</summary>
-    public BattleScoreManager.Accuracy AddNote(BattleNote _note, float _accuracy){
-		CheckCurrentTrack ();
-		return m_engine.AddNote (_note.Data,_accuracy);
+	#region EVENTS
+
+	public void RaiseNoteEvent(NoteEventInfo _eventNote)
+	{
+        //Debug.Log("HIT note event "+ _eventNote.Accuracy.ToString() + " t=" + _eventNote.NoteHit.TimeBegin + " " + m_currentTrackID);
+		if (noteEventHandler != null)
+		{
+			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
+			noteEventHandler.Invoke(this, _eventNote);
+		}
+		//check redirection
+		BattleTrack track = m_tracks[ _eventNote.NoteHit.TrackID ];
+		if (!track.IsActive && track.IsEmpty) {
+			var replcmtTrack = GetReplacementTrack ();
+			if( replcmtTrack != null )
+				RedirectTrack (track.Id,replcmtTrack.Id);
+		}
 	}
+
+	public void RaiseNoteActionEvent(NoteEventInfo _eventNote)
+    {
+        //Debug.Log("HIT note action");
+        if (noteEventHandler != null)
+		{
+			var nextNote = m_tracks[m_currentTrackID].CurrentNote;
+			_eventNote.NextNote = nextNote !=null ? nextNote.Data : null ; // the note being hit/missed cannot be the current
+			actionEventHandler.Invoke(this, _eventNote);
+        }
+        CheckCurrentTrack();
+    }
+	#endregion
 
     /// <summary>
     /// Search between all tracks to see the one which is the current one aka the one with the next not on it

@@ -54,6 +54,7 @@ public class SongEditorManager : MonoBehaviour {
 	void Start () {
 		BootCheck ();
 		m_copiedNotes = new List<SongEditorNote> ();
+        Import();
 	}
 	
 	// Update is called once something has changed in the scene

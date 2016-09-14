@@ -146,10 +146,10 @@ public class BattleEngine : MonoBehaviour {
 
 	#region FIGHT
 
-	public void OnLaunchMagic(BattleFightMagic _magic){
+	public void OnLaunchMagic(BattleMagic _magic){
 	}
 
-	public void OnMagicEnded(BattleFightMagic _magic){
+	public void OnMagicEnded(BattleMagic _magic){
 	}
 
 	/** Called by the FightManager when a group of actor is dead on one side/
@@ -163,15 +163,7 @@ public class BattleEngine : MonoBehaviour {
 	}
 
     #endregion
-
-    /// <summary>
-    /// Called by the TracksManager when a note is hit or missed
-    /// </summary>
-    public BattleScoreManager.Accuracy AddNote( NoteData _note, float _accuracy){
-		_note.HitAccuracy = m_scoreManager.AddNote (_accuracy);
-		return _note.HitAccuracy;
-	}
-    
+        
     #region GETTERS
 
     public static BattleEngine instance {

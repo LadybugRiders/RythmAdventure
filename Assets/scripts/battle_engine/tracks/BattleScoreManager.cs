@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public class BattleScoreManager : MonoBehaviour {
 
-	public enum Accuracy { PERFECT, GREAT, GOOD, MISS };
-	
+    static BattleScoreManager _instance = null;
 	//Accuracy variables
 	[SerializeField] private float m_accuPerfect = 80f;
 	[SerializeField] private float m_accuGreat = 50f;
@@ -15,23 +14,24 @@ public class BattleScoreManager : MonoBehaviour {
     /// <summary>
     /// Notes sorted by accuracy
     /// </summary>
-	public Dictionary<Accuracy,int> m_notesCountByAcc;
+	public Dictionary<HitAccuracy,int> m_notesCountByAcc;
 
 	//SCORE
 	public int m_totalScore = 0;
-	public Dictionary<Accuracy, int>  m_baseScoreByAcc;
+	public Dictionary<HitAccuracy, int>  m_baseScoreByAcc;
 
     void Awake()
     {
         InitScoresData();
+        _instance = this;
     }
 
 	// Use this for initialization
 	void Start () {
-        m_notesCountByAcc = new Dictionary<Accuracy, int>();
+        m_notesCountByAcc = new Dictionary<HitAccuracy, int>();
 
-        for (int i = 0; i < Utils.EnumCount(Accuracy.GOOD); i++) {
-            Accuracy acc = (Accuracy)i;
+        for (int i = 0; i < Utils.EnumCount(HitAccuracy.GOOD); i++) {
+            HitAccuracy acc = (HitAccuracy)i;
 			m_notesCountByAcc.Add(acc, 0 );
 			if( !m_baseScoreByAcc.ContainsKey(acc) )
             	m_baseScoreByAcc[acc] = 0;
@@ -45,12 +45,12 @@ public class BattleScoreManager : MonoBehaviour {
 	
 	}
 
-	/** Adds Note to the scoreManager and returns accuracy (BattleScoreManager.Accuracy) */
-	public BattleScoreManager.Accuracy AddNote ( float _accuracyValue ){
+	/** Adds Note to the scoreManager and returns accuracy (HitAccuracy) */
+	public HitAccuracy AddNote ( float _accuracyValue ){
         //increase total
 		m_notesCount ++;
         //Compute Accuracy
-        Accuracy acc = GetAccuracyByValue(_accuracyValue);   
+        HitAccuracy acc = GetAccuracyByValue(_accuracyValue);   
         //keep total of accuracies     
         m_notesCountByAcc[acc]++;
         //Increment score
@@ -58,24 +58,24 @@ public class BattleScoreManager : MonoBehaviour {
 		return acc;
 	}
 
-    public Accuracy GetAccuracyByValue(float _accuracyValue)
+    public HitAccuracy GetAccuracyByValue(float _accuracyValue)
     {
-        Accuracy acc;
+        HitAccuracy acc;
         if (_accuracyValue > m_accuPerfect)
         {
-            acc = Accuracy.PERFECT;
+            acc = HitAccuracy.PERFECT;
         }
         else if (_accuracyValue > m_accuGreat)
         {
-            acc = Accuracy.GREAT;
+            acc = HitAccuracy.GREAT;
         }
         else if (_accuracyValue > 0)
         {
-            acc = Accuracy.GOOD;
+            acc = HitAccuracy.GOOD;
         }
         else
         {
-            acc = Accuracy.MISS;
+            acc = HitAccuracy.MISS;
         }
         return acc;
     }
@@ -83,7 +83,7 @@ public class BattleScoreManager : MonoBehaviour {
     void InitScoresData()
     {
 		var database = DataManager.instance.GetDatabase("scoring");
-		m_baseScoreByAcc = new Dictionary<Accuracy, int>();
+		m_baseScoreByAcc = new Dictionary<HitAccuracy, int>();
         if(database != null)
         {
             var accDatabase = database["accuracy_scoring"][0];
@@ -91,13 +91,21 @@ public class BattleScoreManager : MonoBehaviour {
             {
                 try
                 {
-                    Accuracy acc = (Accuracy) System.Enum.Parse(typeof(Accuracy),key.ToUpper());
+                    HitAccuracy acc = (HitAccuracy) System.Enum.Parse(typeof(HitAccuracy),key.ToUpper());
                     m_baseScoreByAcc[acc] = (int) accDatabase.GetField(key).f;
                 }catch(System.Exception e)
                 {
                     e.ToString();
                 }
             }
+        }
+    }
+
+    public static BattleScoreManager instance
+    {
+        get
+        {
+            return _instance;
         }
     }
 }

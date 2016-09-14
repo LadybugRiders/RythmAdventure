@@ -1,0 +1,34 @@
+{
+    "attack": [
+        {
+            "id": "short_sword",
+            "name": "short sword",
+            "prefab": "sword_attack",
+            "power": 4,
+            "type": "offense"
+        },
+        {
+            "id": "long_sword",
+            "name": "long sword",
+            "prefab": "sword_attack",
+            "power": 10,
+            "type": "offense"
+        }
+    ],
+    "magic": [
+        {
+            "id": "fireball",
+            "name": "fireball",
+            "prefab": "fireball",
+            "power": 4,
+            "type": "offense"
+        },
+        {
+            "id": "fireblast",
+            "name": "fireblast",
+            "prefab": "fireball",
+            "power": 10,
+            "type": "offense"
+        }
+    ]
+}

@@ -278,6 +278,10 @@ public class TweenEngine : MonoBehaviour {
 				m_repeat = value;
 			}
 		}
+
+        public virtual object Target {
+            get { return null; }
+        }
 	}
 
 	public class TweenTransform : Tween{
@@ -352,7 +356,12 @@ public class TweenEngine : MonoBehaviour {
 
 			return false;
 		}
-	}
+
+        public override object Target
+        {
+            get { return m_target; }
+        }
+    }
 
 	public class TweenColor : Tween{
 		protected SpriteRenderer m_target;
@@ -418,7 +427,11 @@ public class TweenEngine : MonoBehaviour {
 			return false;
 		}
 
-	}
+        public override object Target
+        {
+            get { return m_target; }
+        }
+    }
 
 	#endregion
 }

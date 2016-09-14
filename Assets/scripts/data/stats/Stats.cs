@@ -6,18 +6,24 @@ public class Stats {
 
 	protected int m_level = 1;
 
-	protected int m_HP= 100;
+	protected int m_HP= 0;
 
-	protected int m_MP = 100;
+	protected int m_MP = 0;
 
-	protected int m_attack = 20;
-	protected int m_defense = 10;
-	protected int m_magic = 10;
+	protected int m_attack = 0;
+	protected int m_defense = 0;
+	protected int m_magic = 0;
+    private int m_speed = 0;
 
-	public float blockPerfectModifier = 0.9f;
-	public float blockGreatModifier = 0.6f;
-	public float blockGoodModifier = 0.3f;
-	public float blockBadModifier = -0.3f;
+    public float attackPerfectModifier = 1.4f;
+	public float attackGreatModifier = 1.2f;
+	public float attackGoodModifier = 1.0f;
+	public float attackBadModifier = 0.8f;
+
+    public float blockPerfectModifier = 0.8f;
+    public float blockGreatModifier = 0.9f;
+    public float blockGoodModifier = 1.0f;
+    public float blockBadModifier = 1.1f;
 
     public Stats() { }
 
@@ -33,9 +39,66 @@ public class Stats {
         Attack = (int)json.GetField("attack").f;
         Defense = (int)json.GetField("defense").f;
         Magic = (int)json.GetField("magic").f;
+        HP = (int)json.GetField("hp").f;
+        MP = (int)json.GetField("mp").f;
+        Speed = (int)json.GetField("speed").f;
     }
 
-	public int Level {
+    public Stats Add(Stats _stats)
+    {
+        Attack += _stats.Attack;
+        Defense += _stats.Defense;
+        Magic += _stats.Magic;
+        HP += _stats.HP;
+        MP += _stats.MP;
+        Speed += _stats.Speed;
+        return this;
+    }
+
+    public Stats Subtract(Stats _stats)
+    {
+        Attack -= _stats.Attack;
+        Defense -= _stats.Defense;
+        Magic -= _stats.Magic;
+        HP -= _stats.HP;
+        MP -= _stats.MP;
+        Speed -= _stats.Speed;
+        return this;
+    }
+
+    public float GetBlockerBonus(HitAccuracy _accuracy)
+    {
+        switch (_accuracy)
+        {
+            case HitAccuracy.PERFECT:
+                return blockPerfectModifier;
+            case HitAccuracy.GREAT:
+                return blockGreatModifier;
+            case HitAccuracy.GOOD:
+                return blockGoodModifier;
+            case HitAccuracy.MISS:
+                return blockBadModifier;
+        }
+        return 1.0f;
+    }
+
+    public float GetAttackingBonus(HitAccuracy _accuracy)
+    {
+        switch (_accuracy)
+        {
+            case HitAccuracy.PERFECT:
+                return attackPerfectModifier;
+            case HitAccuracy.GREAT:
+                return attackGreatModifier;
+            case HitAccuracy.GOOD:
+                return attackGoodModifier;
+            case HitAccuracy.MISS:
+                return attackBadModifier;
+        }
+        return 1.0f;
+    }
+
+    public int Level {
 		get {
 			return m_level;
 		}
@@ -88,5 +151,17 @@ public class Stats {
 			m_magic = value;
 		}
 	}
-    
+
+    public int Speed
+    {
+        get
+        {
+            return m_speed;
+        }
+
+        set
+        {
+            m_speed = value;
+        }
+    }
 }

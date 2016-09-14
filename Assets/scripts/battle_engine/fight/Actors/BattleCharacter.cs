@@ -4,7 +4,7 @@ using System.Collections;
 public class BattleCharacter : BattleActor {
 
 	[SerializeField] BattleCharacterAnimator m_charAnimator;
-
+    [SerializeField] CharacterBuild m_build;
 
 	override protected void Start () {
 		base.Start ();
@@ -16,19 +16,37 @@ public class BattleCharacter : BattleActor {
     }
 
 	#region LOADING 
-	override public void Load(string _name){
-        base.Load(_name);
+	override public void Load(string _id){
+        base.Load(_id);
+        
+        //Characer Data form the profile
+        var charData = ProfileManager.instance.GetCharacter(_id);
 
-		m_charAnimator.LoadSprites(_name);
-        var charData = ProfileManager.instance.GetCharacter(_name);
-        var levelupData = DataManager.instance.CharacterManager.GetLevelByXp(charData.Category, charData.Xp);
-        if(charData != null && levelupData.Stats != null)
+        //Load equipement and looks
+        m_build.Load(charData);
+
+        //Get Stats
+        var stats = DataManager.instance.CharacterManager.ComputeStats(charData);
+        if(charData != null )
         {
-            m_maxStats = new Stats(levelupData.Stats);
-            m_currentStats = new Stats(levelupData.Stats);
+            m_maxStats = new Stats(stats);
+            m_currentStats = new Stats(stats);
         }
-		CurrentStats.MP = 0;
-        RefreshManaGauge();
+        RefreshUI();
+
+        //Load Attacks & Magics
+        if (charData.Attack != null)
+        {
+            AddAttack(charData.Attack.Id);
+        }
+        if( charData.Magics != null && charData.Magics.Count > 0)
+        {
+            for (int i = 0; i < charData.Magics.Count; i++)
+            {
+                var magic = charData.Magics[i];
+                AddMagic(magic.Id);
+            }
+        }
     }
 	#endregion
 
@@ -36,48 +54,26 @@ public class BattleCharacter : BattleActor {
 
 	}
 
-	#region ACTION
+    #region ACTION
 
-	override public int Attack( NoteData _noteData){
-		m_state = State.ATTACKING;
+    public override void Attack(BattleActor _target,int _damage)
+    {
+        base.Attack(_target,_damage);
+        m_charAnimator.Attack();
+    }
 
-		m_charAnimator.Attack ();
-
-		this.AddMP (5);
-
-		return CurrentStats.Attack;
-	}
-
-	override public int TakeDamage(int _damage, NoteData _note){
-		int damage = _damage;
-		damage -= CurrentStats.Defense ;
-		//Reduce damage by blocking
-		switch(_note.HitAccuracy){
-			case BattleScoreManager.Accuracy.PERFECT :
-				damage = damage - (int) (damage * CurrentStats.blockPerfectModifier);
-				break;
-			case BattleScoreManager.Accuracy.GREAT :
-				damage = damage - (int) (damage * CurrentStats.blockGreatModifier);
-				break;
-			case BattleScoreManager.Accuracy.GOOD :
-				damage = damage - (int) (damage * CurrentStats.blockGoodModifier);
-				break;
-			case BattleScoreManager.Accuracy.MISS :
-				damage = damage - (int) (damage * CurrentStats.blockBadModifier);
-				break;
-		}
-
-		if (damage < 0)
-			damage = 0;
-		CurrentStats.HP -=  damage;
+	override public void TakeDamage(int _damage){
+		
+		if (_damage < 0)
+			_damage = 0;
+		CurrentStats.HP -=  _damage;
 
 		m_charAnimator.TakeHit ();
 
 		RefreshLifeGauge ();
 
 		CheckDeath ();
-
-		return damage;
+        
 	}
 
 	#endregion

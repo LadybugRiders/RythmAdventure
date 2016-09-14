@@ -5,11 +5,20 @@ using System.Collections.Generic;
 public class MapNode : MonoBehaviour {
 
     [SerializeField] string m_id = "MapId";
+    public bool Locked { get; set; }
+    public int Score { get; set; }
+
+    [SerializeField] SpriteRenderer m_sprite;
 
     [SerializeField] List<MapNode> m_parents;
     [SerializeField] List<MapNode> m_children;
-
+    
     [SerializeField] BattleDataAsset m_battleData;
+
+    void Awake()
+    {
+        Lock();
+    }
     
     // Use this for initialization
     void Start () {
@@ -20,6 +29,18 @@ public class MapNode : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public void Lock()
+    {
+        Locked = true;
+        m_sprite.color = Color.gray;
+    }
+
+    public void Unlock()
+    {
+        Locked = false;
+        m_sprite.color = Color.white;
+    }
 
     #region GETTERS-SETTERS
 

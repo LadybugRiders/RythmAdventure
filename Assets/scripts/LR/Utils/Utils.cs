@@ -25,7 +25,16 @@ public partial class Utils  {
 		tmpVector.z = _newValue;
 		_t.localPosition = tmpVector;
 		return _t.localPosition;
-	}
+    }
+
+    public static Vector3 SetLocalPositionXY(Transform _t, float _x, float _y)
+    {
+        Vector3 tmpVector = _t.localPosition;
+        tmpVector.x = _x;
+        tmpVector.y = _y;
+        _t.localPosition = tmpVector;
+        return _t.localPosition;
+    }
 
     /// <summary>
     /// Sets the local position without the Z axis
@@ -115,10 +124,17 @@ public partial class Utils  {
 		_textMesh.color = color;
 	}
 
-	public static bool IsAnimationStateRunning( Animator _animator, string _statename){
-		return _animator.GetCurrentAnimatorStateInfo (0).IsName (_statename);
+    /// <summary>
+    /// Returns true if the animation is running. 
+    /// If _checkTransition, also returns false if the animator is still in transition.
+    /// </summary>
+	public static bool IsAnimationStateRunning( Animator _animator, string _statename, bool _checkTransition = true, int _layerIndex = 0){
+        bool result = _animator.GetCurrentAnimatorStateInfo(_layerIndex).IsName(_statename);
+        if (_checkTransition)
+            result = result && !_animator.IsInTransition(_layerIndex);
+        return result;
 	}
-
+    
 	public static void SetParentKeepTransform( Transform _child, Transform _parent){
 		Vector3 pos = _child.localPosition;
 		Vector3 scale = _child.localScale;
@@ -199,5 +215,13 @@ public partial class Utils  {
     /// </summary>
     public static int EnumCount( Enum _enum ){        
         return Enum.GetNames(_enum.GetType()).Length;
+    }
+
+    public static void SetLayerRecursively(GameObject go, int layerNumber)
+    {
+        foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
+        {
+            trans.gameObject.layer = layerNumber;
+        }
     }
 }

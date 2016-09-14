@@ -8,7 +8,9 @@ public class BattleNote : MonoBehaviour {
 	public enum State { LAUNCHED, HIT, MISS, DEAD };
 	protected State m_state = State.DEAD;
 
-    public enum HIT_METHOD { PRESS, RELEASE, SLIDE };
+    public enum HIT_METHOD { PRESS, RELEASE, SLIDE, NONE };
+
+    private bool m_offensive = false;
     
 	[SerializeField] protected HIT_METHOD m_hitMethod = HIT_METHOD.PRESS;
 
@@ -25,12 +27,18 @@ public class BattleNote : MonoBehaviour {
 	//references to components used in updates
 	protected SpriteRenderer m_renderer;
 	protected Transform m_transform;
+    
+    /// <summary>
+    /// Distance done by the note from its starting point 
+    /// </summary>
+    protected float m_distanceDone = 0;
 
-	/** Distance done by the note from its starting point */
-	protected float m_distanceDone = 0;
-
-	/** Distance where the alpha of the note will reach 1.Of */
-	protected float m_alphaDist = 5.0f;
+	public float Accuracy{ get; set; }
+    
+    /// <summary>
+    /// Distance where the alpha of the note will reach 1.Of
+    /// </summary>
+    [SerializeField] protected float m_alphaDist = 3.0f;
 
 	protected Vector3 m_startPos;
 
@@ -40,6 +48,8 @@ public class BattleNote : MonoBehaviour {
 	protected bool m_isFinal = false;
 
 	protected bool m_paused = false;
+
+	protected bool m_canSlide = true;
 
 	// Use this for initialization
 	virtual protected void Start () {
@@ -103,8 +113,10 @@ public class BattleNote : MonoBehaviour {
 		return Launch ();
 	}
 
-	virtual protected bool Launch(){
-		this.CurrentState = State.LAUNCHED;
+	virtual protected bool Launch()
+    {
+        IsFinal = false; //failsafe : a note cannot be launched on a disabled track, so cant be launched as final
+        this.CurrentState = State.LAUNCHED;
 		//set sprite & color
 		if (m_track.TracksManager.IsAttacking) {
 			m_renderer.sprite = m_attackSprite;
@@ -123,9 +135,11 @@ public class BattleNote : MonoBehaviour {
 	/** Hit the note */
 	virtual public void Hit(BattleSlot _slot){
 		this.CurrentState = State.HIT;
-		Die ();
 	}
 
+    /// <summary>
+    /// Makes a note miss. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
 	virtual public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
 		Die ();
@@ -133,14 +147,17 @@ public class BattleNote : MonoBehaviour {
         return new BattleNote[] { this };
 	}
 
-	/** Makes the note die if needs to be. If the note can be killed, return true */
-	virtual public bool Die(){
+	/// <summary>
+    /// Makes the note die. Return the notes affected by this action ( ie head and tail for long notes )
+    /// </summary>
+	virtual public BattleNote[] Die(){
 		this.CurrentState = State.DEAD;
+        IsFinal = false;
 		Utils.SetLocalPositionY (m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
 		if (m_magicEffect)
 			Utils.SetAlpha (m_magicEffect, 0.0f);
-		return true;
+		return new BattleNote[] { this }; ;
 	}
 
 	public void Pause(){
@@ -191,6 +208,10 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+	public bool IsHit{
+		get{ return m_state == State.HIT; }
+	}
+
 	public bool IsDead{
 		get{
 			return m_state == State.DEAD;
@@ -222,6 +243,9 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Tells if the note is a final note of the track. This means the tracks has been disabled but the note still can be hit
+	/// </summary>
 	public bool IsFinal {
 		get {
 			return m_isFinal;
@@ -230,6 +254,21 @@ public class BattleNote : MonoBehaviour {
 			m_isFinal = value;
 		}
 	}
+
+	public bool CanSlide{
+		get{
+			return m_canSlide;
+		}
+		set{
+			m_canSlide = value;
+		}
+	}
+
+    public bool Offensive
+    {
+        get { return m_offensive; }
+        set { m_offensive = value; }
+    }
 
 	#endregion
 }

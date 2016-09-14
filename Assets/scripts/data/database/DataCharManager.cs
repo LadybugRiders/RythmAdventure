@@ -9,14 +9,29 @@ public class DataCharManager : DatabaseLoader
         base.LoadDatabase();
 
         JSONObject tempJson;
+        //levelup
         tempJson = LoadDataJSON("characters/characters_levelup_database");
-        m_database.Add("levelup", tempJson);        
+        m_database.Add("levelup", tempJson);
+        //equipement
+        tempJson = LoadDataJSON("characters/equipement_database");
+        m_database.Add("equipment", tempJson);
     }
-    
-    public LevelUpData GetLevelByXp(string _category, int _xp)
+
+    public Stats ComputeStats(ProfileManager.CharacterData _charData)
     {
-        JSONObject levelupDB = m_database["levelup"];
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        Stats stats = new Stats();
+        //Get Class Stats
+        var levelupStats = GetLevelByXp(_charData.Job, _charData.Xp).Stats;
+        stats.Add(levelupStats);
+        return stats;
+    }
+
+    #region LEVEL
+
+    public LevelUpData GetLevelByXp(Job _job, int _xp)
+    {
+        JSONObject levelupDB = LevelUpDatabase;
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -32,10 +47,10 @@ public class DataCharManager : DatabaseLoader
         return levelUpData;
     }
 
-    public LevelUpData GetLevel(string _category, int _level)
+    public LevelUpData GetLevel(Job _job, int _level)
     {
-        JSONObject levelupDB = m_database["levelup"];
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        JSONObject levelupDB = LevelUpDatabase;
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -54,10 +69,10 @@ public class DataCharManager : DatabaseLoader
     /// <summary>
     /// Returns the level data of the next level
     /// </summary>
-    public LevelUpData GetNextLevelByXp(string _category, int _xp)
+    public LevelUpData GetNextLevelByXp(Job _job, int _xp)
     {
-        JSONObject levelupDB = m_database["levelup"];
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
+        JSONObject levelupDB = LevelUpDatabase;
+        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
 
         //Get base stats from leveling (db)
         LevelUpData levelUpData = null;
@@ -79,7 +94,7 @@ public class DataCharManager : DatabaseLoader
     /// </summary>
     public LevelUpData GetNextLevel(string _category, int _level)
     {
-        JSONObject levelupDB = m_database["levelup"];
+        JSONObject levelupDB = LevelUpDatabase;
         JSONObject levelsForPlayerJSON = levelupDB[_category];
 
         //Get base stats from leveling (db)
@@ -96,11 +111,110 @@ public class DataCharManager : DatabaseLoader
         }
         return levelUpData;
     }
+    #endregion
 
-    #region LEVELUP
+    #region EQUIPEMENT
+
+    public EquipmentData GetEquipement( EquipmentType _type, string _id)
+    {
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
+
+        if (jsonObject != null)
+        {
+            return new EquipmentData(jsonObject, _type);
+        }
+        return null;
+    }
+
+    public EquipmentData GetEquipement(string _type, string _id)
+    {
+        EquipmentType enumType = (EquipmentType) System.Enum.Parse(typeof(EquipmentType), _type);
+        return GetEquipement(enumType, _id);
+    }
+
+    public LooksData GetLooks( LooksType _type, string _id)
+    {
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
+
+        if (jsonObject != null)
+        {
+            return new LooksData(jsonObject, _type);
+        }
+        return null;
+    }
+
+    public LooksData GetLooks(string _type, string _id)
+    {
+        LooksType lookType = (LooksType)System.Enum.Parse(typeof(LooksType), _type);
+        return GetLooks(lookType, _id);
+    }
 
     #endregion
 
+    #region COLOR
+
+    public Color GetBodyColor(string _colorId)
+    {
+        Color color = new Color();
+        color.a = 1.0f;
+        JSONObject colorDB = EquipementDatabase["body_colors"];
+        var jsonObject = colorDB.list.Find(x => x.GetField("id").ToString() == _colorId);
+        if( jsonObject != null)
+        {
+            color.r = jsonObject.GetField("red").f / 255;
+            color.g = jsonObject.GetField("green").f / 255;
+            color.b = jsonObject.GetField("blue").f / 255;
+        }
+        return color;
+    }
+
+    #endregion
+
+    JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
+    JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
+
+    #region CHARACTER_GENERATION
+
+    public ProfileManager.CharacterData GenerateCharacter(Job _job)
+    {
+        ProfileManager.CharacterData chara = new ProfileManager.CharacterData(""+ProfileManager.instance.profile.Characters.Count);
+        chara.Job = _job;
+        //Add random equipements
+        for(int i = 0; i< Utils.EnumCount(EquipmentType.ACCESSORY); i++)
+        {
+            EquipmentType type = (EquipmentType)i;
+            var randomEqpmnt = GetRandomEquipment(_job, type );
+            chara.AddEquipement(randomEqpmnt.Id, type);
+        }
+        //Add random looks
+        for (int i = 0; i < Utils.EnumCount(LooksType.EYEBROWS); i++)
+        {
+            LooksType type = (LooksType)i;
+            var randomLooks = GetRandomLooks(_job, type);
+            chara.AddLooks(randomLooks.Id, type);
+        }
+        return chara;
+    }
+
+    public LooksData GetRandomLooks(Job _job, LooksType _type)
+    {
+        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
+        int r = Random.Range(0, listOfLooks.Count - 1);
+        return new LooksData(listOfLooks[r],_type);
+    }
+
+    public EquipmentData GetRandomEquipment(Job _job, EquipmentType _type)
+    {
+        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
+        int r = Random.Range(0, listOfLooks.Count - 1);
+        return new EquipmentData(listOfLooks[r], _type);
+    }
+
+    #endregion
+
+    #region DATA
     /// <summary>
     /// Data used to stored levels 
     /// </summary>
@@ -109,10 +223,65 @@ public class DataCharManager : DatabaseLoader
         public int XpNeeded = 0;
         public Stats Stats = new Stats();
 
-        public LevelUpData(JSONObject json)
+        public LevelUpData(JSONObject _json)
         {
-            XpNeeded = (int)json.GetField("xp").f;
-            Stats = new Stats(json);
+            XpNeeded = (int)_json.GetField("xp").f;
+            Stats = new Stats(_json);
         }
     }
+
+    public class BuildData
+    {
+        public string Id;
+        public string Name = "NoName_Equipment";
+        public string Prefab;
+        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
+        public int Level = 1;
+
+        public BuildData(JSONObject _json)
+        {
+            Id = _json.GetField("id").str;
+            Level = (int)_json.GetField("level").f;
+            Name = _json.GetField("name").str;
+            Prefab = _json.GetField("prefab").str;
+
+            //Compat
+            Compatibilities.Add( (EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper())) ;
+            var compat2 = _json.GetField("compat2");
+            if( compat2 != null)
+            {
+                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
+            }
+        }
+
+        public bool IsCompatible(EquipCompatibility _type)
+        {
+            foreach (var comp in Compatibilities)
+                if (comp == _type)
+                    return true;
+            return false;
+        }
+    }
+
+    public class EquipmentData : BuildData
+    {
+        public EquipmentType type;
+
+        public EquipmentData(JSONObject _json, EquipmentType _type) : base(_json)
+        {
+            type = _type;
+        }
+    }
+
+    public class LooksData : BuildData
+    {
+        public LooksType type;
+
+        public LooksData(JSONObject _json, LooksType _type) : base(_json)
+        {
+            type = _type;
+        }
+    }
+
+    #endregion
 }
