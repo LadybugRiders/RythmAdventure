@@ -29,15 +29,16 @@ public class BattleNoteLong : BattleNote {
 	// Update is called once per frame
 	override protected void Update () {
 		base.Update ();
-		if (!m_paused && IsHead && IsOnTrack) {
+		if (!m_paused && IsHead) {
 			UpdateBody();
 		}
 	}
 
 	/** make the body follow the head */
 	void UpdateBody(){
-		if ( m_pairNote.IsHit )
-			return;
+        //neither the head nor the tail is hittable
+        if ( !IsHittable && !m_pairNote.IsHittable )
+            return;
 		float deltaX;
 		Vector3 tmpVector = m_startPos;
 		if (m_pairNote.CurrentState == State.LAUNCHED) {
@@ -128,24 +129,14 @@ public class BattleNoteLong : BattleNote {
         if ( m_isHead )
         {
             UpdateBody();
+            m_bodySprite.color = color;
             Utils.SetAlpha(m_bodySprite, 0.0f);
-            if ( m_track.TracksManager.IsAttacking ){
-				m_renderer.sprite = m_attackSprite;
-                //change body color
-                m_bodySprite.color = color;
-            }
-            else{
-				m_renderer.sprite = m_defendSprite;
-                //change body color
-                m_bodySprite.color = color;
-            }
+			m_renderer.sprite = m_track.TracksManager.IsAttacking ? m_attackSprite : m_defendSprite;
 		} else {
-			m_renderer.sprite = m_blankSprite;
             m_renderer.color = color;
-
         }
-		Utils.SetAlpha (m_renderer, 0.0f);
 
+		Utils.SetAlpha (m_renderer, 0.0f);
 		return true;
 	}
 	#endregion
