@@ -193,8 +193,10 @@ public class BattleSlot : MonoBehaviour {
 	/// </summary>
     public void AbortPendingSlide()
     {
+        m_explosion.Stop();
+
 		if (m_pendingNote != null) {
-			m_track.OnNoteKill (m_pendingNote, this);
+			m_track.OnNoteMiss (m_pendingNote);
 			m_pendingNote = null;            
         }
         //clean timers
@@ -246,6 +248,7 @@ public class BattleSlot : MonoBehaviour {
 			BattleNote note = _collider.gameObject.GetComponent<BattleNote>();
 			if( note && note.IsHittable && m_collidingNotes.Contains(note)){
 				m_track.OnNoteMiss(note);
+                m_explosion.Stop();
 				m_collidingNotes.Remove(note);
 			}
 		}

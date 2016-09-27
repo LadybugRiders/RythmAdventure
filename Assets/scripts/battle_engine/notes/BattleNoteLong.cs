@@ -36,8 +36,7 @@ public class BattleNoteLong : BattleNote {
 
 	/** make the body follow the head */
 	void UpdateBody(){
-		//only the head gets to modify the body
-		if (IsHead == false)
+		if ( m_pairNote.IsHit )
 			return;
 		float deltaX;
 		Vector3 tmpVector = m_startPos;
@@ -50,7 +49,9 @@ public class BattleNoteLong : BattleNote {
 		Utils.SetLocalPositionX( m_bodyTransform, m_transform.localPosition.x - deltaX * 0.5f);
 		//Change scale
 		deltaX = Mathf.Abs (deltaX);
-		Utils.SetLocalScaleX( m_bodyTransform, deltaX + deltaX * m_bodyScaleMultiplier);
+        deltaX += deltaX * m_bodyScaleMultiplier;
+
+        Utils.SetLocalScaleX( m_bodyTransform, deltaX);
         //compute alpha from the beginning
         float newAlpha = (m_distanceDone / m_bodyAlphaDist) * 1.0f;
         Utils.SetAlpha (m_bodySprite, newAlpha);
@@ -60,24 +61,33 @@ public class BattleNoteLong : BattleNote {
 
 	//Hit : If HEAD place in slot center
 	//     If TAIL , send second hit and Die
-	override public void Hit(BattleSlot _slot){
+	override public BattleNote[] Hit(BattleSlot _slot){
 		this.CurrentState = State.HIT;
-		if (IsHead) {
+        if (IsHead) {
 			Utils.SetPositionX(m_transform, _slot.transform.position.x);
-		} /*else {
-			Die ();
-		}*/
-	}
+        }
+        else
+        {
+            m_pairNote.TriggerHitAnimation();
+            this.Die();
+        }
+        return new BattleNote[] { this };
+    }
 
 	// Miss: If HEAD, kill itself and tail ( if launched )
 	//		If TAIL : kill itself and head
 	override public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
-		//Notify other
-		if ( m_pairNote.IsOnTrack )
-			m_pairNote.Die ();
-		Die ();
-		return new BattleNote[]{this, m_pairNote};
+        //Notify other
+        if (IsHead)
+        {
+            m_pairNote.Miss();
+            Utils.SetAlpha(m_bodySprite, 0.0f);
+        }
+        m_animator.enabled = true;
+        m_animator.SetTrigger("die");
+
+        return new BattleNote[]{this, m_pairNote};
 	}
 
     /// <summary>
@@ -90,9 +100,6 @@ public class BattleNoteLong : BattleNote {
 			Utils.SetAlpha (m_bodySprite, 0.0f);
 			Utils.SetLocalPositionY(m_bodyTransform,-10000);
         }
-        //Make pair note die if not already
-        if( ! m_pairNote.IsDead)
-            m_pairNote.Die();
         //Hide note
         Utils.SetLocalPositionY(m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
@@ -142,6 +149,11 @@ public class BattleNoteLong : BattleNote {
 		return true;
 	}
 	#endregion
+
+    public void TriggerHitAnimation()
+    {
+        m_animator.SetTrigger("hit");
+    }
 
 	public bool IsHead {
 		get {
