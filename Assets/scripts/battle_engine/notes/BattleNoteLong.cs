@@ -82,8 +82,11 @@ public class BattleNoteLong : BattleNote {
         //Notify other
         if (IsHead)
         {
-            m_pairNote.Miss();
             Utils.SetAlpha(m_bodySprite, 0.0f);
+        }
+        if( m_pairNote.CurrentState != State.MISS)
+        {
+            m_pairNote.Miss();
         }
         m_animator.enabled = true;
         m_animator.SetTrigger("die");

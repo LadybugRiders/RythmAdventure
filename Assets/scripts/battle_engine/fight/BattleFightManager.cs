@@ -156,6 +156,9 @@ public class BattleFightManager : MonoBehaviour {
 		//no attack for long note's head
 		if (_eventInfo.NoteHit.Type == NoteData.NoteType.LONG && _eventInfo.NoteHit.Head)
 			return;
+        //if a miss when the player attacks : no attack
+        if (_eventInfo.IsPlayerAttack && _eventInfo.Success == false )
+            return;
 
         //Get the duel
         int trackId = _eventInfo.NoteHit.TrackID;
