@@ -136,7 +136,8 @@ public class BattleNoteLong : BattleNote {
             m_renderer.color = color;
         }
 
-		Utils.SetAlpha (m_renderer, 0.0f);
+        m_renderer.color = color;
+        Utils.SetAlpha (m_renderer, 0.0f);
 		return true;
 	}
 	#endregion
