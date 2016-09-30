@@ -149,9 +149,8 @@ public class BattleFightManager : MonoBehaviour {
 	}
 
 	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo _eventInfo){
-
-        /*if( eventInfo.NoteHit.TimeBegin > 8.0f)
-            Debug.Log("RECEIVE ACTION " + eventInfo.NoteHit.TimeBegin);*/
+        
+        //Debug.Log("RECEIVE ACTION " + _eventInfo.NoteHit.TimeBegin + " " +_eventInfo.Accuracy);
          
 		//no attack for long note's head
 		if (_eventInfo.NoteHit.Type == NoteData.NoteType.LONG && _eventInfo.NoteHit.Head)
