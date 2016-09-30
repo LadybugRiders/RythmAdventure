@@ -146,7 +146,6 @@ public class BattleNote : MonoBehaviour {
 		this.CurrentState = State.MISS;
         m_animator.enabled = true;
         m_animator.SetTrigger("die");
-		//Die ();
         //some notes (like long notes) needs to return several notes when then are missed
         return new BattleNote[] { this };
 	}
@@ -156,7 +155,9 @@ public class BattleNote : MonoBehaviour {
     /// Called from animation event
     /// </summary>
 	virtual public BattleNote[] Die(){
+        //Debug.Log("DIE" + ( Data!=null ? Data.TimeBegin.ToString() : "nodata") + Utils.IsAnimationStateRunning(m_animator,"die") );
 		this.CurrentState = State.DEAD;
+        //m_animator.SetTrigger("stop");
         IsFinal = false;
 		Utils.SetLocalPositionY (m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
@@ -224,7 +225,7 @@ public class BattleNote : MonoBehaviour {
 
 	public bool IsDead{
 		get{
-			return m_state == State.DEAD;
+			return m_state == State.DEAD && Utils.IsAnimationStateRunning(m_animator, "idle",false);
 		}
 	}
 
@@ -279,6 +280,8 @@ public class BattleNote : MonoBehaviour {
         get { return m_offensive; }
         set { m_offensive = value; }
     }
+
+    public Animator Animator { get { return m_animator; } }
 
 	#endregion
 }

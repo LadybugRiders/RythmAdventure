@@ -66,7 +66,7 @@ public class BattleSlot : MonoBehaviour {
 		//if no long note is currently being hit, an error shouldn't be send ( just releasing after a hit/swipe )
 		if( (_inputMethod == BattleNote.HIT_METHOD.RELEASE && ( CurrentLongNote == null && m_pendingNote == null) )){
 			AbortPendingSlide ();
-            Debug.Log(m_track.Id + " abort input : released but no long note / pending note");
+            //Debug.Log(m_track.Id + " abort input : released but no long note / pending note");
             //debugText.text = "Error1";
 
             return;
@@ -196,7 +196,6 @@ public class BattleSlot : MonoBehaviour {
         m_explosion.Stop();
 
 		if (m_pendingNote != null) {
-			m_track.OnNoteMiss (m_pendingNote);
 			m_pendingNote = null;            
         }
         //clean timers

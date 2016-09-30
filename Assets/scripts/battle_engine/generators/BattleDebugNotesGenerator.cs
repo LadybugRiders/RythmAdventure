@@ -21,9 +21,9 @@ public class BattleDebugNotesGenerator : BattleNotesGenerator {
 	// Update is called once per frame
 	void Update () {
 		
-		m_timeElapsed += Time.deltaTime;
+		m_computedTime += Time.deltaTime;
 
-		if (m_timeElapsed >= m_nextTimeSpawn) {
+		if (m_computedTime >= m_nextTimeSpawn) {
 			m_nextTimeSpawn += m_deltaTimeSpawn;
 			GenerateNote();
 		}

@@ -44,7 +44,6 @@ public class BattleTrack : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	public void SwitchPhase(){
@@ -96,15 +95,19 @@ public class BattleTrack : MonoBehaviour {
 	public void OnNoteHit(BattleNote _note, BattleSlot _slot, bool _forceRemove = false){
         		
         HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
-		//kill note
-		var noteshit =_note.Hit (_slot);
-		//play text on slot
-		m_currentSlot.PlayTextAccuracy (acc);
+		//play anim and get notes to delete
+		var notesToDelete =_note.Hit (_slot);
         
+        //remove note induced by the hit (in case of a long note, we want to delete notes only when the tail is hit)
+        foreach (var note in notesToDelete)
+            m_notes.Remove(note);
+
         CheckLongNoteHit (_note);
 
-		//Audio
-		PlayAudio (_note);
+        //play text on slot
+        m_currentSlot.PlayTextAccuracy(acc);
+        //Audio
+        PlayAudio (_note);
 
 		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, _note.Offensive, acc, _note.IsFinal);
 		m_manager.RaiseNoteEvent(noteEvent);
@@ -129,7 +132,7 @@ public class BattleTrack : MonoBehaviour {
 
         //miss note and gather notes to delete with it
         BattleNote[] notesToDelete = _note.Miss();
-
+        
         //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
         foreach (var note in notesToDelete)
             m_notes.Remove(note);
@@ -192,7 +195,9 @@ public class BattleTrack : MonoBehaviour {
 			BattleNoteLong noteLong = (BattleNoteLong)_note;
 			if (noteLong.IsHead)
 				m_currentLongNote = noteLong;
-		} else {
+            else
+                m_currentLongNote = null;
+        } else {
 			m_currentLongNote = null;
 		}
 	}

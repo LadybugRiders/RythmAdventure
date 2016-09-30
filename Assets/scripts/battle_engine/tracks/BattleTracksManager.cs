@@ -179,11 +179,12 @@ public class BattleTracksManager : MonoBehaviour {
 		BattleNote note = null;
 		//Search for a available note
 		for (int i=0; i < _notes.Count; i ++) {
-			if(_notes[i].CurrentState == BattleNote.State.DEAD ){
+			if(_notes[i].IsDead ){
 				note = _notes[i];
 				break;
 			}
 		}
+
 		if (note == null) {
 			Debug.LogError( "No Note Available Note found ");
 			return false;

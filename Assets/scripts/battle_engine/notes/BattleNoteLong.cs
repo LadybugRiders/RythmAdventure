@@ -72,7 +72,10 @@ public class BattleNoteLong : BattleNote {
             m_pairNote.TriggerHitAnimation();
             this.Die();
         }
-        return new BattleNote[] { this };
+        //if the tail is hit, the two notes can be removed from the track
+        if( !IsHead )
+            return new BattleNote[] { this, m_pairNote };
+        return new BattleNote[0];
     }
 
 	// Miss: If HEAD, kill itself and tail ( if launched )
