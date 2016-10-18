@@ -116,7 +116,7 @@ public class BattleFightManager : MonoBehaviour {
 
     #region DAMAGE_DEALING
 
-    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _multiplier = 1.0f)
+    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _accMultiplier = 1.0f)
     {
         if (m_noDeath)
             return 0;
@@ -136,7 +136,10 @@ public class BattleFightManager : MonoBehaviour {
             damage -= _target.CurrentStats.Magic;
         }
         
-        damage =(int) (damage * _multiplier);
+        damage =(int) (damage * _accMultiplier);
+        //randomize a bit
+        int demiVariation = (int) (damage * 0.1f);
+        damage += Random.Range(-demiVariation, demiVariation);
         return damage;
     }
 

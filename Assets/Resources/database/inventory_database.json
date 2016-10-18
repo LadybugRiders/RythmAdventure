@@ -5,6 +5,7 @@
             "name": "short sword",
             "prefab": "sword_attack",
             "power": 4,
+            "mp": 0,
             "type": "offense"
         },
         {
@@ -12,6 +13,7 @@
             "name": "long sword",
             "prefab": "sword_attack",
             "power": 10,
+            "mp": 0,
             "type": "offense"
         }
     ],
@@ -20,14 +22,16 @@
             "id": "fireball",
             "name": "fireball",
             "prefab": "fireball",
-            "power": 4,
+            "power": 12,
+            "mp": 3,
             "type": "offense"
         },
         {
             "id": "fireblast",
             "name": "fireblast",
             "prefab": "fireball",
-            "power": 10,
+            "power": 25,
+            "mp": 8,
             "type": "offense"
         }
     ]

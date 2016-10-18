@@ -57,6 +57,7 @@ public class BattleSlot : MonoBehaviour {
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
 
         //var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
+        //Debug.Log(_inputMethod);
         if (_inputMethod == BattleNote.HIT_METHOD.RELEASE)
             _inputMethod.ToString();
 
@@ -114,7 +115,7 @@ public class BattleSlot : MonoBehaviour {
 				case BattleNote.HIT_METHOD.SLIDE: 
 					//launch magic
 					if (m_pendingNote == note) {
-						//Debug.Log ("slide "+transform.parent.parent.name);
+                        //Debug.Log("slide " + transform.parent.parent.name + " pending:" + m_pendingNote);
 						AbortPendingSlide ();
 						m_track.OnNoteTriggerAction (note,this,true);
 					}
