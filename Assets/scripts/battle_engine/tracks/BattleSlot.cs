@@ -57,6 +57,7 @@ public class BattleSlot : MonoBehaviour {
 	public void OnInputTriggered(BattleNote.HIT_METHOD _inputMethod){
 
         //var debugText = GameObject.Find("DebugText").GetComponent<UnityEngine.UI.Text>();
+        //Debug.Log(_inputMethod);
         if (_inputMethod == BattleNote.HIT_METHOD.RELEASE)
             _inputMethod.ToString();
 
@@ -114,7 +115,7 @@ public class BattleSlot : MonoBehaviour {
 				case BattleNote.HIT_METHOD.SLIDE: 
 					//launch magic
 					if (m_pendingNote == note) {
-						//Debug.Log ("slide "+transform.parent.parent.name);
+                        //Debug.Log("slide " + transform.parent.parent.name + " pending:" + m_pendingNote);
 						AbortPendingSlide ();
 						m_track.OnNoteTriggerAction (note,this,true);
 					}
@@ -170,7 +171,7 @@ public class BattleSlot : MonoBehaviour {
     }
 
 	public void LaunchPendingSlide(BattleNote _note)
-    {        
+    {
         //clean just in case
 		TimerEngine.instance.StopAll("OnPendingSlideTimerOver", this.gameObject);
 		m_pendingNote = _note;
@@ -193,8 +194,9 @@ public class BattleSlot : MonoBehaviour {
 	/// </summary>
     public void AbortPendingSlide()
     {
+        m_explosion.Stop();
+
 		if (m_pendingNote != null) {
-			m_track.OnNoteKill (m_pendingNote, this);
 			m_pendingNote = null;            
         }
         //clean timers
@@ -246,6 +248,7 @@ public class BattleSlot : MonoBehaviour {
 			BattleNote note = _collider.gameObject.GetComponent<BattleNote>();
 			if( note && note.IsHittable && m_collidingNotes.Contains(note)){
 				m_track.OnNoteMiss(note);
+                m_explosion.Stop();
 				m_collidingNotes.Remove(note);
 			}
 		}

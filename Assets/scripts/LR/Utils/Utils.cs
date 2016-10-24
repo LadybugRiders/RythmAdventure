@@ -126,7 +126,7 @@ public partial class Utils  {
 
     /// <summary>
     /// Returns true if the animation is running. 
-    /// If _checkTransition, also returns false if the animator is still in transition.
+    /// If _checkTransition, also returns false if the animator is still in ANY transition.
     /// </summary>
 	public static bool IsAnimationStateRunning( Animator _animator, string _statename, bool _checkTransition = true, int _layerIndex = 0){
         bool result = _animator.GetCurrentAnimatorStateInfo(_layerIndex).IsName(_statename);

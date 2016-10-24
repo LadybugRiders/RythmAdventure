@@ -179,11 +179,12 @@ public class BattleTracksManager : MonoBehaviour {
 		BattleNote note = null;
 		//Search for a available note
 		for (int i=0; i < _notes.Count; i ++) {
-			if(_notes[i].CurrentState == BattleNote.State.DEAD ){
+			if(_notes[i].IsDead ){
 				note = _notes[i];
 				break;
 			}
 		}
+
 		if (note == null) {
 			Debug.LogError( "No Note Available Note found ");
 			return false;
@@ -265,12 +266,6 @@ public class BattleTracksManager : MonoBehaviour {
         if (CheckInputState(_id))
 		{
             m_tracks[m_currentTrackID].OnInputTriggered(_method);
-			//Abort ongoing input (slide/presslong) on other tracks
-			for (int i = 0; i < m_tracks.Count; ++i) {
-				if (m_tracks [i].Id != m_currentTrackID) {
-					m_tracks [i].ResetInput ();
-				}
-			}
         }
         else
 		{
@@ -376,7 +371,6 @@ public class BattleTracksManager : MonoBehaviour {
 
 	public void RaiseNoteActionEvent(NoteEventInfo _eventNote)
     {
-        //Debug.Log("HIT note action");
         if (noteEventHandler != null)
 		{
 			var nextNote = m_tracks[m_currentTrackID].CurrentNote;

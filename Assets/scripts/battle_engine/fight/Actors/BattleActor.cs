@@ -228,13 +228,15 @@ public class BattleActor : MonoBehaviour {
             var pathToPrefab = "prefabs/battle/" + "magic/" + magicData.Prefab;
             //Load prefab
             var go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+            var magic = go.GetComponent<BattleMagic>();
+            magic.ActionData = magicData;
             if (go != null)
             {
                 go.transform.SetParent(m_attacksGroup, false);
                 if(magicData.Offense)
-                    m_magics[1] = go.GetComponent<BattleMagic>();
+                    m_magics[1] = magic;
                 else
-                    m_magics[0] = go.GetComponent<BattleMagic>();
+                    m_magics[0] = magic;
             }
         }
     }

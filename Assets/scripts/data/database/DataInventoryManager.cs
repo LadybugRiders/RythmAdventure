@@ -38,6 +38,7 @@ public class DataInventoryManager : DatabaseLoader
         public string Name;
         public string Prefab;
         public int Power;
+        public int MpCost;
         public bool Offense;
 
         public ActionData(JSONObject _json)
@@ -46,6 +47,7 @@ public class DataInventoryManager : DatabaseLoader
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
             Power = (int)_json.GetField("power").f;
+            MpCost = (int)_json.GetField("mp").f;
             //type
             string strType = _json.GetField("type").str;
             Offense = strType == "offense" ? true : false;

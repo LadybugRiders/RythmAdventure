@@ -30,6 +30,11 @@ public class BattleEngine : MonoBehaviour {
 	protected float m_timeShift;
 	protected float m_sampleRateToTimeModifier;
 
+    /// <summary>
+    /// Time elapsed at the last frame
+    /// </summary>
+    protected float m_lastTimeElapsed = 0.0f;
+
 	void Awake(){
 		_instance = this;
 		//TODO remove this. ensures that the data is loaded 
@@ -83,7 +88,7 @@ public class BattleEngine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        CheckMusicLoop();
 	}
     
     #region LOADING
@@ -163,6 +168,15 @@ public class BattleEngine : MonoBehaviour {
 	}
 
     #endregion
+
+    void CheckMusicLoop()
+    {
+        if( m_lastTimeElapsed > TimeElapsed)
+        {
+            m_notesGenerator.OnMusicLoop();
+        }
+        m_lastTimeElapsed = TimeElapsed;
+    }
         
     #region GETTERS
 
