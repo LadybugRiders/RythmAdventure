@@ -98,12 +98,20 @@ public partial class Utils  {
 		_t.localScale = tmpVector;
 		return _t.localScale;
 	}
+    public static Vector3 SetLocalScaleXY(Transform _t, float _newScaleX, float _newScaleY)
+    {
+        Vector3 tmpVector = _t.localScale;
+        tmpVector.y = _newScaleY;
+        tmpVector.x = _newScaleX;
+        _t.localScale = tmpVector;
+        return _t.localScale;
+    }
 
-	#endregion
+    #endregion
 
-	#region
+    #region
 
-	public static Vector3 SetLocalAngleZ(Transform _t, float _newValue){
+    public static Vector3 SetLocalAngleZ(Transform _t, float _newValue){
 		Vector3 tmpVector = _t.localEulerAngles;
 		tmpVector.z = _newValue;
 		_t.localEulerAngles = tmpVector;
@@ -222,6 +230,23 @@ public partial class Utils  {
         foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
         {
             trans.gameObject.layer = layerNumber;
+        }
+    }
+
+    public static void ConvertToUIImage( GameObject _go )
+    {
+        var spritesRenderers = _go.GetComponentsInChildren<SpriteRenderer>();
+        foreach(var sR in spritesRenderers)
+        {
+            var uiImage = sR.GetComponent<UnityEngine.UI.Image>();
+            if( uiImage == null)
+            {
+                uiImage = sR.gameObject.AddComponent<UnityEngine.UI.Image>();
+            }
+            uiImage.sprite = sR.sprite;
+            uiImage.color = sR.color;
+            sR.enabled = false;
+            uiImage.enabled = true;            
         }
     }
 }

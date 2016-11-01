@@ -5,14 +5,19 @@ using System.Collections.Generic;
 public class GameMenuParty : GameMenu {
 
     [SerializeField] List<CharacterInfos> m_characters;
+    [SerializeField] Transform m_charUIParent;
+    [SerializeField] float m_itemScale = 10.0f;
 
     DataCharManager m_charManager;
     ProfileManager.Profile m_profile;
+
+    List<GameObject> m_charactersUI;
 
 	// Use this for initialization
 	void Start () {
         m_profile = ProfileManager.instance.GetProfile();
         m_charManager = DataManager.instance.CharacterManager;
+        m_charactersUI = new List<GameObject>();
 	}
 	
 	// Update is called once per frame
@@ -27,30 +32,38 @@ public class GameMenuParty : GameMenu {
         base.Activate();
         for(int i=0; i < m_profile.CurrentTeam.Count; i++)
         {
-            string charId = m_profile.CurrentTeam[i];
-            var charaInfo = m_characters[i];
-            if( charId == null)
-            {
-                charaInfo.m_build.gameObject.SetActive(false);
-                continue;
-            }
-            //get data stored in profile
-            var charaData = ProfileManager.instance.GetCharacter(charId);
-            //compute all around stats from the database
-            var stats = m_charManager.ComputeStats(charaData);
-            charaInfo.m_build.gameObject.SetActive(true);
-            charaInfo.m_stats.Load(stats);
-            //load appearance
-            charaInfo.m_build.Load(charaData);
-            Utils.SetLayerRecursively(charaInfo.m_build.gameObject, LayerMask.NameToLayer("SpriteUI"));
+            //Create character
+            GameObject character = DataManager.instance.CreateCharacter(m_profile.CurrentTeam[i]);
+            character.name = "Char_" + i;
+            //convert to ui
+            Utils.SetLayerRecursively(character, LayerMask.NameToLayer("SpriteUI"));
+            Utils.ConvertToUIImage(character);
+            //Set Parent
+            GameObject container = new GameObject("Char_" + i);
+            Utils.SetLocalScaleXY(character.transform, m_itemScale, m_itemScale);
+            container.AddComponent<RectTransform>();
+            container.transform.SetParent(m_charUIParent, false);
+            character.transform.SetParent(container.transform, false);
+            //Set Draggable
+            container.AddComponent<UIInventoryDraggableItem>();
         }
     }
 
     protected override void Deactivate()
     {
         base.Deactivate();
+        Clear();
     }
     
+    void Clear()
+    {
+        foreach(var chara in m_charactersUI)
+        {
+            Destroy(chara);
+        }
+        m_charactersUI.Clear();
+    }
+
     [System.Serializable]
     public class CharacterInfos
     {

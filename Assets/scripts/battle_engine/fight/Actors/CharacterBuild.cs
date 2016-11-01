@@ -13,6 +13,8 @@ public class CharacterBuild : MonoBehaviour {
     [SerializeField] Transform m_equipmentsGO;
     Dictionary<EquipmentType, GameObject> m_equipments = new Dictionary<EquipmentType, GameObject>();
 
+    public string Id { get; set; }
+
     // Use this for initialization
     void Start () {
 	
@@ -40,6 +42,7 @@ public class CharacterBuild : MonoBehaviour {
 
     public void Load(ProfileManager.CharacterData _chara)
     {
+        Id = _chara.Id;
         LoadEquipment(_chara);
         LoadAppearance(_chara);
     }
