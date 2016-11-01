@@ -6,12 +6,13 @@ using System.Collections.Generic;
 public class GameMenuManager : MonoBehaviour {
 
     [SerializeField] List<GameMenu> m_menus;
+    [SerializeField] GameMenu m_startMenu;
 
     GameMenu m_currentMenu;
 
     // Use this for initialization
     void Start () {
-        m_currentMenu = m_menus[0];
+        m_currentMenu = m_startMenu ;
         m_currentMenu.ActivateMenu();
 	}
 	

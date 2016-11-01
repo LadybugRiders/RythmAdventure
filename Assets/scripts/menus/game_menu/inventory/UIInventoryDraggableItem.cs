@@ -19,7 +19,7 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 
     public void OnDrag(PointerEventData _eventData)
     {
-        if (m_draggable)
+        if (IsDraggable)
         {
             transform.position = _eventData.position;
         }
@@ -27,11 +27,17 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 
     public void OnEndDrag(PointerEventData _eventData)
     {
-        if (m_draggable == false)
+        if (IsDraggable == false)
             return;
         
         transform.localPosition = m_initialPosition;
     }
-        
+
+    public bool IsDraggable
+    {
+        get { return m_draggable; }
+        set { m_draggable = value; }
+    }
+
 }
 
