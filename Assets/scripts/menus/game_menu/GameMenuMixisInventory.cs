@@ -93,40 +93,44 @@ public class GameMenuMixisInventory : GameMenu {
 
     public void OnInventoryItemDrag(UIInventoryDraggableItem _item)
     {
-        var itemRect = _item.GetComponent<RectTransform>();
-        foreach (var chara in m_party)
+        var go = GetPartyItemOvered(_item.gameObject);
+        if( go != null)
         {
-            bool inDropZone = ItemsOverlap(_item.gameObject, chara.gameObject);
-            if( inDropZone)
-            {
-                Debug.Log("Interserct " + chara.GetComponent<UIInventoryDraggableItem>().CharId);
-            }
-        }
+            Debug.Log("Interserct " + go.GetComponent<UIInventoryDraggableItem>().CharId);
+        }        
     }
 
     public void OnInventoryItemDrop(UIInventoryDraggableItem _item)
     {
-        var itemRect = _item.GetComponent<RectTransform>();
-        foreach (var chara in m_party)
+        var go = GetPartyItemOvered(_item.gameObject);
+        if (go != null)
         {
-            bool inDropZone = ItemsOverlap(_item.gameObject, chara.gameObject);
-            if (inDropZone)
-            {
-                Debug.Log("Drop on " + chara.GetComponent<UIInventoryDraggableItem>().CharId);
-            }
+            Debug.Log("Drop on " + go.GetComponent<UIInventoryDraggableItem>().CharId);
         }
     }
 
-    bool ItemsOverlap(GameObject obj1, GameObject obj2)
+    float ItemsDistance(GameObject obj1, GameObject obj2)
     {
         RectTransform rt1 = obj1.GetComponent<RectTransform>();
         RectTransform rt2 = obj2.GetComponent<RectTransform>();
 
         var mag = (rt1.position - rt2.position).magnitude;
-        if(mag < 50.0f)
+        return mag;
+    }
+
+    GameObject GetPartyItemOvered(GameObject _item)
+    {
+        float mindistance = float.MaxValue;
+        GameObject go = null;
+        foreach (var chara in m_party)
         {
-            return true;
+            float dist = ItemsDistance(_item.gameObject, chara.gameObject);
+            if (dist < 50.0f && dist < mindistance)
+            {
+                go = chara;
+                mindistance = dist;
+            }
         }
-        return false;
+        return go;
     }
 }
