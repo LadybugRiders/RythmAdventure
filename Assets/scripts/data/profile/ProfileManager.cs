@@ -127,6 +127,19 @@ public partial class ProfileManager : MonoBehaviour {
         return chars;
     }
 
+    public void ReplacePartyCharacter(string oldCharId, string newCharId) 
+    {
+        for(int i=0; i < profile.CurrentTeam.Count; ++i)
+        {
+            if( profile.CurrentTeam[i] == oldCharId)
+            {
+                profile.CurrentTeam[i] = newCharId;
+                break;
+            }
+        }
+        SaveProfile();
+    }
+
     #endregion
 
     #region MAPS

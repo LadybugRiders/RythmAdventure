@@ -9,7 +9,9 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 
     GameMenuMixisInventory m_menu;
 
-    public string CharId { get; set; }
+    Transform m_itemParentTransform;
+
+    private string m_charId;
     
     void Update()
     {
@@ -34,7 +36,7 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
     {
         if (IsDraggable == false)
             return;
-        
+        var dropped = m_menu.OnInventoryItemDrop(this);
         transform.localPosition = m_initialPosition;
     }
 
@@ -50,5 +52,21 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
         set { m_menu = value; }
     }
 
+    public Transform ItemParentTransform
+    {
+        get { return m_itemParentTransform; }
+        set { m_itemParentTransform = value; }
+    }
+
+    public string CharId
+    {
+        get { return m_charId; }
+        set
+        {
+            m_charId = value;
+            ItemParentTransform.name = m_charId;
+            transform.name = "Char_" + m_charId;
+        }
+    }
 }
 

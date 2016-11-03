@@ -85,28 +85,31 @@ public class GameMenuMixisInventory : GameMenu {
         character.transform.SetParent(container.transform, false);
         //Set Draggable
         var uiItem = container.AddComponent<UIInventoryDraggableItem>();
+        uiItem.ItemParentTransform = character.transform;
         uiItem.CharId = _id;
         return container;
     }
 
     #endregion
 
+    #region DRAG
     public void OnInventoryItemDrag(UIInventoryDraggableItem _item)
     {
         var go = GetPartyItemOvered(_item.gameObject);
         if( go != null)
         {
-            Debug.Log("Interserct " + go.GetComponent<UIInventoryDraggableItem>().CharId);
         }        
     }
 
-    public void OnInventoryItemDrop(UIInventoryDraggableItem _item)
+    public bool OnInventoryItemDrop(UIInventoryDraggableItem _item)
     {
         var go = GetPartyItemOvered(_item.gameObject);
         if (go != null)
         {
-            Debug.Log("Drop on " + go.GetComponent<UIInventoryDraggableItem>().CharId);
+            SwitchPartyMember(go.GetComponent<UIInventoryDraggableItem>(), _item);
+            return true;
         }
+        return false;
     }
 
     float ItemsDistance(GameObject obj1, GameObject obj2)
@@ -132,5 +135,25 @@ public class GameMenuMixisInventory : GameMenu {
             }
         }
         return go;
+    }
+    #endregion
+
+    public void SwitchPartyMember(UIInventoryDraggableItem _partyItem, UIInventoryDraggableItem _inventoryItem)
+    {
+        string partyItemId = _partyItem.CharId;
+        string invItemId = _inventoryItem.CharId;
+        Transform tempPartyTransform = _partyItem.ItemParentTransform;
+        //switch UI
+        Utils.SetLocalScaleXY(_partyItem.ItemParentTransform, m_inventoryItemScale, m_inventoryItemScale);
+        _partyItem.ItemParentTransform.SetParent(_inventoryItem.transform, false);
+        _partyItem.ItemParentTransform = _inventoryItem.ItemParentTransform;
+        _partyItem.CharId = invItemId;
+
+        Utils.SetLocalScaleXY(_inventoryItem.ItemParentTransform, m_partyItemScale, m_partyItemScale);
+        _inventoryItem.ItemParentTransform.SetParent(_partyItem.transform, false);
+        _inventoryItem.ItemParentTransform = tempPartyTransform;
+        _inventoryItem.CharId = partyItemId;
+
+        ProfileManager.instance.ReplacePartyCharacter(partyItemId, invItemId);
     }
 }
