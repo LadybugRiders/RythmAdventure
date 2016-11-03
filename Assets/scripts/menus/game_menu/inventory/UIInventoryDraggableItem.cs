@@ -6,6 +6,10 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 {    
     [SerializeField] private bool m_draggable = true;
     Vector3 m_initialPosition;
+
+    GameMenuMixisInventory m_menu;
+
+    public string CharId { get; set; }
     
     void Update()
     {
@@ -22,6 +26,7 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
         if (IsDraggable)
         {
             transform.position = _eventData.position;
+            m_menu.OnInventoryItemDrag(this);
         }
     }
 
@@ -37,6 +42,12 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
     {
         get { return m_draggable; }
         set { m_draggable = value; }
+    }
+
+    public GameMenuMixisInventory Menu
+    {
+        get { return m_menu; }
+        set { m_menu = value; }
     }
 
 }
