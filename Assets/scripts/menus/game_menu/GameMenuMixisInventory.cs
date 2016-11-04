@@ -10,6 +10,9 @@ public class GameMenuMixisInventory : GameMenu {
 
     [SerializeField] float m_partyItemScale = 10.0f;
     [SerializeField] float m_inventoryItemScale = 10.0f;
+    
+    [SerializeField] StatsFiller m_statsFiller;
+    [SerializeField] StatsFiller m_secondStatsFiller;
 
     DataCharManager m_charManager;
     ProfileManager.Profile m_profile;
@@ -17,16 +20,26 @@ public class GameMenuMixisInventory : GameMenu {
     List<GameObject> m_party;
     List<GameObject> m_inventory;
 
-    // Use this for initialization
-    void Start () {
-        LoadParty();
-        LoadInventory();
-    }
-	
+    Stats m_mainStats;
+    	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    protected override void Activate()
+    {
+        base.Activate();
+        if (m_alreadyActivated == false) {
+            LoadParty();
+            LoadInventory();
+        }
+    }
+
+    protected override void Deactivate()
+    {
+        base.Deactivate();
+    }
 
     #region LOADING
 
@@ -95,9 +108,11 @@ public class GameMenuMixisInventory : GameMenu {
     #region DRAG
     public void OnInventoryItemDrag(UIInventoryDraggableItem _item)
     {
+        LoadMainStats(_item.CharId);
         var go = GetPartyItemOvered(_item.gameObject);
         if( go != null)
         {
+            LoadCompareStats(go.GetComponent<UIInventoryDraggableItem>().CharId);
         }        
     }
 
@@ -138,22 +153,36 @@ public class GameMenuMixisInventory : GameMenu {
     }
     #endregion
 
-    public void SwitchPartyMember(UIInventoryDraggableItem _partyItem, UIInventoryDraggableItem _inventoryItem)
+    void SwitchPartyMember(UIInventoryDraggableItem _partyItem, UIInventoryDraggableItem _inventoryItem)
     {
         string partyItemId = _partyItem.CharId;
         string invItemId = _inventoryItem.CharId;
         Transform tempPartyTransform = _partyItem.ItemParentTransform;
-        //switch UI
+
+        //Set party member into inventory
         Utils.SetLocalScaleXY(_partyItem.ItemParentTransform, m_inventoryItemScale, m_inventoryItemScale);
         _partyItem.ItemParentTransform.SetParent(_inventoryItem.transform, false);
         _partyItem.ItemParentTransform = _inventoryItem.ItemParentTransform;
         _partyItem.CharId = invItemId;
 
+        //Set inventory member into party
         Utils.SetLocalScaleXY(_inventoryItem.ItemParentTransform, m_partyItemScale, m_partyItemScale);
         _inventoryItem.ItemParentTransform.SetParent(_partyItem.transform, false);
         _inventoryItem.ItemParentTransform = tempPartyTransform;
         _inventoryItem.CharId = partyItemId;
 
         ProfileManager.instance.ReplacePartyCharacter(partyItemId, invItemId);
+    }
+
+    void LoadMainStats(string _charId)
+    {
+        m_mainStats = ProfileManager.instance.GetCharacterStats(_charId);
+        m_statsFiller.Load(m_mainStats);
+    }
+
+    void LoadCompareStats(string _charId)
+    {
+        var charStats = ProfileManager.instance.GetCharacterStats(_charId);
+        m_secondStatsFiller.Load(charStats,m_mainStats);
     }
 }

@@ -102,8 +102,7 @@ public partial class ProfileManager : MonoBehaviour {
     public Stats GetCharacterStats(string _id)
     {
         var chara = GetCharacter(_id);
-        var levelupdata = DataManager.instance.CharacterManager.GetLevelByXp(chara.Job, chara.Xp);
-        return levelupdata!=null ? levelupdata.Stats : null;
+        return DataManager.instance.CharacterManager.ComputeStats(chara);
     }
 
     public void AddCharacterXp(string _id, int _xp)

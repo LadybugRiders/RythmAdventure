@@ -26,14 +26,42 @@ public class StatsFiller : MonoBehaviour {
         FillStat(m_speedText, _stats.Speed);
     }
 
+    public void Load(Stats _stats, Stats _comparingStats)
+    {
+        FillStat(m_hpText, _stats.HP, GetColor( _stats.HP- _comparingStats.HP));
+        FillStat(m_mpText, _stats.MP, GetColor( _stats.MP - _comparingStats.MP));
+        FillStat(m_attackText, _stats.Attack, GetColor( _stats.Attack - _comparingStats.Attack));
+        FillStat(m_defenseText, _stats.Defense, GetColor( _stats.Defense - _comparingStats.Defense));
+        FillStat(m_magicText, _stats.Magic, GetColor( _stats.Magic - _comparingStats.Magic));
+        FillStat(m_speedText, _stats.Speed, GetColor( _stats.Speed - _comparingStats.Speed));
+    }
+
     void FillStat( Text _text, object _value)
     {
         if (_text != null)
+        {
             _text.text = _value.ToString();
+        }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void FillStat(Text _text, object _value, Color _color)
+    {
+        if (_text != null)
+        {
+            _text.text = _value.ToString();
+            _text.color = _color;
+        }
+    }
+
+    Color GetColor(int _value)
+    {
+        if (_value == 0)
+            return Color.black;
+        return _value > 0 ? Color.green : Color.red;
+    }
+
+    // Update is called once per frame
+    void Update () {
 	
 	}
 }
