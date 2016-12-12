@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {    
     [SerializeField] private bool m_draggable = true;
     Vector3 m_initialPosition;
@@ -16,6 +16,11 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
     void Update()
     {
 
+    }
+
+    public void OnPointerClick(PointerEventData _eventData)
+    {
+        m_menu.SelectCharacter(this);
     }
 
     public void OnBeginDrag(PointerEventData _eventData)

@@ -36,6 +36,16 @@ public class StatsFiller : MonoBehaviour {
         FillStat(m_speedText, _stats.Speed, GetColor( _stats.Speed - _comparingStats.Speed));
     }
 
+    public void Empty()
+    {
+        FillStat(m_hpText, "-", GetColor(0));
+        FillStat(m_mpText, "-", GetColor(0));
+        FillStat(m_attackText, "-", GetColor(0));
+        FillStat(m_defenseText, "-", GetColor(0));
+        FillStat(m_magicText, "-", GetColor(0));
+        FillStat(m_speedText, "-", GetColor(0));
+    }
+
     void FillStat( Text _text, object _value)
     {
         if (_text != null)

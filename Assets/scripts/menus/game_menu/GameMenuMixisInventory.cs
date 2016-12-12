@@ -33,6 +33,8 @@ public class GameMenuMixisInventory : GameMenu {
         if (m_alreadyActivated == false) {
             LoadParty();
             LoadInventory();
+            m_statsFiller.Empty();
+            m_secondStatsFiller.Empty();
         }
     }
 
@@ -119,6 +121,7 @@ public class GameMenuMixisInventory : GameMenu {
     public bool OnInventoryItemDrop(UIInventoryDraggableItem _item)
     {
         var go = GetPartyItemOvered(_item.gameObject);
+        m_secondStatsFiller.Empty();
         if (go != null)
         {
             SwitchPartyMember(go.GetComponent<UIInventoryDraggableItem>(), _item);
@@ -172,6 +175,11 @@ public class GameMenuMixisInventory : GameMenu {
         _inventoryItem.CharId = partyItemId;
 
         ProfileManager.instance.ReplacePartyCharacter(partyItemId, invItemId);
+    }
+
+    public void SelectCharacter(UIInventoryDraggableItem item)
+    {
+        LoadMainStats(item.CharId);
     }
 
     void LoadMainStats(string _charId)
