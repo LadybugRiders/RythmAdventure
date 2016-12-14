@@ -14,6 +14,8 @@ public class GameMenuMixisInventory : GameMenu {
     [SerializeField] StatsFiller m_statsFiller;
     [SerializeField] StatsFiller m_secondStatsFiller;
 
+    [SerializeField] Transform m_selectorTransform;
+
     DataCharManager m_charManager;
     ProfileManager.Profile m_profile;
 
@@ -21,6 +23,8 @@ public class GameMenuMixisInventory : GameMenu {
     List<GameObject> m_inventory;
 
     Stats m_mainStats;
+
+    bool m_itemIsDragged = false;
     	
 	// Update is called once per frame
 	void Update () {
@@ -35,6 +39,7 @@ public class GameMenuMixisInventory : GameMenu {
             LoadInventory();
             m_statsFiller.Empty();
             m_secondStatsFiller.Empty();
+            m_selectorTransform.gameObject.SetActive(false);
         }
     }
 
@@ -110,6 +115,8 @@ public class GameMenuMixisInventory : GameMenu {
     #region DRAG
     public void OnInventoryItemDrag(UIInventoryDraggableItem _item)
     {
+        m_itemIsDragged = true;
+        m_selectorTransform.gameObject.SetActive(false);
         LoadMainStats(_item.CharId);
         var go = GetPartyItemOvered(_item.gameObject);
         if( go != null)
@@ -120,11 +127,14 @@ public class GameMenuMixisInventory : GameMenu {
 
     public bool OnInventoryItemDrop(UIInventoryDraggableItem _item)
     {
+        m_itemIsDragged = false;
         var go = GetPartyItemOvered(_item.gameObject);
         m_secondStatsFiller.Empty();
         if (go != null)
         {
-            SwitchPartyMember(go.GetComponent<UIInventoryDraggableItem>(), _item);
+            var replacedItem = go.GetComponent<UIInventoryDraggableItem>();
+            SwitchPartyMember(replacedItem, _item);
+            SelectCharacter(replacedItem);
             return true;
         }
         return false;
@@ -179,7 +189,11 @@ public class GameMenuMixisInventory : GameMenu {
 
     public void SelectCharacter(UIInventoryDraggableItem item)
     {
+        if (m_itemIsDragged)
+            return;
         LoadMainStats(item.CharId);
+        Utils.SetPositionXY( m_selectorTransform, item.transform.position.x, item.transform.position.y);
+        m_selectorTransform.gameObject.SetActive(true);
     }
 
     void LoadMainStats(string _charId)

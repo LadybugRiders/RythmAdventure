@@ -71,6 +71,15 @@ public partial class Utils  {
 		return _t.position;
 	}
 
+    public static Vector3 SetPositionXY(Transform _t, float _x, float _y)
+    {
+        Vector3 tmpVector = _t.position;
+        tmpVector.x = _x;
+        tmpVector.y = _y;
+        _t.position = tmpVector;
+        return _t.position;
+    }
+
     /// <summary>
     /// Sets the position without the Z axis
     /// </summary>

@@ -43,6 +43,8 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
             return;
         var dropped = m_menu.OnInventoryItemDrop(this);
         transform.localPosition = m_initialPosition;
+        if (!dropped)
+            m_menu.SelectCharacter(this);
     }
 
     public bool IsDraggable
