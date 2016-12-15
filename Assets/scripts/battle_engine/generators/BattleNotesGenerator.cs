@@ -22,8 +22,6 @@ public class BattleNotesGenerator : MonoBehaviour {
     /// Time for a note to complete its way to the end
     /// </summary>
     protected float m_timeShift = 0.0f;
-	/** Synchronisation issue */
-	protected float m_timeSynchroDelta = 0f;
 
 	protected List< NoteData > m_notes;
 	protected int m_index = 0;
@@ -66,7 +64,7 @@ public class BattleNotesGenerator : MonoBehaviour {
 		if (m_paused || m_finished)
 			return;
 
-		m_computedTime = m_engine.TimeElapsed + m_timeShift + m_timeSynchroDelta;
+		m_computedTime = m_engine.MusicTimeElapsed + m_timeShift;
 		
         //If the time elapsed is
 		if (m_computedTime >= m_engine.AudioSrc.clip.length){
@@ -87,7 +85,7 @@ public class BattleNotesGenerator : MonoBehaviour {
 
         //if the current note time has been reached
         //we also check that we are in the same iteration
-        bool nextNoteTimeReached = m_currentNote.TimeBegin <= m_computedTime;
+        bool nextNoteTimeReached = m_currentNote.Time <= m_computedTime;
         bool sameIteration = m_notesIterations == m_iteration;
 
         if ( sameIteration && nextNoteTimeReached ) {
@@ -124,7 +122,7 @@ public class BattleNotesGenerator : MonoBehaviour {
 			NoteData noteData = new NoteData();
 			//Debug.Log( noteJSON);
 			noteData.Type = (NoteData.NoteType) ((int)noteJSON.GetField("type").n);
-			noteData.TimeBegin = noteJSON.GetField("time").f;
+			noteData.Time = noteJSON.GetField("time").f;
 			noteData.Head = noteJSON.GetField("head").b;
 			noteData.TrackID =(int) noteJSON.GetField("track").n;
 			m_notes.Add( noteData);
@@ -133,18 +131,10 @@ public class BattleNotesGenerator : MonoBehaviour {
 
 	int GetFirstNoteIndex(float _beginTime){
 		for(int i=0 ; i < m_notes.Count; i ++){
-			if( m_notes[i].TimeBegin > _beginTime )
+			if( m_notes[i].Time > _beginTime )
 				return i;
 		}
 		return m_notes.Count-1;
 	}
-
-	public float TimeSynchroDelta {
-		get {
-			return m_timeSynchroDelta;
-		}
-		set {
-			m_timeSynchroDelta = value;
-		}
-	}
+    
 }

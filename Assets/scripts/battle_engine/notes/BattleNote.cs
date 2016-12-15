@@ -42,6 +42,8 @@ public class BattleNote : MonoBehaviour {
     [SerializeField] protected float m_alphaDist = 3.0f;
 
 	protected Vector3 m_startPos;
+    protected float m_startTime;
+    protected float m_direction = 1.0f;
 
 	/// <summary>
 	/// The note is on a track that has been disabled
@@ -76,11 +78,11 @@ public class BattleNote : MonoBehaviour {
 	protected void UpdateSpeed(){
 		Vector3 pos = m_transform.localPosition;
 
-		//make the note advance
-		float stepX = m_speed * Time.deltaTime;
-		pos.x += stepX ;
+		//compute note position
+		pos.x = ComputePosition();
+
 		//compute total distance done
-		m_distanceDone += Mathf.Abs( stepX );
+		m_distanceDone += Mathf.Abs( pos.x - m_transform.localPosition.x );
 
 		m_transform.localPosition = pos;
 
@@ -101,15 +103,30 @@ public class BattleNote : MonoBehaviour {
 			Utils.SetAlpha( m_magicEffect,newAlpha );
 		}
 	}
+
+    float ComputePosition()
+    {
+        //time of the music
+        float t = BattleEngine.instance.MusicTimeElapsed;
+        //difference betwen target time and start time
+        float percent = (t - m_startTime) / (Data.Time - m_startTime) ; //(t - ti) / (tf - ti)
+        //total distance to go
+        float d = m_track.Length;
+
+        float x = m_startPos.x + m_direction * ( d * percent );
+        return x;
+    }
     
 	#endregion
 
-	public bool Launch(float _speed, Vector3 _startPos, BattleTrack _track){	
+	public bool Launch( Vector3 _startPos, Vector3 _targetPos, BattleTrack _track){	
 		m_track = _track;
 		transform.position = _startPos;
 		m_startPos = m_transform.localPosition;
-		m_speed = _speed;
 		m_distanceDone = 0;
+        m_startTime = BattleEngine.instance.MusicTimeElapsed;
+        //direction
+        m_direction = (_targetPos.x - _startPos.x) > 0 ? 1 : -1;
 		return Launch ();
 	}
 

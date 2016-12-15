@@ -108,8 +108,8 @@ public class BattleEngine : MonoBehaviour {
         m_audioClip = Resources.Load("songs/" + clipName) as AudioClip;
         m_sampleRateToTimeModifier = 1.0f / m_audioClip.frequency;
 
+        //time used by the generator to spawn notes. Sets the speed of notes.
         m_timeShift = jsonData.GetField("timeSpeed").n;
-        m_tracksManager.SetTimeShift(m_timeShift);
 
         m_fightManager.Load(battleData);
     }
@@ -171,11 +171,11 @@ public class BattleEngine : MonoBehaviour {
 
     void CheckMusicLoop()
     {
-        if( m_lastTimeElapsed > TimeElapsed)
+        if( m_lastTimeElapsed > MusicTimeElapsed)
         {
             m_notesGenerator.OnMusicLoop();
         }
-        m_lastTimeElapsed = TimeElapsed;
+        m_lastTimeElapsed = MusicTimeElapsed;
     }
         
     #region GETTERS
@@ -198,7 +198,10 @@ public class BattleEngine : MonoBehaviour {
 		}
 	}
 
-	public float TimeElapsed{
+    /// <summary>
+    /// Time elapsed in the music. Always between 0 and music length
+    /// </summary>
+	public float MusicTimeElapsed{
 		get{
 			return m_audioSource.timeSamples * m_sampleRateToTimeModifier;
 		}

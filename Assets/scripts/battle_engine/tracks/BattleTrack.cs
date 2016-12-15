@@ -59,24 +59,27 @@ public class BattleTrack : MonoBehaviour {
 	}
 
 	/** Launch note on the track */
-	public bool LaunchNote(BattleNote _note, float _speed){
+	public bool LaunchNote(BattleNote _note){
 		if (m_suspended) {
-			if( m_suspendedTimeLimit >= _note.Data.TimeBegin){
+			if( m_suspendedTimeLimit >= _note.Data.Time){
 				return false;
 			}
 		}
-		Vector3 pos = new Vector3 ();
-		//place the note at the right x according to state
-		if (m_manager.IsAttacking) {
-			pos.x = m_slotDefend.transform.position.x;
-		} else {
-			pos.x = m_slotAttack.transform.position.x;
+		Vector3 startPos = new Vector3 ();
+		Vector3 targetPos = new Vector3 ();
+        //place the note at the right x according to state
+        if (m_manager.IsAttacking) {
+			startPos.x = m_slotDefend.transform.position.x;
+            targetPos.x = m_slotAttack.transform.position.x;
+        } else {
+            startPos.x = m_slotAttack.transform.position.x;
+            targetPos.x = m_slotDefend.transform.position.x;
 		}
 		//place y
-		pos.y = this.transform.position.y;
-		pos.z = -1;
+		startPos.y = this.transform.position.y;
+		startPos.z = -1;
 
-		bool success = _note.Launch (_speed, pos, this);
+		bool success = _note.Launch (startPos,targetPos, this);
 		if( success )
 			m_notes.Add (_note);
 		return success;
@@ -316,6 +319,9 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// Distance between the slots
+    /// </summary>
 	public float Length {
 		get {
 			return m_length;
