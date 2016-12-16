@@ -32,20 +32,8 @@ public class GameMenuParty : GameMenu {
         base.Activate();
         for(int i=0; i < m_profile.CurrentTeam.Count; i++)
         {
-            //Create character
-            GameObject character = DataManager.instance.CreateCharacter(m_profile.CurrentTeam[i]);
-            character.name = "Char_" + i;
-            //convert to ui
-            Utils.SetLayerRecursively(character, LayerMask.NameToLayer("SpriteUI"));
-            Utils.ConvertToUIImage(character);
-            //Set Parent
-            GameObject container = new GameObject("Char_" + i);
-            Utils.SetLocalScaleXY(character.transform, m_itemScale, m_itemScale);
-            container.AddComponent<RectTransform>();
+            var container = GameUtils.CreateCharacterUIObject(m_profile.CurrentTeam[i], m_itemScale);
             container.transform.SetParent(m_charUIParent, false);
-            character.transform.SetParent(container.transform, false);
-            //Set Draggable
-            container.AddComponent<UIInventoryDraggableItem>();
 
             m_charactersUI.Add(container);
         }

@@ -64,7 +64,7 @@ public class GameMenuMixisInventory : GameMenu {
                     Destroy(m_party[i].gameObject);
                 continue;
             }
-            GameObject go = CreateCharacterUIObject(charId, m_partyItemScale);
+            GameObject go = GameUtils.CreateCharacterUIObject(charId, m_partyItemScale);
             go.GetComponent<UIInventoryDraggableItem>().IsDraggable = false;
             go.GetComponent<UIInventoryDraggableItem>().Menu = this;
             go.transform.SetParent(m_partyTransform, false);
@@ -82,33 +82,14 @@ public class GameMenuMixisInventory : GameMenu {
             //check if not in party
             if (!m_profile.CurrentTeam.Contains(charData.Id))
             {
-                GameObject go = CreateCharacterUIObject(charData.Id, m_inventoryItemScale);
+                GameObject go = GameUtils.CreateCharacterUIObject(charData.Id, m_inventoryItemScale,true);
                 go.transform.SetParent(m_inventoryTransform, false);
                 go.GetComponent<UIInventoryDraggableItem>().Menu = this;
                 m_inventory.Add(go);
             }
         }
     }
-
-    GameObject CreateCharacterUIObject(string _id, float _scale)
-    {
-        //Create character
-        GameObject character = DataManager.instance.CreateCharacter(_id);
-        character.name = _id;
-        //convert to ui
-        Utils.SetLayerRecursively(character, LayerMask.NameToLayer("SpriteUI"));
-        Utils.ConvertToUIImage(character);
-        //Set Parent
-        GameObject container = new GameObject("Char_" + _id);
-        Utils.SetLocalScaleXY(character.transform, _scale, _scale);
-        var rect = container.AddComponent<RectTransform>();
-        character.transform.SetParent(container.transform, false);
-        //Set Draggable
-        var uiItem = container.AddComponent<UIInventoryDraggableItem>();
-        uiItem.ItemParentTransform = character.transform;
-        uiItem.CharId = _id;
-        return container;
-    }
+      
 
     #endregion
 
