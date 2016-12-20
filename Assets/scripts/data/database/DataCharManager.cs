@@ -15,6 +15,9 @@ public class DataCharManager : DatabaseLoader
         //equipement
         tempJson = LoadDataJSON("characters/equipement_database");
         m_database.Add("equipment", tempJson);
+        //generation
+        tempJson = LoadDataJSON("characters/mixi_generation_database");
+        m_database.Add("generation", tempJson);
     }
 
     public Stats ComputeStats(ProfileManager.CharacterData _charData)
@@ -114,6 +117,34 @@ public class DataCharManager : DatabaseLoader
     #endregion
 
     #region EQUIPEMENT
+    
+    public List<EquipmentData> GetEquipements(EquipmentType _type, Job _job, int _tiers = -1) 
+    {
+        var list = new List<EquipmentData>();
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        foreach(var eqpmt in database.list)
+        {
+            if( (int)eqpmt.GetField("tiers").f <= _tiers)
+            {
+                list.Add( new EquipmentData(eqpmt, _type) );
+            }
+        }
+        return list;
+    }
+
+    public List<LooksData> GetLooks(LooksType _type, Job _job, int _tiers = -1)
+    {
+        var list = new List<LooksData>();
+        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
+        foreach (var looks in database.list)
+        {
+            if ((int)looks.GetField("tiers").f <= _tiers)
+            {
+                list.Add(new LooksData(looks, _type));
+            }
+        }
+        return list;
+    }
 
     public EquipmentData GetEquipement( EquipmentType _type, string _id)
     {
@@ -172,47 +203,10 @@ public class DataCharManager : DatabaseLoader
 
     #endregion
 
-    JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
-    JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
+    public JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
+    public JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
+    public JSONObject GenerationDatabase { get { return m_database["generation"]; } }
 
-    #region CHARACTER_GENERATION
-
-    public ProfileManager.CharacterData GenerateCharacter(Job _job)
-    {
-        ProfileManager.CharacterData chara = new ProfileManager.CharacterData(""+ProfileManager.instance.profile.Characters.Count);
-        chara.Job = _job;
-        //Add random equipements
-        for(int i = 0; i< Utils.EnumCount(EquipmentType.ACCESSORY); i++)
-        {
-            EquipmentType type = (EquipmentType)i;
-            var randomEqpmnt = GetRandomEquipment(_job, type );
-            chara.AddEquipement(randomEqpmnt.Id, type);
-        }
-        //Add random looks
-        for (int i = 0; i < Utils.EnumCount(LooksType.EYEBROWS); i++)
-        {
-            LooksType type = (LooksType)i;
-            var randomLooks = GetRandomLooks(_job, type);
-            chara.AddLooks(randomLooks.Id, type);
-        }
-        return chara;
-    }
-
-    public LooksData GetRandomLooks(Job _job, LooksType _type)
-    {
-        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
-        int r = Random.Range(0, listOfLooks.Count - 1);
-        return new LooksData(listOfLooks[r],_type);
-    }
-
-    public EquipmentData GetRandomEquipment(Job _job, EquipmentType _type)
-    {
-        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
-        int r = Random.Range(0, listOfLooks.Count - 1);
-        return new EquipmentData(listOfLooks[r], _type);
-    }
-
-    #endregion
 
     #region DATA
     /// <summary>
@@ -236,14 +230,19 @@ public class DataCharManager : DatabaseLoader
         public string Name = "NoName_Equipment";
         public string Prefab;
         public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
-        public int Level = 1;
+
+        public int Tiers = 1;
+        public int Weight = 1;
 
         public BuildData(JSONObject _json)
         {
             Id = _json.GetField("id").str;
-            Level = (int)_json.GetField("level").f;
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
+
+            Tiers = (int)_json.GetField("tiers").f;
+            if(_json.GetField("weight") == null)
+                Weight = (int)_json.GetField("weight").f;
 
             //Compat
             Compatibilities.Add( (EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper())) ;

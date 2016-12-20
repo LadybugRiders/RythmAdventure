@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Reflection;
 
@@ -118,17 +119,13 @@ public partial class Utils  {
 
     #endregion
 
-    #region
-
     public static Vector3 SetLocalAngleZ(Transform _t, float _newValue){
 		Vector3 tmpVector = _t.localEulerAngles;
 		tmpVector.z = _newValue;
 		_t.localEulerAngles = tmpVector;
 		return _t.localEulerAngles;
 	}
-
-	#endregion
-
+    
 	public static void SetAlpha(SpriteRenderer _spriteRenderer,float _alpha){
 		Color color = _spriteRenderer.color;
 		color.a = _alpha;

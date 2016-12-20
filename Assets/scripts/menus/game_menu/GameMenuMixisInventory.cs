@@ -82,7 +82,7 @@ public class GameMenuMixisInventory : GameMenu {
             //check if not in party
             if (!m_profile.CurrentTeam.Contains(charData.Id))
             {
-                GameObject go = GameUtils.CreateCharacterUIObject(charData.Id, m_inventoryItemScale,true);
+                GameObject go = GameUtils.CreateCharacterUIObject(charData, m_inventoryItemScale,true);
                 go.transform.SetParent(m_inventoryTransform, false);
                 go.GetComponent<UIInventoryDraggableItem>().Menu = this;
                 m_inventory.Add(go);

@@ -89,12 +89,14 @@ public class CharacterBuild : MonoBehaviour {
                 switch(lookData.type)
                 {
                     case LooksType.EYES:
-                        Destroy(m_eyes);
+                        Destroy(m_eyes.gameObject);
                         go.transform.SetParent(this.transform,false);
+                        m_eyes = go.GetComponent<SpriteRenderer>();
                         break;
                     case LooksType.EYEBROWS:
-                        Destroy(m_eyebrows);
+                        Destroy(m_eyebrows.gameObject);
                         go.transform.SetParent(this.transform,false);
+                        m_eyebrows = go.GetComponent<SpriteRenderer>();
                         break;
                     case LooksType.FACE:
                         go.transform.SetParent(this.transform,false);

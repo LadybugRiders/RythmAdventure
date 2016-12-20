@@ -57,20 +57,18 @@ public class DataManager : DatabaseLoader {
 
     #region CHARACTER_LOADING
 
-    public GameObject CreateCharacter(string charId)
+    public GameObject CreateCharacter(ProfileManager.CharacterData _charaData)
     {
         var charManager = DataManager.instance.CharacterManager;
         //load prefab
         GameObject go = Instantiate(Resources.Load("prefabs/character/character_parts")) as GameObject;
         CharacterBuild build = go.GetComponent<CharacterBuild>();
-
-        //get data stored in profile
-        var charaData = ProfileManager.instance.GetCharacter(charId);
+        
         //compute all around stats from the database
-        var stats = charManager.ComputeStats(charaData);
+        var stats = charManager.ComputeStats(_charaData);
         build.gameObject.SetActive(true);
         //load appearance
-        build.Load(charaData);
+        build.Load(_charaData);
         return go;
     }
 

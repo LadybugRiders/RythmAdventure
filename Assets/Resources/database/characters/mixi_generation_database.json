@@ -1,0 +1,37 @@
+{
+    "job_equip": [
+        {
+            "job": "warrior",
+            "compat": "heavy",
+            "compat2": "medium",
+            "tiers": 1
+        },
+        {
+            "job": "magus",
+            "compat": "light",
+            "tiers": 1
+        },
+        {
+            "job": "thief",
+            "compat": "light",
+            "compat2": "medium",
+            "tiers": 1
+        }
+    ],
+    "warrior_skills": [
+        {
+            "id": 0,
+            "skillid": "fireball",
+            "tiers": 2,
+            "weight": 1
+        }
+    ],
+    "warrior_abilities": [
+        {
+            "id": 0,
+            "skillid": "brawler",
+            "tiers": 1,
+            "weight": 1
+        }
+    ]
+}

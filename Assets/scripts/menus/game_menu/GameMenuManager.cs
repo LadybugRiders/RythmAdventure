@@ -14,6 +14,11 @@ public class GameMenuManager : MonoBehaviour {
     void Start () {
         m_currentMenu = m_startMenu ;
         m_currentMenu.ActivateMenu();
+        foreach( var menu in m_menus)
+        {
+            if (menu != m_startMenu)
+                menu.DeactivateMenu();
+        }
 	}
 	
 	// Update is called once per frame

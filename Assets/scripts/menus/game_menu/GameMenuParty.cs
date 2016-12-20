@@ -47,6 +47,8 @@ public class GameMenuParty : GameMenu {
     
     void Clear()
     {
+        if (m_charactersUI == null)
+            return;
         foreach(var chara in m_charactersUI)
         {
             Destroy(chara);
