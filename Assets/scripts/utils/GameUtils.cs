@@ -1,7 +1,67 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameUtils {
+
+    public class WeightableData
+    {
+        public int Tiers;
+        public int Weight;
+
+        public WeightableData(JSONObject _json)
+        {
+            if (_json.GetField("tiers") != null)
+                Tiers = (int)_json.GetField("tiers").f;
+            if (_json.GetField("weight") != null)
+                Weight = (int)_json.GetField("weight").f;
+        }
+    }
+
+    /// <summary>
+    /// Returns a list of items that have the same or inferior tiers
+    /// </summary>
+    public static List<T> SearchByTiers<T>(IJSONDataCollection pool, int _tiers) where T : WeightableData
+    {
+        List<T> list = new List<T>();
+        foreach(var i in pool)
+        {
+            WeightableData w = (WeightableData)i;
+            if (w.Tiers <= _tiers)
+                list.Add(w as T);
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Gets a random item from the pool using the Russian Roulette algo
+    /// </summary>
+    public static T GetRandom<T>(List<T> pool) where T : WeightableData
+    {
+        //compute total weight
+        int totalWeight = 0;
+        foreach (var i in pool)
+        {
+            totalWeight += i.Weight;
+        }
+        int random = Random.Range(1,totalWeight);
+        int stackedOffset = 0;
+
+        WeightableData result = null;
+        //for each item 
+        foreach (var i in pool)
+        {
+            WeightableData w = (WeightableData)i;
+            //if it's valid & the weight is drawn
+            if (w.Weight > 0 && stackedOffset + w.Weight >= random )
+            {
+                result = w;
+                break;
+            }
+            stackedOffset += w.Weight;
+        }
+        return result as T;
+    }
 
     public static GameObject CreateCharacterUIObject(string _id, float _scale, bool _draggable = false)
     {

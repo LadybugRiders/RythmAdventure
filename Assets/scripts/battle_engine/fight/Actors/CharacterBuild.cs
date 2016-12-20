@@ -28,7 +28,7 @@ public class CharacterBuild : MonoBehaviour {
 
     public void SetColor(string _colorId)
     {
-        var color = DataManager.instance.CharacterManager.GetBodyColor(_colorId);
+        var color = DataManager.instance.CharacterManager.GetColor(_colorId);
         m_body.color = color;
         m_arm.color = color;
     }
@@ -74,7 +74,7 @@ public class CharacterBuild : MonoBehaviour {
         {
 			if (string.IsNullOrEmpty(look.Id))
                 continue;
-            var lookData = DataManager.instance.CharacterManager.GetLooks(look.LooksType, look.Id);
+            var lookData = DataManager.instance.CharacterManager.GetLook(look.LooksType, look.Id);
             if( lookData != null)
             {
                 string pathToPrefab = "prefabs/looks/" + look.LooksType.ToString().ToLower();
@@ -86,7 +86,7 @@ public class CharacterBuild : MonoBehaviour {
                     continue;
                 }
                 var go = Instantiate(prefab) as GameObject;
-                switch(lookData.type)
+                switch(look.LooksType)
                 {
                     case LooksType.EYES:
                         Destroy(m_eyes.gameObject);

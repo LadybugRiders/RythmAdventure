@@ -1,18 +1,18 @@
 {
     "job_equip": [
         {
-            "job": "warrior",
+            "id": "warrior",
             "compat": "heavy",
             "compat2": "medium",
             "tiers": 1
         },
         {
-            "job": "magus",
+            "id": "magus",
             "compat": "light",
             "tiers": 1
         },
         {
-            "job": "thief",
+            "id": "thief",
             "compat": "light",
             "compat2": "medium",
             "tiers": 1

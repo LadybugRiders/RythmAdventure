@@ -28,6 +28,9 @@ public class MixiGenerator {
         ProfileManager.CharacterData chara = new ProfileManager.CharacterData(id);
 
         chara.Job = _job;
+        //Color
+        var colors = CharManager.GetColors(_tiers);
+        chara.ColorId = GameUtils.GetRandom(colors).Id;
         
         SetEquipement(chara, _job, _tiers);
         SetLooks(chara, _job, _tiers);
@@ -66,14 +69,14 @@ public class MixiGenerator {
 
     #region CHARACTER_GENERATION
     
-    public DataCharManager.LooksData GetRandomLooks(Job _job, LooksType _type, int _tiers)
+    public DataCharManager.BuildData GetRandomLooks(Job _job, LooksType _type, int _tiers)
     {
         var listOfLooks = CharManager.GetLooks(_type, _job, _tiers);
         int r = Random.Range(0, listOfLooks.Count - 1);
         return listOfLooks[r];
     }
 
-    public DataCharManager.EquipmentData GetRandomEquipment(Job _job, EquipmentType _type, int _tiers)
+    public DataCharManager.BuildData GetRandomEquipment(Job _job, EquipmentType _type, int _tiers)
     {
         var listOfEquipements = CharManager.GetEquipements(_type, _job, _tiers);
         int r = Random.Range(0, listOfEquipements.Count - 1);
