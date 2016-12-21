@@ -167,7 +167,7 @@ public class DataCharManager : DatabaseLoader
     
     public List<ColorData> GetColors(int _tiers)
     {
-        return GameUtils.SearchByTiers<ColorData>(m_colorsDB, _tiers);
+        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers);
     }
 
     #endregion

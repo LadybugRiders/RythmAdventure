@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class JSONData
 {
@@ -60,6 +61,11 @@ public class IJSONDataDicoCollection<T> : IJSONDataCollection where T : JSONData
             return default(T);
         }
     }
+
+    public List<T> ToList()
+    {
+        return items.Values.ToList();
+    }
 }
 
 /// <summary>
@@ -89,6 +95,11 @@ public class IJSONDataListCollection<T> : IJSONDataCollection where T : JSONData
                 return items[i];
             return default(T);
         }
+    }
+
+    public List<T> ToList()
+    {
+        return items.ToList();
     }
 }
 

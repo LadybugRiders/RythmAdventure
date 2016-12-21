@@ -66,7 +66,6 @@ public class MixiGenerator {
 
     }
 
-
     #region CHARACTER_GENERATION
     
     public DataCharManager.BuildData GetRandomLooks(Job _job, LooksType _type, int _tiers)

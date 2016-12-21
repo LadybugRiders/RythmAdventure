@@ -22,14 +22,13 @@ public class GameUtils {
     /// <summary>
     /// Returns a list of items that have the same or inferior tiers
     /// </summary>
-    public static List<T> SearchByTiers<T>(IJSONDataCollection pool, int _tiers) where T : WeightableData
+    public static List<T> SearchByTiers<T>(IEnumerable<T> pool, int _tiers) where T : WeightableData
     {
         List<T> list = new List<T>();
         foreach(var item in pool)
         {
-            WeightableData w = (WeightableData)item;
-            if (w.Tiers <= _tiers)
-                list.Add(w as T);
+            if (item.Tiers <= _tiers)
+                list.Add(item);
         }
         return list;
     }

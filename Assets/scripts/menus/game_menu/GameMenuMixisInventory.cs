@@ -34,18 +34,20 @@ public class GameMenuMixisInventory : GameMenu {
     protected override void Activate()
     {
         base.Activate();
-        if (m_alreadyActivated == false) {
+        if (m_alreadyActivated == false)
+        {
             LoadParty();
-            LoadInventory();
-            m_statsFiller.Empty();
-            m_secondStatsFiller.Empty();
-            m_selectorTransform.gameObject.SetActive(false);
         }
+        LoadInventory();
+        m_statsFiller.Empty();
+        m_secondStatsFiller.Empty();
+        m_selectorTransform.gameObject.SetActive(false);
     }
 
     protected override void Deactivate()
     {
         base.Deactivate();
+        ClearInventory();
     }
 
     #region LOADING
@@ -187,5 +189,14 @@ public class GameMenuMixisInventory : GameMenu {
     {
         var charStats = ProfileManager.instance.GetCharacterStats(_charId);
         m_secondStatsFiller.Load(charStats,m_mainStats);
+    }
+
+    void ClearInventory()
+    {
+        for(int i = m_inventory.Count-1; i >=0; --i)
+        {
+            Destroy(m_inventory[i]);
+        }
+        m_inventory.Clear();
     }
 }
