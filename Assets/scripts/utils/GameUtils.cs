@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 public class GameUtils {
 
-    public class WeightableData
+    public class WeightableData : JSONData
     {
         public int Tiers;
         public int Weight;
 
-        public WeightableData(JSONObject _json)
+        public override void BuildJSONData(JSONObject _json)
         {
+            base.BuildJSONData(_json);
             if (_json.GetField("tiers") != null)
                 Tiers = (int)_json.GetField("tiers").f;
             if (_json.GetField("weight") != null)

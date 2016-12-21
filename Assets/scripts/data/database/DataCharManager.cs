@@ -257,16 +257,15 @@ public class DataCharManager : DatabaseLoader
 
     public class BuildData : GameUtils.WeightableData
     {
-        public string Id;
         public string Name = "NoName_Equipment";
         public string Prefab;
         public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
         
         public Stats Stats = new Stats();
 
-        public BuildData(JSONObject _json) : base(_json)
+        public override void BuildJSONData(JSONObject _json)
         {
-            Id = _json.GetField("id").str;
+            base.BuildJSONData(_json);
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
             
@@ -293,31 +292,12 @@ public class DataCharManager : DatabaseLoader
     }
        
 
-    public class BuildDataCollection : IJSONDataCollection
-    {
-        Dictionary<string, BuildData> builds = new Dictionary<string, BuildData>();
-        
-        public void AddElement(JSONObject _element)
-        {
-            BuildData data = new BuildData(_element);
-            builds.Add(data.Id, data);
-        }
-
-
-        public IEnumerator<BuildData> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
+    public class BuildDataCollection : IJSONDataDicoCollection<BuildData>
+    {        
         public List<BuildData> GetCompatibleBuilds(EquipCompatibility _compat,int _tiers)
         {
             var list = new List<BuildData>();
-            foreach (var b in builds.Values)
+            foreach (var b in items.Values)
             {
                 if (b.IsCompatible(_compat) && ( b.Tiers <= _tiers || _tiers < 0 ))
                 {
@@ -326,29 +306,17 @@ public class DataCharManager : DatabaseLoader
             }
             return list;
         }
-        
-        public BuildData this[string i]
-        {
-            get
-            {
-                if (builds.ContainsKey(i))
-                    return builds[i];
-                return null;
-            }
-        }
     }
 
 
     public class SkillGenerationData : GameUtils.WeightableData
     {
-        public string Id;
         public Job Job;
         public string SkillId;
 
-        public SkillGenerationData(JSONObject _json, Job _job) : base(_json)
+        public override void BuildJSONData(JSONObject _json)
         {
-            Job = _job;
-            Id = _json.GetField("id").str;
+            base.BuildJSONData(_json);
             SkillId = _json.GetField("skill_id").str;
         }
     }
@@ -359,13 +327,12 @@ public class DataCharManager : DatabaseLoader
 
     public class ColorData : GameUtils.WeightableData
     {
-        public string Id;
         public string Name;
         public Color Color;
 
-        public ColorData(JSONObject _json) : base(_json)
+        public override void BuildJSONData(JSONObject _json)
         {
-            Id = _json.GetField("id").ToString();
+            base.BuildJSONData(_json);
             Name = _json.GetField("name").str;
             
             Color.r = _json.GetField("red").f / 255;
@@ -375,36 +342,7 @@ public class DataCharManager : DatabaseLoader
         }
     }
 
-    public class ColorDataCollection : IJSONDataCollection
-    {
-        Dictionary<string, ColorData> builds = new Dictionary<string, ColorData>();
-
-        public void AddElement(JSONObject _element)
-        {
-            ColorData data = new ColorData(_element);
-            builds.Add(data.Id, data);
-        }
-
-        public IEnumerator<ColorData> GetEnumerator()
-        {
-            return builds.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return builds.Values.GetEnumerator();
-        }
-        
-        public ColorData this[string i]
-        {
-            get
-            {
-                if (builds.ContainsKey(i))
-                    return builds[i];
-                return null;
-            }
-        }
-    }
+    public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
 
     #endregion
 }
