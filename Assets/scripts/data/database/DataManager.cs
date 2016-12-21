@@ -53,8 +53,26 @@ public class DataManager : DatabaseLoader {
         base.LoadDatabase();
 	}
 
-	#endregion
-    
+    #endregion
+
+    #region CHARACTER_LOADING
+
+    public GameObject CreateCharacter(ProfileManager.CharacterData _charaData)
+    {
+        var charManager = DataManager.instance.CharacterManager;
+        //load prefab
+        GameObject go = Instantiate(Resources.Load("prefabs/character/character_parts")) as GameObject;
+        CharacterBuild build = go.GetComponent<CharacterBuild>();
+        
+        //compute all around stats from the database
+        var stats = charManager.ComputeStats(_charaData);
+        build.gameObject.SetActive(true);
+        //load appearance
+        build.Load(_charaData);
+        return go;
+    }
+
+    #endregion
     #region PROPERTIES
 
     public static DataManager instance {

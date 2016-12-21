@@ -102,8 +102,7 @@ public partial class ProfileManager : MonoBehaviour {
     public Stats GetCharacterStats(string _id)
     {
         var chara = GetCharacter(_id);
-        var levelupdata = DataManager.instance.CharacterManager.GetLevelByXp(chara.Job, chara.Xp);
-        return levelupdata!=null ? levelupdata.Stats : null;
+        return DataManager.instance.CharacterManager.ComputeStats(chara);
     }
 
     public void AddCharacterXp(string _id, int _xp)
@@ -125,6 +124,19 @@ public partial class ProfileManager : MonoBehaviour {
                 chars.Add(charaSave);
         }
         return chars;
+    }
+
+    public void ReplacePartyCharacter(string oldCharId, string newCharId) 
+    {
+        for(int i=0; i < profile.CurrentTeam.Count; ++i)
+        {
+            if( profile.CurrentTeam[i] == oldCharId)
+            {
+                profile.CurrentTeam[i] = newCharId;
+                break;
+            }
+        }
+        SaveProfile();
     }
 
     #endregion

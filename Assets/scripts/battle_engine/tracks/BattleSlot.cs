@@ -278,7 +278,7 @@ public class BattleSlot : MonoBehaviour {
         for (int i = m_collidingNotes.Count - 1; i >= 0; --i)
         {
             var note = m_collidingNotes[i];
-            if (note != CurrentLongNote && note.Data.TimeBegin < _note.Data.TimeBegin)
+            if (note != CurrentLongNote && note.Data.Time < _note.Data.Time)
             {
                 m_collidingNotes.RemoveAt(i);
                 m_track.OnNoteMiss(note);

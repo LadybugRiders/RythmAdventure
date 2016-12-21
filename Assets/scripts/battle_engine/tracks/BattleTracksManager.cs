@@ -32,9 +32,7 @@ public class BattleTracksManager : MonoBehaviour {
 	private BattleNote m_lastNoteLaunched = null;
 	/** How many loops we have done */
 	private int m_iteration = 1;
-
-	private float m_currentSpeed = 5.0f;
-
+    
     //EVENTS
 	/// <summary>
 	/// Called when a note is hit
@@ -143,10 +141,6 @@ public class BattleTracksManager : MonoBehaviour {
 		for( int i=0; i < m_tracks.Count; i ++ ){
 			m_tracks[i].SwitchPhase();
 		}
-		if (m_state == BattleState.DEFEND)
-			m_currentSpeed = Mathf.Abs (m_currentSpeed) * -1;
-		else
-			m_currentSpeed = Mathf.Abs (m_currentSpeed);
 		CheckCurrentTrack ();
 	}
 
@@ -248,7 +242,7 @@ public class BattleTracksManager : MonoBehaviour {
 		_data.TrackID = track.Id;
 		//Launch
 		m_tracks [_data.TrackID].Iteration = m_iteration;
-		bool success = m_tracks [_data.TrackID].LaunchNote (_note,m_currentSpeed);
+		bool success = m_tracks [_data.TrackID].LaunchNote (_note);
 		CheckCurrentTrack ();
 		return success;
 	}
@@ -391,22 +385,14 @@ public class BattleTracksManager : MonoBehaviour {
 			BattleNote n = m_tracks[i].CurrentNote;
 			if( n==null )
 				continue;
-			if( m_tracks[i].Iteration < minIteration || n.Data.TimeBegin < bestTime ){
-				bestTime = n.Data.TimeBegin ;
+			if( m_tracks[i].Iteration < minIteration || n.Data.Time < bestTime ){
+				bestTime = n.Data.Time ;
 				minIteration = m_tracks[i].Iteration;
 				m_currentTrackID = i;
 			}
 		}
 	}
-
-    /// <summary>
-    /// Computes the speed of the notes according to the timeshift ( time for a note to arrive )
-    /// </summary>
-    /// <param name="_timeShift"></param>
-    public void SetTimeShift(float _timeShift){
-		m_currentSpeed = m_tracks [0].Length / _timeShift;
-	}
-
+    
 	public BattleState State{
 		get{
 			return m_state;

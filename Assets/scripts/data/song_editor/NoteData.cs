@@ -22,7 +22,7 @@ public class NoteData {
 
 	public NoteData Clone(){
 		NoteData noteData = new NoteData ();
-		noteData.TimeBegin = this.TimeBegin;
+		noteData.Time = this.Time;
 		noteData.Type = this.Type;
 		noteData.TrackID = this.TrackID;
 		noteData.Subtype = this.Subtype;
@@ -50,7 +50,10 @@ public class NoteData {
 		}
 	}
 
-	public float TimeBegin {
+    /// <summary>
+    /// Time of the song at which the note has to be played
+    /// </summary>
+	public float Time {
 		get {
 			return m_timeBegin;
 		}

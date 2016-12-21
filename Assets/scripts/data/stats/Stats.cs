@@ -35,7 +35,7 @@ public class Stats {
     public Stats(JSONObject json)
     {
         //stats
-        Level = (int)json.GetField("level").f;
+        Level = json.GetField("level")!=null ? (int) json.GetField("level").f : 1;
         Attack = (int)json.GetField("attack").f;
         Defense = (int)json.GetField("defense").f;
         Magic = (int)json.GetField("magic").f;

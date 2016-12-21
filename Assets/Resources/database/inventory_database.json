@@ -1,38 +1,26 @@
 {
-    "attack": [
+    "items": [],
+    "shards": [
         {
-            "id": "short_sword",
-            "name": "short sword",
-            "prefab": "sword_attack",
-            "power": 4,
-            "mp": 0,
-            "type": "offense"
+            "id": "min_attack",
+            "name": "minor red shard",
+            "tiers": 1,
+            "weight": 5,
+            "job1": "warrior"
         },
         {
-            "id": "long_sword",
-            "name": "long sword",
-            "prefab": "sword_attack",
-            "power": 10,
-            "mp": 0,
-            "type": "offense"
-        }
-    ],
-    "magic": [
-        {
-            "id": "fireball",
-            "name": "fireball",
-            "prefab": "fireball",
-            "power": 12,
-            "mp": 3,
-            "type": "offense"
+            "id": "min_mag",
+            "name": "minor blue shard",
+            "tiers": 1,
+            "weight": 5,
+            "job1": "magus"
         },
         {
-            "id": "fireblast",
-            "name": "fireblast",
-            "prefab": "fireball",
-            "power": 25,
-            "mp": 8,
-            "type": "offense"
+            "id": "min_green",
+            "name": "minor green shard",
+            "tiers": 1,
+            "weight": 5,
+            "job1": "thief"
         }
     ]
 }

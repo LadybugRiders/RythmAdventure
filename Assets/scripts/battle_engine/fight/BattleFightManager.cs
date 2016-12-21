@@ -255,10 +255,7 @@ public class BattleFightManager : MonoBehaviour {
     public void OnActorDead(BattleActor _actor){
 
         int index = FindActorIndex(_actor);
-
-        var chara = m_party[index];
-        var enemy = m_enemies[index];
-        
+                
 		//Check Combat End
 		bool end = true;
 		int repTrack = 0;
