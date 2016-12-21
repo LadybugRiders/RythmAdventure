@@ -13,27 +13,38 @@ public class DataCharManager : DatabaseLoader
     protected override void LoadDatabase()
     {
         base.LoadDatabase();
+        ReadLevelUp();
+        ReadEquipement();
+        //generation
+        /*tempdatabase = LoadDataJSON("characters/mixi_generation_database");
+        m_database.Add("generation", tempdatabase);*/
+        
+    }
 
-        JSONObject tempJson;
-        //levelup
-        //read json from database
-        tempJson = LoadDataJSON("characters/characters_levelup_database");
+    #region DATABASE_READING
+    void ReadLevelUp()
+    {
+        var database = LoadDataJSON("characters/characters_levelup_database");
         //foreach enum value
-        for( int i=0; i< Utils.EnumCount(Job.THIEF); i++)
+        for (int i = 0; i < Utils.EnumCount(Job.THIEF); i++)
         {
             Job job = (Job)i;
             string jobStr = job.ToString().ToLower();
             //Convert json into classes
-            var coll = JSONLoaderLR.LoadTable<LevelUpDataCollection>(tempJson[jobStr]);
+            var coll = JSONLoaderLR.LoadTable<LevelUpDataCollection>(database[jobStr]);
             m_levelupsDB[job] = coll;
         }
+    }
+
+    void ReadEquipement()
+    {
         //equipement
-        tempJson = LoadDataJSON("characters/equipement_database");
+        var database = LoadDataJSON("characters/equipement_database");
         for (int i = 0; i < Utils.EnumCount(EquipmentType.ACCESSORY); i++)
         {
             EquipmentType equEnum = (EquipmentType)i;
             string equStr = equEnum.ToString().ToLower();
-            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(tempJson[equStr]);
+            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(database[equStr]);
             m_equipmentsDB[equEnum] = coll;
         }
         //looks
@@ -41,16 +52,13 @@ public class DataCharManager : DatabaseLoader
         {
             LooksType lookEnum = (LooksType)i;
             string lookStr = lookEnum.ToString().ToLower();
-            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(tempJson[lookStr]);
+            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(database[lookStr]);
             m_looksDB[lookEnum] = coll;
         }
-        var ld = tempJson["body_colors"];
-        m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(tempJson["body_colors"]);
-        //generation
-        tempJson = LoadDataJSON("characters/mixi_generation_database");
-        m_database.Add("generation", tempJson);
-        
+        var ld = database["body_colors"];
+        m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(database["body_colors"]);
     }
+    #endregion
 
     public Stats ComputeStats(ProfileManager.CharacterData _charData)
     {
@@ -177,10 +185,7 @@ public class DataCharManager : DatabaseLoader
 
     }*/
 
-    #endregion
-        
-    public JSONObject GenerationDatabase { get { return m_database["generation"]; } }
-
+    #endregion        
 
     #region LEVEL_DATA
     /// <summary>

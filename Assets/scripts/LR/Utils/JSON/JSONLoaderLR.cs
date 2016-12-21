@@ -15,9 +15,16 @@ public class JSONData
 
     public virtual void BuildJSONData(JSONObject _json)
     {
-        Id = _json.GetField("id").str;
+        var idObj = _json.GetField("id");
+        if (idObj == null)
+            return;
+        Id = idObj.str;
         if( Id == null )
-            Id = _json.GetField("id").ToString();
+            Id = idObj.ToString();
+        if( Id == null)
+        {
+            UnityEngine.Debug.Log("An id column is missing in your table");
+        }
     }
 }
 

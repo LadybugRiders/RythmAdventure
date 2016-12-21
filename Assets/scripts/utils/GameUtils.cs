@@ -25,9 +25,9 @@ public class GameUtils {
     public static List<T> SearchByTiers<T>(IJSONDataCollection pool, int _tiers) where T : WeightableData
     {
         List<T> list = new List<T>();
-        foreach(var i in pool)
+        foreach(var item in pool)
         {
-            WeightableData w = (WeightableData)i;
+            WeightableData w = (WeightableData)item;
             if (w.Tiers <= _tiers)
                 list.Add(w as T);
         }

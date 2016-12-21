@@ -25,7 +25,6 @@ public class BattleDataAsset : ScriptableObject  {
     public class EnemyBattleInfo
     {
         [SerializeField] public GameObject Prefab;
-        [SerializeField] public int Level = 1;
-        [SerializeField] public string Name;
+        [SerializeField] public string Id;
     }
 }

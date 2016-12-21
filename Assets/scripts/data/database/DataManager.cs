@@ -122,5 +122,10 @@ public class DataManager : DatabaseLoader {
         get { return GetComponent<DataInventoryManager>(); }
     }
 
+    public DataGameManager GameDataManager
+    {
+        get { return GetComponent<DataGameManager>(); }
+    }
+
     #endregion
 }

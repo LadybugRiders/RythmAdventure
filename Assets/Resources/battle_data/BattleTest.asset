@@ -18,13 +18,13 @@ MonoBehaviour:
   Enemies:
   - Prefab: {fileID: 173632, guid: 41400c681545b7e42a10400637135d3b, type: 2}
     Level: 1
-    Name: bat
+    Name: bat_1
   - Prefab: {fileID: 173632, guid: 41400c681545b7e42a10400637135d3b, type: 2}
     Level: 1
-    Name: bat
+    Name: bat_1
   - Prefab: {fileID: 173632, guid: 41400c681545b7e42a10400637135d3b, type: 2}
     Level: 1
-    Name: bat
+    Name: bat_1
   TimeBegin: 0
   AttackNotesCount: 10
   DefenseNotesCount: 5

@@ -21,14 +21,14 @@ public class BattleEnemy : BattleActor {
 	}
 
 	#region LOADING 
-	public void Load(string _name, int _level){
+	public override void Load(string _name){
         base.Load(_name);
         var dataManager = DataManager.instance.EnemiesManager;
-        var levelData = dataManager.GetFullStats(_name, _level);
-        if (levelData != null)
+        var stats = dataManager.GetFullStats(_name);
+        if (stats != null)
         {
-            m_maxStats = new Stats(levelData.Stats);
-            m_currentStats = new Stats(levelData.Stats);
+            m_maxStats = new Stats(stats);
+            m_currentStats = new Stats(stats);
         }
         CurrentStats.MP = 0;
     }

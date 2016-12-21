@@ -82,21 +82,16 @@ public class BattleScoreManager : MonoBehaviour {
 
     void InitScoresData()
     {
-		var database = DataManager.instance.GetDatabase("scoring");
+        var scoring = DataManager.instance.GameDataManager.AccuracyScoring;
 		m_baseScoreByAcc = new Dictionary<HitAccuracy, int>();
-        if(database != null)
+        foreach(var score in scoring.scores)
         {
-            var accDatabase = database["accuracy_scoring"][0];
-            foreach(var key in accDatabase.keys)
+            try
             {
-                try
-                {
-                    HitAccuracy acc = (HitAccuracy) System.Enum.Parse(typeof(HitAccuracy),key.ToUpper());
-                    m_baseScoreByAcc[acc] = (int) accDatabase.GetField(key).f;
-                }catch(System.Exception e)
-                {
-                    e.ToString();
-                }
+                m_baseScoreByAcc[score.Key] = score.Value;
+            }catch(System.Exception e)
+            {
+                e.ToString();
             }
         }
     }

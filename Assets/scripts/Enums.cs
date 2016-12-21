@@ -23,3 +23,8 @@ public enum EquipCompatibility
     ALL, LIGHT, MEDIUM, HEAVY
 }
 
+public enum ActionType
+{
+    ATTACK, MAGIC, TALENT
+}
+
