@@ -103,4 +103,11 @@ public partial class ProfileManager {
         }
     }
 
+    [System.Serializable]
+    public class Item
+    {
+        public string Id;
+        public int Quantity;
+    }
+
 }

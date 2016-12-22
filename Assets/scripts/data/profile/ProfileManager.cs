@@ -179,6 +179,8 @@ public partial class ProfileManager : MonoBehaviour {
 
         [SerializeField] public List<string> CurrentTeam;
 
+        [SerializeField] public List<Item> Shards;
+
         //Progression
         [SerializeField] public List<Map> Maps = new List<Map>();
 

@@ -175,6 +175,13 @@ MonoBehaviour:
     - 0
     - 1
     - 2
+    Shards:
+    - Id: min_red
+      Quantity: 3
+    - Id: min_blue
+      Quantity: 2
+    - Id: min_green
+      Quantity: 3
     Maps:
     - Name: World1
       Levels: []
