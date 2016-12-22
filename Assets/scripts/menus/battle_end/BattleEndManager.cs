@@ -78,8 +78,8 @@ public class BattleEndManager : MonoBehaviour {
         {
             if( enemies[i] != null)
             {
-                var stats = DataManager.instance.EnemiesManager.GetFullStats(enemies[i].Name, enemies[i].Level);
-                totalXp += stats.XpNeeded;
+                var enemy = DataManager.instance.EnemiesManager.GetEnemy(enemies[i].Id);
+                totalXp += enemy.XpGranted;
             }
         }
         return totalXp;

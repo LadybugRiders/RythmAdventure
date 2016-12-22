@@ -5,35 +5,29 @@ using System.Collections.Generic;
 
 public class DataInventoryManager : DatabaseLoader
 {
-    
+    ActionDataCollection m_attacks;
+    ActionDataCollection m_magics;
+
     protected override void LoadDatabase()
     {
         base.LoadDatabase();
 
         JSONObject tempJson;
-        tempJson = LoadDataJSON("inventory_database");
-        m_database.Add("inventory", tempJson);
+        tempJson = LoadDataJSON("skills_database");
+        m_attacks = JSONLoaderLR.LoadTable<ActionDataCollection>(tempJson["attack"]);
+        m_magics = JSONLoaderLR.LoadTable<ActionDataCollection>(tempJson["magic"]);
     }
-
-    public ActionData GetActionData(string _id, string _type)
-    {
-        JSONObject actions = Database[_type];
-        var actionJSON = actions.list.Find(x => x.GetField("id").str == _id);
-        return null;
-    }
-
+    
     public ActionData GetAttackActionData(string _id)
     {
-        return GetActionData(_id, "attack");
+        return m_attacks[_id];
     }
 
     public ActionData GetMagicActionData(string _id)
     {
-        return GetActionData(_id, "magic");
+        return m_magics[_id];
     }
-
-    JSONObject Database { get { return m_database["inventory"]; } }
-
+    
     #region ACTIONDATA
     public class ActionData : JSONData
     {

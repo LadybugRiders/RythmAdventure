@@ -89,6 +89,17 @@ public partial class ProfileManager : MonoBehaviour {
 
     #region CHARACTERS
 
+    public void AddCharacter(CharacterData chara)
+    {
+        var existingChar = GetCharacter(chara.Id);
+        if( existingChar != null)
+        {
+            Debug.LogError("Character " + chara.Id + " is already in the profile");
+            return;
+        }
+        profile.Characters.Add(chara);
+    }
+
     public CharacterData GetCharacter(string _id)
     {
         foreach (var chara in profile.Characters)

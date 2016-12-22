@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class JSONData
 {
@@ -15,9 +16,16 @@ public class JSONData
 
     public virtual void BuildJSONData(JSONObject _json)
     {
-        Id = _json.GetField("id").str;
+        var idObj = _json.GetField("id");
+        if (idObj == null)
+            return;
+        Id = idObj.str;
         if( Id == null )
-            Id = _json.GetField("id").ToString();
+            Id = idObj.ToString();
+        if( Id == null)
+        {
+            UnityEngine.Debug.Log("An id column is missing in your table");
+        }
     }
 }
 
@@ -53,6 +61,11 @@ public class IJSONDataDicoCollection<T> : IJSONDataCollection where T : JSONData
             return default(T);
         }
     }
+
+    public List<T> ToList()
+    {
+        return items.Values.ToList();
+    }
 }
 
 /// <summary>
@@ -82,6 +95,11 @@ public class IJSONDataListCollection<T> : IJSONDataCollection where T : JSONData
                 return items[i];
             return default(T);
         }
+    }
+
+    public List<T> ToList()
+    {
+        return items.ToList();
     }
 }
 

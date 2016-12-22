@@ -85,8 +85,11 @@ public class BattleFightManager : MonoBehaviour {
                     Transform parent = m_enemies[i].transform.parent;
                     Vector3 position = m_enemies[i].transform.position;
                     Destroy(m_enemies[i].gameObject);
+                    //Get the corresponding new enemy and instantiate it
+                    var id = battleData.Enemies[i].Id;
+                    var prefabName = DataManager.instance.EnemiesManager.GetEnemy(id).Prefab;
                     //instantiate and place the new one
-                    var prefab = battleData.Enemies[i].Prefab;
+                    var prefab = Resources.Load("prefabs/enemy/"+prefabName);
                     if( prefab != null)
                     {
                         //instantiate enemy
@@ -95,10 +98,10 @@ public class BattleFightManager : MonoBehaviour {
                         go.transform.SetParent(parent, true);
                         go.transform.position = position;
                         //load
-                        m_enemies[i].Load(battleData.Enemies[i].Name, battleData.Enemies[i].Level);
+                        m_enemies[i].Load(id);
                     }else
                     {
-                        Debug.LogError("Enemy Prefab was null");
+                        Debug.LogError("Enemy Prefab was null ("+prefabName+")" );
                     }
                 }
             }

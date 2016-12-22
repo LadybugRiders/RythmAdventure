@@ -18,7 +18,9 @@ public class MixiGenerator {
 
     public ProfileManager.CharacterData Generate(int _tiers)
     {
-        Job job = Job.WARRIOR;
+        int r = Random.Range(0, Utils.EnumCount(Job.WARRIOR));
+        Job job = (Job)r;
+        Debug.Log("Job " + job.ToString());
         return Generate(_tiers, job);
     }
 
@@ -65,7 +67,6 @@ public class MixiGenerator {
     {
 
     }
-
 
     #region CHARACTER_GENERATION
     
