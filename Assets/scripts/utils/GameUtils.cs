@@ -27,7 +27,7 @@ public class GameUtils {
         List<T> list = new List<T>();
         foreach(var item in pool)
         {
-            if (item.Tiers <= _tiers)
+            if (item.Tiers <= _tiers && item.Tiers >= _tiers - 1)
                 list.Add(item);
         }
         return list;

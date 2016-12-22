@@ -353,7 +353,9 @@ public class DataCharManager : DatabaseLoader
             var list = new List<BuildData>();
             foreach (var b in items.Values)
             {
-                if (b.IsCompatible(_compat) && ( b.Tiers <= _tiers || _tiers < 0 ))
+                // we want to take tiers that are equals or one tiers down ( ex : for _tiers = 3, we can allow tiers 2 and 3 )
+                bool isTiersCompatible = (b.Tiers <= _tiers && b.Tiers >= _tiers -1 ) || _tiers < 0 ;
+                if (b.IsCompatible(_compat) && isTiersCompatible)
                 {
                     list.Add(b);
                 }
