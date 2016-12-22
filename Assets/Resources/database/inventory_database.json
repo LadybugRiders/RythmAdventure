@@ -6,7 +6,7 @@
             "name": "minor red shard",
             "tiers": 1,
             "weight": 5,
-            "job1": "warrior",
+            "job": "warrior",
             "image": "items/shards/major_shard",
             "description": "Minor shard of fighting",
             "color": "red"
@@ -16,7 +16,7 @@
             "name": "minor blue shard",
             "tiers": 1,
             "weight": 5,
-            "job1": "magus",
+            "job": "magus",
             "image": "items/shards/major_shard",
             "description": "Minor shard of magic",
             "color": "blue"
@@ -26,7 +26,7 @@
             "name": "minor green shard",
             "tiers": 1,
             "weight": 5,
-            "job1": "thief",
+            "job": "thief",
             "image": "items/shards/major_shard",
             "description": "Minor shard of speed",
             "color": "green"

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -164,6 +165,19 @@ public partial class ProfileManager : MonoBehaviour {
             }
         }
         return null;
+    }
+
+    #endregion
+
+    #region ITEMS
+
+    public void RemoveShard(string _shardId, int _quantity)
+    {
+        var shard = profile.Shards.FirstOrDefault(x => x.Id == _shardId);
+        if( shard != null)
+        {
+            shard.Quantity--;
+        }
     }
 
     #endregion
