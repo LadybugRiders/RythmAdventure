@@ -193,6 +193,8 @@ public class GameMenuMixisInventory : GameMenu {
 
     void ClearInventory()
     {
+        if (m_inventory == null || m_inventory.Count <= 0)
+            return;
         for(int i = m_inventory.Count-1; i >=0; --i)
         {
             Destroy(m_inventory[i]);

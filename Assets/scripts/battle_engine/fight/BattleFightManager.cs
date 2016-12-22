@@ -87,7 +87,7 @@ public class BattleFightManager : MonoBehaviour {
                     Destroy(m_enemies[i].gameObject);
                     //Get the corresponding new enemy and instantiate it
                     var id = battleData.Enemies[i].Id;
-                    var prefabName = DataManager.instance.EnemiesManager.GetFullStats(id);
+                    var prefabName = DataManager.instance.EnemiesManager.GetEnemy(id).Prefab;
                     //instantiate and place the new one
                     var prefab = Resources.Load("prefabs/enemy/"+prefabName);
                     if( prefab != null)
@@ -101,7 +101,7 @@ public class BattleFightManager : MonoBehaviour {
                         m_enemies[i].Load(id);
                     }else
                     {
-                        Debug.LogError("Enemy Prefab was null");
+                        Debug.LogError("Enemy Prefab was null ("+prefabName+")" );
                     }
                 }
             }

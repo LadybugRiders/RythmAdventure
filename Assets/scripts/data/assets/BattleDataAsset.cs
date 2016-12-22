@@ -24,7 +24,6 @@ public class BattleDataAsset : ScriptableObject  {
     [System.Serializable]
     public class EnemyBattleInfo
     {
-        [SerializeField] public GameObject Prefab;
         [SerializeField] public string Id;
     }
 }

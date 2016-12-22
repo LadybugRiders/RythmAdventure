@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class DataCharManager : DatabaseLoader
 {
@@ -10,15 +11,16 @@ public class DataCharManager : DatabaseLoader
     Dictionary<LooksType, BuildDataCollection> m_looksDB = new Dictionary<LooksType, BuildDataCollection>();
     ColorDataCollection m_colorsDB;
 
+    JobEquipCompatibilitiesCollection jobs;
+    Dictionary<Job, SkillGenerationDataCollection> skillsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
+    Dictionary<Job, SkillGenerationDataCollection> talentsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
+
     protected override void LoadDatabase()
     {
         base.LoadDatabase();
         ReadLevelUp();
         ReadEquipement();
-        //generation
-        /*tempdatabase = LoadDataJSON("characters/mixi_generation_database");
-        m_database.Add("generation", tempdatabase);*/
-        
+        ReadGeneration();        
     }
 
     #region DATABASE_READING
@@ -38,8 +40,11 @@ public class DataCharManager : DatabaseLoader
 
     void ReadEquipement()
     {
-        //equipement
         var database = LoadDataJSON("characters/equipement_database");
+
+        jobs = JSONLoaderLR.LoadTable<JobEquipCompatibilitiesCollection>(database["jobs"]);
+
+        //equipement
         for (int i = 0; i < Utils.EnumCount(EquipmentType.ACCESSORY); i++)
         {
             EquipmentType equEnum = (EquipmentType)i;
@@ -57,6 +62,31 @@ public class DataCharManager : DatabaseLoader
         }
         var ld = database["body_colors"];
         m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(database["body_colors"]);
+    }
+
+    void ReadGeneration()
+    {
+        var database = LoadDataJSON("characters/mixi_generation_database");
+        //foreach enum value
+        for (int i = 0; i < Utils.EnumCount(Job.THIEF); i++)
+        {
+            Job job = (Job)i;
+            string jobStr = job.ToString().ToLower();
+            //skills
+            var skillTable = database[jobStr + "_skills"];
+            if (skillTable != null)
+            {
+                var skills = JSONLoaderLR.LoadTable<SkillGenerationDataCollection>(skillTable);
+                skillsGenerations[job] = skills;
+            }
+            //talents
+            var talentsTable = database[jobStr+"_talents"];
+            if (talentsTable != null)
+            {
+                var talents = JSONLoaderLR.LoadTable<SkillGenerationDataCollection>(talentsTable);
+                talentsGenerations[job] = talents;
+            }
+        }
     }
     #endregion
 
@@ -123,7 +153,8 @@ public class DataCharManager : DatabaseLoader
     public List<BuildData> GetEquipements(EquipmentType _type, Job _job, int _tiers = -1) 
     {
         var equipments = m_equipmentsDB[_type];
-        return equipments.GetCompatibleBuilds(EquipCompatibility.ALL, _tiers);
+        var compats = jobs[_job.ToString().ToLower()].Compatibilities;
+        return equipments.GetCompatibleBuilds(compats, _tiers);
     }
         
     public BuildData GetEquipement( EquipmentType _type, string _id)
@@ -140,8 +171,9 @@ public class DataCharManager : DatabaseLoader
 
     public List<BuildData> GetLooks(LooksType _type, Job _job, int _tiers = -1)
     {
-        var equipments = m_looksDB[_type];
-        return equipments.GetCompatibleBuilds(EquipCompatibility.ALL, _tiers);
+        var looks = m_looksDB[_type];
+        var compats = jobs[_job.ToString().ToLower()].Compatibilities;
+        return looks.GetCompatibleBuilds(compats, _tiers);
     }
 
     public BuildData GetLook( LooksType _type, string _id)
@@ -174,18 +206,53 @@ public class DataCharManager : DatabaseLoader
 
     #region SKILLS
 
-    /*public List<SkillGenerationData> GetSkills(Job _job, int _tiers)
+    public List<SkillGenerationData> GetSkills(Job _job, int _tiers)
     {
-        string id = _job.ToString().ToLower() + "_" + "skills";
-        var json = GenerationDatabase[id];
+        var skillsColl = skillsGenerations[_job];
+        return GameUtils.SearchByTiers(skillsColl.ToList(), _tiers);
     }
-
-    List<SkillGenerationData> GetSkills(JSONObject _skills, int _tiers)
+    
+    #endregion   
+    
+    /// <summary>
+    /// Used to hold data with job compatibilities ( compat and/or compat2 ). Also a WeightableData.
+    /// </summary>
+    public class EquipCompatibilityData : GameUtils.WeightableData
     {
+        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
 
-    }*/
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+            //Compat
+            Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper()));
+            var compat2 = _json.GetField("compat2");
+            if (compat2 != null)
+            {
+                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
+            }
+        }
 
-    #endregion        
+        public bool IsCompatible(EquipCompatibility _type)
+        {
+            if (_type == EquipCompatibility.ALL)
+                return true;
+            foreach (var comp in Compatibilities)
+                if (comp == EquipCompatibility.ALL || comp == _type)
+                    return true;
+            return false;
+        }
+
+        public bool IsCompatible(List<EquipCompatibility> _types)
+        {
+            foreach(var t in _types)
+            {
+                if (IsCompatible(t))
+                    return true;
+            }
+            return false;
+        }
+    }     
 
     #region LEVEL_DATA
     /// <summary>
@@ -260,11 +327,10 @@ public class DataCharManager : DatabaseLoader
 
     #region BUILD_DATA
 
-    public class BuildData : GameUtils.WeightableData
+    public class BuildData : EquipCompatibilityData
     {
         public string Name = "NoName_Equipment";
         public string Prefab;
-        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
         
         public Stats Stats = new Stats();
 
@@ -274,32 +340,15 @@ public class DataCharManager : DatabaseLoader
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
             
-            //Compat
-            Compatibilities.Add( (EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper())) ;
-            var compat2 = _json.GetField("compat2");
-            if( compat2 != null)
-            {
-                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
-            }
 
             Stats = new Stats(_json);
-        }
-
-        public bool IsCompatible(EquipCompatibility _type)
-        {
-            if (_type == EquipCompatibility.ALL)
-                return true;
-            foreach (var comp in Compatibilities)
-                if (comp == EquipCompatibility.ALL || comp == _type)
-                    return true;
-            return false;
         }
     }
        
 
     public class BuildDataCollection : IJSONDataDicoCollection<BuildData>
     {        
-        public List<BuildData> GetCompatibleBuilds(EquipCompatibility _compat,int _tiers)
+        public List<BuildData> GetCompatibleBuilds(List<EquipCompatibility> _compat,int _tiers)
         {
             var list = new List<BuildData>();
             foreach (var b in items.Values)
@@ -310,19 +359,6 @@ public class DataCharManager : DatabaseLoader
                 }
             }
             return list;
-        }
-    }
-
-
-    public class SkillGenerationData : GameUtils.WeightableData
-    {
-        public Job Job;
-        public string SkillId;
-
-        public override void BuildJSONData(JSONObject _json)
-        {
-            base.BuildJSONData(_json);
-            SkillId = _json.GetField("skill_id").str;
         }
     }
 
@@ -350,4 +386,33 @@ public class DataCharManager : DatabaseLoader
     public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
 
     #endregion
+
+    #region SKILLS_GENERATION
+    
+
+    public class SkillGenerationData : GameUtils.WeightableData
+    {
+        public Job Job;
+        public string SkillId;
+
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+            SkillId = _json.GetField("skillid").str;
+        }
+    }
+
+    public class SkillGenerationDataCollection : IJSONDataDicoCollection<SkillGenerationData> { }
+
+    #endregion
+
+    public class JobEquipCompatibilityData : EquipCompatibilityData
+    {
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);            
+        }        
+    }
+
+    public class JobEquipCompatibilitiesCollection : IJSONDataDicoCollection<JobEquipCompatibilityData> { }
 }

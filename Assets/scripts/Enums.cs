@@ -20,7 +20,7 @@ public enum LooksType
 
 public enum EquipCompatibility
 {
-    ALL, LIGHT, MEDIUM, HEAVY
+    ALL, MAGIC, LIGHT, MEDIUM, HEAVY
 }
 
 public enum ActionType

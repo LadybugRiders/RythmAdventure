@@ -26,7 +26,7 @@
             "weight": 1
         }
     ],
-    "warrior_abilities": [
+    "warrior_talents": [
         {
             "id": 0,
             "skillid": "brawler",

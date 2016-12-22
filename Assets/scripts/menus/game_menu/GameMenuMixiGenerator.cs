@@ -43,6 +43,7 @@ public class GameMenuMixiGenerator : GameMenu
         m_currentMixi = GameUtils.CreateCharacterUIObject(chara, m_mixiScale, false);
         Destroy(m_currentMixi.GetComponent<UIInventoryDraggableItem>());
         m_currentMixi.transform.SetParent(m_mixiGO.transform, false);
+
     }
 
     public void OnMixiClicked()

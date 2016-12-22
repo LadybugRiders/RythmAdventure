@@ -45,6 +45,8 @@ public class DataEnemiesManager : DatabaseLoader {
             Prefab = _json.GetField("prefab").str;
             Description = _json.GetField("description").str;
             XpGranted = (int)_json.GetField("xp").f;
+
+            Stats = new Stats(_json);
         }
     }
 
