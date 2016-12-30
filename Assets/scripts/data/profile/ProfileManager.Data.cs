@@ -11,6 +11,7 @@ public partial class ProfileManager {
         public string Name = "temp";
         public int Xp = 0;
         public Job Job;
+        public int Tiers = 1;
 
         //public CharacterBuild Build; // skins
 
@@ -20,7 +21,9 @@ public partial class ProfileManager {
         public List<LooksData> Looks;
         
         //Magics
-        public List<ActionData> Magics;
+        public List<SkillData> Skills;
+
+        public string Talent = "0";
 
         public string ColorId = "0";
 
@@ -29,6 +32,7 @@ public partial class ProfileManager {
             Id = _id;
             Equipments = new List<EquipmentData>();
             Looks = new List<LooksData>();
+            Skills = new List<SkillData>();
         }
 
         public string GetEquipmentId(EquipmentType _equipmentType)
@@ -47,6 +51,11 @@ public partial class ProfileManager {
         public void AddLooks(string _id, LooksType _type)
         {
             Looks.Add(new LooksData(_id, _type));
+        }
+
+        public void AddSkills(string _id)
+        {
+            Skills.Add(new SkillData(_id));
         }
 
         [System.Serializable]
@@ -77,12 +86,13 @@ public partial class ProfileManager {
         }
 
         [System.Serializable]
-        public class ActionData
+        public class SkillData
         {
             public string Id;
+            public string Ap;
             public bool equipped = false;
 
-            public ActionData(string _id)
+            public SkillData(string _id)
             {
                 Id = _id;
             }

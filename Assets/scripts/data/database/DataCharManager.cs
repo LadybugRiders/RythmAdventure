@@ -208,17 +208,26 @@ public class DataCharManager : DatabaseLoader
     
     public List<DataManager.ColorData> GetColors(int _tiers)
     {
-        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers);
+        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers,1);
     }
 
     #endregion
 
     #region SKILLS
 
+    /// <summary>
+    /// Get Skills of this tiers only
+    /// </summary>
     public List<SkillGenerationData> GetSkills(Job _job, int _tiers)
     {
         var skillsColl = skillsGenerations[_job];
         return GameUtils.SearchByTiers(skillsColl.ToList(), _tiers);
+    }
+
+    public List<SkillGenerationData> GetTalents(Job _job, int _tiers)
+    {
+        var talents = talentsGenerations[_job];
+        return GameUtils.SearchByTiers(talents.ToList(), _tiers);
     }
     
     #endregion   

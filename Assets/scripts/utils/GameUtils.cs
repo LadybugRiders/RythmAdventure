@@ -20,14 +20,18 @@ public class GameUtils {
     }
 
     /// <summary>
-    /// Returns a list of items that have the same or inferior tiers
+    /// Returns a list of items that have the same tiers. Set _tiersRange if you want more inferior tiers
     /// </summary>
-    public static List<T> SearchByTiers<T>(IEnumerable<T> pool, int _tiers) where T : WeightableData
+    public static List<T> SearchByTiers<T>(IEnumerable<T> pool, int _tiers, int _tiersRange = 0) where T : WeightableData
     {
         List<T> list = new List<T>();
-        foreach(var item in pool)
+        foreach (var item in pool)
         {
-            if (item.Tiers <= _tiers && item.Tiers >= _tiers - 1)
+            bool isTiersOk = item.Tiers == _tiers;
+            if (_tiersRange > 0) {
+                isTiersOk &= item.Tiers >= _tiers - _tiersRange;
+            }
+            if ( isTiersOk )
                 list.Add(item);
         }
         return list;
