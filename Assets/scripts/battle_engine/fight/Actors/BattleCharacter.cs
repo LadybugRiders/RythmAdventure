@@ -37,9 +37,10 @@ public class BattleCharacter : BattleActor {
         RefreshUI();
 
         //Load Attacks & Magics
-        if (charData.Attack != null)
+        string weaponId = charData.GetEquipmentId(EquipmentType.WEAPON);
+        if (weaponId != null)
         {
-            AddAttack(charData.Attack.Id);
+            AddAttack(weaponId);
         }
         if( charData.Magics != null && charData.Magics.Count > 0)
         {

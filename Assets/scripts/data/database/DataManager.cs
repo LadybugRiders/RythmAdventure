@@ -62,6 +62,8 @@ public class DataManager : DatabaseLoader {
         var charManager = DataManager.instance.CharacterManager;
         //load prefab
         GameObject go = Instantiate(Resources.Load("prefabs/character/character_parts")) as GameObject;
+        go.name = _charaData.Id;
+
         CharacterBuild build = go.GetComponent<CharacterBuild>();
         
         //compute all around stats from the database

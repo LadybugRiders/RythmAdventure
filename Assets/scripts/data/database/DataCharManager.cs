@@ -188,6 +188,15 @@ public class DataCharManager : DatabaseLoader
         return GetLook(lookType, _id);
     }
 
+    public GameObject LoadAttackPrefab(string _weaponId)
+    {
+        BuildDataCollection weaponDB = m_equipmentsDB[EquipmentType.WEAPON];
+        BuildData weapon = weaponDB[_weaponId];
+        var prefab = Resources.Load( "prefabs/battle/attack/" + weapon.AttackPrefab );
+        GameObject go = Instantiate(prefab) as GameObject;
+        return go;
+    }
+
     #endregion
 
     #region COLOR
@@ -331,7 +340,8 @@ public class DataCharManager : DatabaseLoader
     {
         public string Name = "NoName_Equipment";
         public string Prefab;
-        
+        public string AttackPrefab;
+
         public Stats Stats = new Stats();
 
         public override void BuildJSONData(JSONObject _json)
@@ -339,7 +349,8 @@ public class DataCharManager : DatabaseLoader
             base.BuildJSONData(_json);
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
-            
+            if(_json.GetField("attackprefab"))
+                AttackPrefab = _json.GetField("attackprefab").str;
 
             Stats = new Stats(_json);
         }

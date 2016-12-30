@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public partial class ProfileManager {
-
-
+    
     [System.Serializable]
     public class CharacterData
     {
@@ -19,9 +18,7 @@ public partial class ProfileManager {
         public List<EquipmentData> Equipments;
         //Appearance
         public List<LooksData> Looks;
-
-        //Attack
-        public ActionData Attack;
+        
         //Magics
         public List<ActionData> Magics;
 
@@ -36,7 +33,10 @@ public partial class ProfileManager {
 
         public string GetEquipmentId(EquipmentType _equipmentType)
         {
-            return Equipments.Find(x => x.EquipmentType == _equipmentType).Id;
+            var weapon = Equipments.Find(x => x.EquipmentType == _equipmentType);
+            if (weapon == null)
+                Debug.Log("no weapon of type "+ _equipmentType.ToString() +" found for " + Id);
+            return weapon.Id;
         }
 
         public void AddEquipement(string _id, EquipmentType _type)

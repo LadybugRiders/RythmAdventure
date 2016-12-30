@@ -75,7 +75,6 @@ public class GameUtils {
     {
         //Create character
         GameObject character = DataManager.instance.CreateCharacter(_charaData);
-        character.name = _charaData.Id;
         //convert to ui
         Utils.SetLayerRecursively(character, LayerMask.NameToLayer("SpriteUI"));
         Utils.ConvertToUIImage(character);
