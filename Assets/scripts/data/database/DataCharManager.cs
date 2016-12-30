@@ -9,7 +9,7 @@ public class DataCharManager : DatabaseLoader
     Dictionary<Job, LevelUpDataCollection> m_levelupsDB = new Dictionary<Job, LevelUpDataCollection>();
     Dictionary<EquipmentType, BuildDataCollection> m_equipmentsDB = new Dictionary<EquipmentType, BuildDataCollection>();
     Dictionary<LooksType, BuildDataCollection> m_looksDB = new Dictionary<LooksType, BuildDataCollection>();
-    ColorDataCollection m_colorsDB;
+    DataManager.ColorDataCollection m_colorsDB;
 
     JobEquipCompatibilitiesCollection jobs;
     Dictionary<Job, SkillGenerationDataCollection> skillsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
@@ -61,7 +61,7 @@ public class DataCharManager : DatabaseLoader
             m_looksDB[lookEnum] = coll;
         }
         var ld = database["body_colors"];
-        m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(database["body_colors"]);
+        m_colorsDB = JSONLoaderLR.LoadTable<DataManager.ColorDataCollection>(database["body_colors"]);
     }
 
     void ReadGeneration()
@@ -197,7 +197,7 @@ public class DataCharManager : DatabaseLoader
         return m_colorsDB[_colorId].Color;
     }
     
-    public List<ColorData> GetColors(int _tiers)
+    public List<DataManager.ColorData> GetColors(int _tiers)
     {
         return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers);
     }
@@ -365,32 +365,8 @@ public class DataCharManager : DatabaseLoader
     }
 
     #endregion
-
-    #region COLORS_DATA
-
-    public class ColorData : GameUtils.WeightableData
-    {
-        public string Name;
-        public Color Color;
-
-        public override void BuildJSONData(JSONObject _json)
-        {
-            base.BuildJSONData(_json);
-            Name = _json.GetField("name").str;
-            
-            Color.r = _json.GetField("red").f / 255;
-            Color.g = _json.GetField("green").f / 255;
-            Color.b = _json.GetField("blue").f / 255;
-            Color.a = 1.0f;
-        }
-    }
-
-    public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
-
-    #endregion
-
-    #region SKILLS_GENERATION
     
+    #region SKILLS_GENERATION    
 
     public class SkillGenerationData : GameUtils.WeightableData
     {

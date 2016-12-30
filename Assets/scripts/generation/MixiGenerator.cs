@@ -16,12 +16,17 @@ public class MixiGenerator {
 	
 	}
 
-    public ProfileManager.CharacterData Generate(int _tiers)
+    public ProfileManager.CharacterData Generate( string _shardId, int _quantity = 1 )
     {
-        int r = Random.Range(0, Utils.EnumCount(Job.WARRIOR));
-        Job job = (Job)r;
+        var shard = DataManager.instance.InventoryManager.GetShard(_shardId);
+        int r = Random.Range(0, shard.Compatibilities.Count -1);
+        Job job = shard.Compatibilities[r];
         Debug.Log("Job " + job.ToString());
-        return Generate(_tiers, job);
+
+        //Decrement profile values
+        ProfileManager.instance.RemoveShard(_shardId, _quantity);
+
+        return Generate(shard.Tiers, job);
     }
 
     public ProfileManager.CharacterData Generate(int _tiers, Job _job)

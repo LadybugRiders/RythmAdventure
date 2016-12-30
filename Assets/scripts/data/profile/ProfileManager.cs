@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -168,6 +169,19 @@ public partial class ProfileManager : MonoBehaviour {
 
     #endregion
 
+    #region ITEMS
+
+    public void RemoveShard(string _shardId, int _quantity)
+    {
+        var shard = profile.Shards.FirstOrDefault(x => x.Id == _shardId);
+        if( shard != null)
+        {
+            shard.Quantity--;
+        }
+    }
+
+    #endregion
+
     [System.Serializable]
     public class Profile
     {
@@ -178,6 +192,8 @@ public partial class ProfileManager : MonoBehaviour {
         [SerializeField] public List<CharacterData> Characters = new List<CharacterData>();
 
         [SerializeField] public List<string> CurrentTeam;
+
+        [SerializeField] public List<Item> Shards;
 
         //Progression
         [SerializeField] public List<Map> Maps = new List<Map>();
