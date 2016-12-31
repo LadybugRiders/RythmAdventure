@@ -13,6 +13,8 @@ public partial class ProfileManager : MonoBehaviour {
 
     public Profile profile;
 
+    public BattleData BattleData;
+
     [SerializeField] bool m_resetPrefsAtLaunch = false;
     
     public static ProfileManager instance{
@@ -165,6 +167,27 @@ public partial class ProfileManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    
+    public Map EndLevel( string _mapName, string _levelId, int _score, bool _win)
+    {
+        var map = GetMapData(_mapName);
+        if (map == null)
+        {
+            map = new Map(_mapName);
+            profile.Maps.Add(map);
+        }
+        var level = map.Levels.FirstOrDefault(x => x.Id == _levelId);
+        if(level == null)
+        {
+            level = new Map.Level(_levelId);
+            map.Levels.Add(level);
+        }
+        level.WinCount += _win ? 1 : 0;
+        if (level.Score < _score)
+            level.Score = _score;
+        
+        return map;
     }
 
     #endregion

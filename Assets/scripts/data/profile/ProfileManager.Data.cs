@@ -105,11 +105,22 @@ public partial class ProfileManager {
         public string Name = "";
         public List<Level> Levels = new List<Level>();
 
+        public Map(string _name)
+        {
+            Name = _name;
+        }
+
         [System.Serializable]
         public class Level
         {
             public string Id;
             public int Score = 0;
+            public int WinCount = 0;
+
+            public Level(string _id)
+            {
+                Id = _id;
+            }
         }
     }
 

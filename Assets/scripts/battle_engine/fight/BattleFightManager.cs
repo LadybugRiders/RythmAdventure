@@ -275,11 +275,16 @@ public class BattleFightManager : MonoBehaviour {
 		//Notify BattleEngine
 		if (end) {
 			bool win = _actor.GetType() == typeof(BattleEnemy);
-			endBattleEventHandler.Invoke (this, new EndBattleEventInfo(win));
+            EndBattle(win);
 		}else{				
 			m_engine.OnDisableTrack( index, repTrack ) ;
 		}
 	}
+
+    public void EndBattle(bool _win)
+    {
+        endBattleEventHandler.Invoke(this, new EndBattleEventInfo(_win));
+    }
 
 	#endregion
     

@@ -77,7 +77,7 @@
             "xp": 0,
             "hp": 25,
             "mp": 20,
-            "attack": 28,
+            "attack": 140,
             "defense": 30,
             "magic": 15,
             "speed": 12
@@ -149,7 +149,7 @@
             "xp": 0,
             "hp": 45,
             "mp": 12,
-            "attack": 35,
+            "attack": 140,
             "defense": 40,
             "magic": 10,
             "speed": 20

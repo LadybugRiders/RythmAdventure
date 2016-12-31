@@ -10,15 +10,15 @@ public class BattleScoreManager : MonoBehaviour {
 	[SerializeField] private float m_accuGreat = 50f;
 
 	//COUNT
-	public int m_notesCount = 0;
+	int m_notesCount = 0;
     /// <summary>
     /// Notes sorted by accuracy
     /// </summary>
-	public Dictionary<HitAccuracy,int> m_notesCountByAcc;
+	Dictionary<HitAccuracy,int> m_notesCountByAcc;
 
 	//SCORE
-	public int m_totalScore = 0;
-	public Dictionary<HitAccuracy, int>  m_baseScoreByAcc;
+	int m_totalScore = 0;
+	Dictionary<HitAccuracy, int>  m_baseScoreByAcc;
 
     void Awake()
     {
@@ -35,9 +35,7 @@ public class BattleScoreManager : MonoBehaviour {
 			m_notesCountByAcc.Add(acc, 0 );
 			if( !m_baseScoreByAcc.ContainsKey(acc) )
             	m_baseScoreByAcc[acc] = 0;
-        }
-
-        DontDestroyOnLoad(gameObject);
+        }        
 	}
 	
 	// Update is called once per frame
@@ -94,6 +92,20 @@ public class BattleScoreManager : MonoBehaviour {
                 e.ToString();
             }
         }
+    }
+
+    public int TotalScore
+    {
+        get { return m_totalScore; }
+    }
+
+    public int NotesCount {
+        get { return m_notesCount; }
+    }
+
+    public Dictionary<HitAccuracy,int> NotesCountByAccuracy
+    {
+        get { return m_notesCountByAcc; }
     }
 
     public static BattleScoreManager instance

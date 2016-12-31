@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public partial class MapNodesManager : SpriteTouchManager {
+    [SerializeField] string m_mapName = "World1";
     //nodes building
     [SerializeField] Transform m_poolNodesObject;
     List<MapNode> m_nodes;
@@ -137,6 +138,8 @@ public partial class MapNodesManager : SpriteTouchManager {
         //Save map
         PlayerPrefs.SetString("current_map_scene", SceneManager.GetActiveScene().name);
         PlayerPrefs.SetString("current_map_node", m_targetNode.Id);
+        PlayerPrefs.SetString("current_map", m_mapName);
+        PlayerPrefs.SetString("current_level", m_targetNode.Id);
         SceneManager.LoadScene(data.sceneName);
     }
 
@@ -241,9 +244,12 @@ public partial class MapNodesManager : SpriteTouchManager {
     }
     #endregion
 
+    /// <summary>
+    /// Unlocks levels
+    /// </summary>
     public void DataCheck()
     {
-        var mapData = ProfileManager.instance.GetMapData("World1");
+        var mapData = ProfileManager.instance.GetMapData(m_mapName);
         foreach(var node in m_nodes)
         {
             var levelData = mapData.Levels.Find(x => x.Id == node.Id);
@@ -253,6 +259,7 @@ public partial class MapNodesManager : SpriteTouchManager {
                 if( levelData.Score > 0 )
                 {
                     node.Unlock();
+                    node.Score = levelData.Score;
                 }
             }
             if (node.Parents.Count == 0)
