@@ -70,7 +70,8 @@ public class UIXpScrollerManager : MonoBehaviour {
             
             prog = Mathf.Abs(m_currentNumber - begin) / (float)length;
 
-            m_gauge.SetValue(prog);
+            if(m_gauge != null)
+                m_gauge.SetValue(prog);
         }
     }
 

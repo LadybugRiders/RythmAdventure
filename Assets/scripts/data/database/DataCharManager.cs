@@ -9,7 +9,7 @@ public class DataCharManager : DatabaseLoader
     Dictionary<Job, LevelUpDataCollection> m_levelupsDB = new Dictionary<Job, LevelUpDataCollection>();
     Dictionary<EquipmentType, BuildDataCollection> m_equipmentsDB = new Dictionary<EquipmentType, BuildDataCollection>();
     Dictionary<LooksType, BuildDataCollection> m_looksDB = new Dictionary<LooksType, BuildDataCollection>();
-    ColorDataCollection m_colorsDB;
+    DataManager.ColorDataCollection m_colorsDB;
 
     JobEquipCompatibilitiesCollection jobs;
     Dictionary<Job, SkillGenerationDataCollection> skillsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
@@ -61,7 +61,7 @@ public class DataCharManager : DatabaseLoader
             m_looksDB[lookEnum] = coll;
         }
         var ld = database["body_colors"];
-        m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(database["body_colors"]);
+        m_colorsDB = JSONLoaderLR.LoadTable<DataManager.ColorDataCollection>(database["body_colors"]);
     }
 
     void ReadGeneration()
@@ -188,6 +188,15 @@ public class DataCharManager : DatabaseLoader
         return GetLook(lookType, _id);
     }
 
+    public GameObject LoadAttackPrefab(string _weaponId)
+    {
+        BuildDataCollection weaponDB = m_equipmentsDB[EquipmentType.WEAPON];
+        BuildData weapon = weaponDB[_weaponId];
+        var prefab = Resources.Load( "prefabs/battle/attack/" + weapon.AttackPrefab );
+        GameObject go = Instantiate(prefab) as GameObject;
+        return go;
+    }
+
     #endregion
 
     #region COLOR
@@ -197,19 +206,28 @@ public class DataCharManager : DatabaseLoader
         return m_colorsDB[_colorId].Color;
     }
     
-    public List<ColorData> GetColors(int _tiers)
+    public List<DataManager.ColorData> GetColors(int _tiers)
     {
-        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers);
+        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers,1);
     }
 
     #endregion
 
     #region SKILLS
 
+    /// <summary>
+    /// Get Skills of this tiers only
+    /// </summary>
     public List<SkillGenerationData> GetSkills(Job _job, int _tiers)
     {
         var skillsColl = skillsGenerations[_job];
         return GameUtils.SearchByTiers(skillsColl.ToList(), _tiers);
+    }
+
+    public List<SkillGenerationData> GetTalents(Job _job, int _tiers)
+    {
+        var talents = talentsGenerations[_job];
+        return GameUtils.SearchByTiers(talents.ToList(), _tiers);
     }
     
     #endregion   
@@ -331,7 +349,8 @@ public class DataCharManager : DatabaseLoader
     {
         public string Name = "NoName_Equipment";
         public string Prefab;
-        
+        public string AttackPrefab;
+
         public Stats Stats = new Stats();
 
         public override void BuildJSONData(JSONObject _json)
@@ -339,7 +358,8 @@ public class DataCharManager : DatabaseLoader
             base.BuildJSONData(_json);
             Name = _json.GetField("name").str;
             Prefab = _json.GetField("prefab").str;
-            
+            if(_json.GetField("attackprefab"))
+                AttackPrefab = _json.GetField("attackprefab").str;
 
             Stats = new Stats(_json);
         }
@@ -365,32 +385,8 @@ public class DataCharManager : DatabaseLoader
     }
 
     #endregion
-
-    #region COLORS_DATA
-
-    public class ColorData : GameUtils.WeightableData
-    {
-        public string Name;
-        public Color Color;
-
-        public override void BuildJSONData(JSONObject _json)
-        {
-            base.BuildJSONData(_json);
-            Name = _json.GetField("name").str;
-            
-            Color.r = _json.GetField("red").f / 255;
-            Color.g = _json.GetField("green").f / 255;
-            Color.b = _json.GetField("blue").f / 255;
-            Color.a = 1.0f;
-        }
-    }
-
-    public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
-
-    #endregion
-
-    #region SKILLS_GENERATION
     
+    #region SKILLS_GENERATION    
 
     public class SkillGenerationData : GameUtils.WeightableData
     {

@@ -21,7 +21,7 @@ public class BattleEngine : MonoBehaviour {
     
 	bool m_debug = false;
 
-    [SerializeField] BattleDataAsset m_battleData;
+    [SerializeField] BattleDataAsset m_battleDataAsset;
 
 	//Audio
 	protected AudioSource m_audioSource;
@@ -50,7 +50,7 @@ public class BattleEngine : MonoBehaviour {
 			if (gens [i].enabled)
 				m_notesGenerator = gens [i];
 		}
-		TimerEngine.instance.AddTimer (1.0f, "BeginBattle", gameObject);
+		TimerEngine.instance.AddTimer (1.0f, "BeginFight", gameObject);
 
 		//events
 		m_fightManager.endBattleEventHandler += OnFightEnded;
@@ -61,28 +61,61 @@ public class BattleEngine : MonoBehaviour {
 		m_fightManager.endBattleEventHandler -= OnFightEnded;
 	}
 
-	void BeginBattle(){
+	void BeginFight(){
         if (DataManager.instance.BattleData != null)
         {
-            m_battleData = DataManager.instance.BattleData;
+            m_battleDataAsset = DataManager.instance.BattleData;
         }
-        Load(m_battleData);
-        m_notesGenerator.Begin(m_timeShift, m_battleData.TimeBegin);
+        Load(m_battleDataAsset);
+        m_notesGenerator.Begin(m_timeShift, m_battleDataAsset.TimeBegin);
         //Play song
         m_audioSource.clip = m_audioClip;
 		m_audioSource.Play ();
         //change begin time
-        if(m_battleData.TimeBegin > m_audioClip.length) {
-            Debug.LogError("Error with begin time setting (" + m_battleData.TimeBegin + ") . Total song length = " + m_audioClip.length);
+        if(m_battleDataAsset.TimeBegin > m_audioClip.length) {
+            Debug.LogError("Error with begin time setting (" + m_battleDataAsset.TimeBegin + ") . Total song length = " + m_audioClip.length);
         }else {
-            m_audioSource.time = m_battleData.TimeBegin;
+            m_audioSource.time = m_battleDataAsset.TimeBegin;
         }
 
         SwitchPhase ();
-		m_nextSwitchCount = m_battleData.AttackNotesCount;        
+		m_nextSwitchCount = m_battleDataAsset.AttackNotesCount;        
 	}
-    
-	public void OnQuitBattle(){
+
+    public void OnFightEnded(object sender, BattleFightManager.EndBattleEventInfo eventInfo)
+    {
+        BattleData battleData = new BattleData();
+        ProfileManager.instance.BattleData = battleData;
+        //total Xp
+        int totalXp = 0;
+        foreach(var enemy in m_battleDataAsset.Enemies)
+        {
+            totalXp += DataManager.instance.EnemiesManager.GetEnemy(enemy.Id).XpGranted; 
+        }
+        battleData.TotalXp = totalXp;
+        //add xp and store it in BattleData
+        foreach(var charData in ProfileManager.instance.GetCurrentTeam())
+        {
+            var oldXp = charData.Xp;
+            charData.Xp += totalXp;
+            battleData.AddPlayerData(charData.Id, oldXp, totalXp);
+        }
+        //Score
+        battleData.NotesCount = m_scoreManager.NotesCount;
+        battleData.NotesCountByAccuracy = m_scoreManager.NotesCountByAccuracy;
+        battleData.TotalScore = m_scoreManager.TotalScore;
+        //Add Shard
+
+        //EndLevel
+        string mapName = PlayerPrefs.GetString("current_map");
+        string levelName = PlayerPrefs.GetString("current_level");
+        ProfileManager.instance.EndLevel(mapName, levelName, 200, true);
+        ProfileManager.instance.SaveProfile();
+
+        SceneManager.LoadScene("battle_end");
+    }
+
+    public void OnQuitBattle(){
         SceneManager.LoadScene("main_menu");
 	}
 	
@@ -139,9 +172,9 @@ public class BattleEngine : MonoBehaviour {
 
 	public void OnSwitchSuccessful(){
 		if (m_tracksManager.PhaseState == BattleTracksManager.BattleState.ATTACK)
-			m_nextSwitchCount = m_battleData.AttackNotesCount;
+			m_nextSwitchCount = m_battleDataAsset.AttackNotesCount;
 		else
-			m_nextSwitchCount = m_battleData.DefenseNotesCount;
+			m_nextSwitchCount = m_battleDataAsset.DefenseNotesCount;
 		m_switchCount = 0;
 		//UI
 		m_ui.SwitchPhase (m_tracksManager.IsAttacking);
@@ -161,10 +194,6 @@ public class BattleEngine : MonoBehaviour {
 	* 	Disables the track specified */ 
 	public void OnDisableTrack(int _index, int _replacementTrack){
 		m_tracksManager.DisableTrack (_index, _replacementTrack);
-	}
-
-	public void OnFightEnded(object sender, BattleFightManager.EndBattleEventInfo eventInfo){
-        SceneManager.LoadScene("battle_end");
 	}
 
     #endregion

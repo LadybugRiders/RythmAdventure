@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public partial class ProfileManager {
-
-
+    
     [System.Serializable]
     public class CharacterData
     {
@@ -12,6 +11,7 @@ public partial class ProfileManager {
         public string Name = "temp";
         public int Xp = 0;
         public Job Job;
+        public int Tiers = 1;
 
         //public CharacterBuild Build; // skins
 
@@ -19,11 +19,11 @@ public partial class ProfileManager {
         public List<EquipmentData> Equipments;
         //Appearance
         public List<LooksData> Looks;
-
-        //Attack
-        public ActionData Attack;
+        
         //Magics
-        public List<ActionData> Magics;
+        public List<SkillData> Skills;
+
+        public string Talent = "0";
 
         public string ColorId = "0";
 
@@ -32,11 +32,15 @@ public partial class ProfileManager {
             Id = _id;
             Equipments = new List<EquipmentData>();
             Looks = new List<LooksData>();
+            Skills = new List<SkillData>();
         }
 
         public string GetEquipmentId(EquipmentType _equipmentType)
         {
-            return Equipments.Find(x => x.EquipmentType == _equipmentType).Id;
+            var weapon = Equipments.Find(x => x.EquipmentType == _equipmentType);
+            if (weapon == null)
+                Debug.Log("no weapon of type "+ _equipmentType.ToString() +" found for " + Id);
+            return weapon.Id;
         }
 
         public void AddEquipement(string _id, EquipmentType _type)
@@ -47,6 +51,11 @@ public partial class ProfileManager {
         public void AddLooks(string _id, LooksType _type)
         {
             Looks.Add(new LooksData(_id, _type));
+        }
+
+        public void AddSkills(string _id)
+        {
+            Skills.Add(new SkillData(_id));
         }
 
         [System.Serializable]
@@ -77,12 +86,13 @@ public partial class ProfileManager {
         }
 
         [System.Serializable]
-        public class ActionData
+        public class SkillData
         {
             public string Id;
+            public string Ap;
             public bool equipped = false;
 
-            public ActionData(string _id)
+            public SkillData(string _id)
             {
                 Id = _id;
             }
@@ -95,12 +105,30 @@ public partial class ProfileManager {
         public string Name = "";
         public List<Level> Levels = new List<Level>();
 
+        public Map(string _name)
+        {
+            Name = _name;
+        }
+
         [System.Serializable]
         public class Level
         {
             public string Id;
             public int Score = 0;
+            public int WinCount = 0;
+
+            public Level(string _id)
+            {
+                Id = _id;
+            }
         }
+    }
+
+    [System.Serializable]
+    public class Item
+    {
+        public string Id;
+        public int Quantity;
     }
 
 }

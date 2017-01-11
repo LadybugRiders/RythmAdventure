@@ -21,9 +21,20 @@ public class BattleDataAsset : ScriptableObject  {
     public int AttackNotesCount = 10;
     public int DefenseNotesCount = 5;
 
+    public List<RewardBattleInfo> Shards;
+
     [System.Serializable]
     public class EnemyBattleInfo
     {
         [SerializeField] public string Id;
+    }
+
+    [System.Serializable]
+    public class RewardBattleInfo
+    {
+        [SerializeField]
+        public string Id;
+        [SerializeField]
+        public int Weight;
     }
 }

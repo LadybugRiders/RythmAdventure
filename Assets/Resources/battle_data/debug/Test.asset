@@ -22,3 +22,6 @@ MonoBehaviour:
   TimeBegin: 3
   AttackNotesCount: 10
   DefenseNotesCount: 5
+  Shards:
+  - Id: min_red
+    Weight: 1

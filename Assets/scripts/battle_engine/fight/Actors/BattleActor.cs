@@ -200,17 +200,12 @@ public class BattleActor : MonoBehaviour {
         return m_magics[0];
     }
 
-    protected void AddAttack(string _attackId)
+    protected void AddAttack(string _weaponId)
     {
-
-        var inventory = DataManager.instance.InventoryManager;
-
-        if (!string.IsNullOrEmpty(_attackId))
+        if (!string.IsNullOrEmpty(_weaponId))
         {
-            var attackData = inventory.GetAttackActionData(_attackId);
-            string pathToPrefab = "prefabs/battle/" + "attack/" + attackData.Prefab;
-            //Load prefab
-            GameObject go = Instantiate(Resources.Load(pathToPrefab)) as GameObject;
+            //get weapon prefab
+            GameObject go = DataManager.instance.CharacterManager.LoadAttackPrefab(_weaponId);
             if (go != null)
             {
                 go.transform.SetParent(m_attacksGroup, false);
