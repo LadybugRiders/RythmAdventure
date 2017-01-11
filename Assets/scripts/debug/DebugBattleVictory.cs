@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class DebugBattleVictory : MonoBehaviour {
 
@@ -18,13 +19,15 @@ public class DebugBattleVictory : MonoBehaviour {
 
         BattleScoreManager scoreManager = Component.FindObjectOfType<BattleScoreManager>();
 
-        /*foreach (var acc in scoreManager.m_notesCountByAcc.Keys)
+        var keys = scoreManager.NotesCountByAccuracy.Keys.ToList() ;
+        int totalNotes = Random.Range(0, 100);
+        foreach (var acc in keys)
         {
-            int r = Random.Range(0, 30);
-            scoreManager.m_notesCountByAcc[acc] = r;
-            scoreManager.m_notesCount += r;
-        }*/
+            int accFloat = Random.Range(0, 100);
+            for (int i = 0; i < accFloat; ++i)
+                scoreManager.AddNote(accFloat);
+        }
 
-        SceneManager.LoadScene("battle_end");
+        BattleFightManager.instance.EndBattle(true);
     }
 }

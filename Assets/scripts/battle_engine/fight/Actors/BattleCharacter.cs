@@ -37,15 +37,16 @@ public class BattleCharacter : BattleActor {
         RefreshUI();
 
         //Load Attacks & Magics
-        if (charData.Attack != null)
+        string weaponId = charData.GetEquipmentId(EquipmentType.WEAPON);
+        if (weaponId != null)
         {
-            AddAttack(charData.Attack.Id);
+            AddAttack(weaponId);
         }
-        if( charData.Magics != null && charData.Magics.Count > 0)
+        if( charData.Skills != null && charData.Skills.Count > 0)
         {
-            for (int i = 0; i < charData.Magics.Count; i++)
+            for (int i = 0; i < charData.Skills.Count; i++)
             {
-                var magic = charData.Magics[i];
+                var magic = charData.Skills[i];
                 AddMagic(magic.Id);
             }
         }

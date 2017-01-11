@@ -5,10 +5,10 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 408350}
-  - 114: {fileID: 11487366}
+  - component: {fileID: 408350}
+  - component: {fileID: 11487366}
   m_Layer: 0
   m_Name: Profile
   m_TagString: Untagged
@@ -25,10 +25,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 153.7467, y: 133.66496, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11487366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -49,6 +49,7 @@ MonoBehaviour:
       Name: JeanJean
       Xp: 0
       Job: 0
+      Tiers: 1
       Equipments:
       - Id: cap
         EquipmentType: 0
@@ -59,18 +60,17 @@ MonoBehaviour:
         LooksType: 0
       - Id: eyebrows2
         LooksType: 1
-      Attack:
-        Id: short_sword
-        equipped: 1
-      Magics:
-      - Id: fireball
-        equipped: 1
+      Skills: []
+      Talent: brawler
       ColorId: 0
     - Id: 1
       Name: Rosalie
       Xp: 0
       Job: 2
-      Equipments: []
+      Tiers: 1
+      Equipments:
+      - Id: knife
+        EquipmentType: 1
       Looks:
       - Id: 
         LooksType: 0
@@ -78,84 +78,16 @@ MonoBehaviour:
         LooksType: 1
       - Id: 
         LooksType: 2
-      Attack:
-        Id: short_sword
-        equipped: 1
-      Magics:
-      - Id: fireball
-        equipped: 0
+      Skills: []
+      Talent: brawler
       ColorId: 1
     - Id: 2
       Name: Oh
       Xp: 0
       Job: 1
+      Tiers: 1
       Equipments:
-      - Id: 0
-        EquipmentType: 0
-      Looks:
-      - Id: 
-        LooksType: 0
-      - Id: 
-        LooksType: 1
-      - Id: 
-        LooksType: 2
-      Attack:
-        Id: long_sword
-        equipped: 0
-      Magics:
-      - Id: fireball
-        equipped: 0
-      ColorId: 2
-    - Id: 3
-      Name: Hike
-      Xp: 0
-      Job: 1
-      Equipments:
-      - Id: 0
-        EquipmentType: 0
-      Looks:
-      - Id: 
-        LooksType: 0
-      - Id: 
-        LooksType: 1
-      - Id: 
-        LooksType: 2
-      Attack:
-        Id: long_sword
-        equipped: 0
-      Magics:
-      - Id: fireball
-        equipped: 0
-      ColorId: 2
-    - Id: 4
-      Name: Conan
-      Xp: 3
-      Job: 0
-      Equipments:
-      - Id: mace
-        EquipmentType: 1
-      Looks:
-      - Id: eyes3
-        LooksType: 0
-      - Id: 
-        LooksType: 1
-      - Id: 
-        LooksType: 2
-      Attack:
-        Id: long_sword
-        equipped: 0
-      Magics:
-      - Id: fireball
-        equipped: 0
-      ColorId: 2
-    - Id: 5
-      Name: Kyle
-      Xp: 0
-      Job: 2
-      Equipments:
-      - Id: cap
-        EquipmentType: 0
-      - Id: wooden_sword
+      - Id: axe
         EquipmentType: 1
       Looks:
       - Id: 
@@ -164,17 +96,20 @@ MonoBehaviour:
         LooksType: 1
       - Id: 
         LooksType: 2
-      Attack:
-        Id: long_sword
-        equipped: 0
-      Magics:
-      - Id: fireball
-        equipped: 0
-      ColorId: 3
+      Skills: []
+      Talent: brawler
+      ColorId: 2
     CurrentTeam:
     - 0
     - 1
     - 2
+    Shards:
+    - Id: min_red
+      Quantity: 3
+    - Id: min_blue
+      Quantity: 2
+    - Id: min_green
+      Quantity: 3
     Maps:
     - Name: World1
       Levels: []

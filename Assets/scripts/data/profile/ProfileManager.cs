@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -11,6 +12,8 @@ public partial class ProfileManager : MonoBehaviour {
     private static ProfileManager _instance;
 
     public Profile profile;
+
+    public BattleData BattleData;
 
     [SerializeField] bool m_resetPrefsAtLaunch = false;
     
@@ -165,6 +168,40 @@ public partial class ProfileManager : MonoBehaviour {
         }
         return null;
     }
+    
+    public Map EndLevel( string _mapName, string _levelId, int _score, bool _win)
+    {
+        var map = GetMapData(_mapName);
+        if (map == null)
+        {
+            map = new Map(_mapName);
+            profile.Maps.Add(map);
+        }
+        var level = map.Levels.FirstOrDefault(x => x.Id == _levelId);
+        if(level == null)
+        {
+            level = new Map.Level(_levelId);
+            map.Levels.Add(level);
+        }
+        level.WinCount += _win ? 1 : 0;
+        if (level.Score < _score)
+            level.Score = _score;
+        
+        return map;
+    }
+
+    #endregion
+
+    #region ITEMS
+
+    public void RemoveShard(string _shardId, int _quantity)
+    {
+        var shard = profile.Shards.FirstOrDefault(x => x.Id == _shardId);
+        if( shard != null)
+        {
+            shard.Quantity--;
+        }
+    }
 
     #endregion
 
@@ -178,6 +215,8 @@ public partial class ProfileManager : MonoBehaviour {
         [SerializeField] public List<CharacterData> Characters = new List<CharacterData>();
 
         [SerializeField] public List<string> CurrentTeam;
+
+        [SerializeField] public List<Item> Shards;
 
         //Progression
         [SerializeField] public List<Map> Maps = new List<Map>();

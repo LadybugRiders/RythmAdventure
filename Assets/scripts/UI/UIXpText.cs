@@ -40,7 +40,7 @@ public class UIXpText : UITextNumberScroller {
         //Get direction of the scroll
         m_direction = totalDelta < 0 ? -1 : 1;
         //compute the speed
-        m_timeByUnit = _duration / Mathf.Abs(totalDelta);
+        m_stepTime = _duration / Mathf.Abs(totalDelta);
         m_time = 0;
     }
     

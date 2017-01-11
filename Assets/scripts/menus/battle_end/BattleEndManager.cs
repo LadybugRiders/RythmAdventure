@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class BattleEndManager : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class BattleEndManager : MonoBehaviour {
     [SerializeField] Text m_totalXpText;
     [SerializeField] UITextNumberScroller m_totalScoreText;
 
-    [SerializeField] List<CharacterXpInfo> m_characters;
+    [SerializeField] List<BattleEndCharInfoUI> m_characters;
 
     [SerializeField] GameObject m_mapButton;
 
@@ -19,12 +20,14 @@ public class BattleEndManager : MonoBehaviour {
     enum State { IDLE, SCORE, XP };
     State m_state = State.IDLE;
 
+    [SerializeField]  float m_uiCharaScale = 40;
+
+    BattleData m_battleData;
+
     DataCharManager m_charManager;
-    BattleScoreManager m_scoreManager;
 
     List<UIXpScrollerManager.StoredLevelUpStats> m_storedStats = new List<UIXpScrollerManager.StoredLevelUpStats>();
-    int m_totalXp = 0;
-
+    
     //UI Value
     float m_time = 0;
 
@@ -35,7 +38,13 @@ public class BattleEndManager : MonoBehaviour {
 	void Start () {
         m_mapButton.SetActive(false);
         m_charManager = DataManager.instance.CharacterManager;
-        m_scoreManager = FindObjectOfType<BattleScoreManager>();
+        m_battleData = ProfileManager.instance.BattleData;
+
+        //Debug
+        if (m_battleData.Characters.Count == 0)
+        {
+            DebugFillBattleData();
+        }
 
         InitCharacters();
 
@@ -45,11 +54,6 @@ public class BattleEndManager : MonoBehaviour {
 
     void Update()
     {
-        switch (m_state)
-        {
-            case State.SCORE: UpdateScore();
-                break;
-        }
     }
 
     #region XP
@@ -57,79 +61,65 @@ public class BattleEndManager : MonoBehaviour {
     void ProcessXp()
     {
         m_state = State.XP;
+        
+        ApplyXp();
+        SetTotalXp(m_battleData.TotalXp);
 
-        m_totalXp = ComputeTotalXp();
-        ApplyXp(m_totalXp);
-        SetTotalXp(m_totalXp);
-
-        LaunchXpAnimation();
+        //LaunchXpAnimation();
     }
-
-    /// <summary>
-    /// For all enemies, add xp
-    /// </summary>
-    int ComputeTotalXp()
-    {
-        if (DataManager.instance.BattleData == null)
-            return 0;
-        var enemies = DataManager.instance.BattleData.Enemies;
-        int totalXp = 0;
-        for(int i=0; i < enemies.Count; ++i)
-        {
-            if( enemies[i] != null)
-            {
-                var enemy = DataManager.instance.EnemiesManager.GetEnemy(enemies[i].Id);
-                totalXp += enemy.XpGranted;
-            }
-        }
-        return totalXp;
-    }
-
+    
     void InitCharacters()
     {
         var teamMates = ProfileManager.instance.GetCurrentTeam();
         for (int i = 0; i < m_characters.Count; ++i)
         {
-            CharacterXpInfo chara = m_characters[i];
+            var chara = m_characters[i];
             var mate = teamMates[i];            
             var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+            var battleCharData = m_battleData.Characters[i];
 
             if (mate != null)
             {
                 //Set xp before battle
-                chara.text.text = "" + mate.Xp;
+                chara.XpText.text = "" + battleCharData.XpStart;
                 float prog = 1.0f;
                 if (levelUpData.XpNeeded != 0)
-                    prog = (float)mate.Xp / levelUpData.XpNeeded;
-                chara.gauge.SetValue(prog);
+                    prog = (float)battleCharData.XpStart / levelUpData.XpNeeded;
+                if( chara.Gauge != null )
+                    chara.Gauge.SetValue(prog);
             }
+
+            //create UI characters
+            var go = GameUtils.CreateCharacterUIObject(mate, m_uiCharaScale);
+            go.transform.SetParent(chara.CharacterObject.transform, false);
         }
     }
 
-    void ApplyXp(int _xp)
+    void ApplyXp()
     {
-        foreach(var charaSave in ProfileManager.instance.GetCurrentTeam())
+        var teamMates = ProfileManager.instance.GetCurrentTeam();
+        for (int i = 0; i < m_characters.Count; ++i)
         {
+            var charaUI = m_characters[i];
+            var mate = teamMates[i];
+            var charBattleData = m_battleData.GetCharacter(mate.Id);
             //old values for ui
-            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(charaSave.Id);
+            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(mate.Id);
             m_storedStats.Add(data);
 
-            var levelupdata = m_charManager.GetNextLevelByXp(charaSave.Job, charaSave.Xp);
+            var levelupdata = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
             if( levelupdata == null)
             {
                 data.isMaxLevel = true;
                 continue;
             }
-            data.oldXp = charaSave.Xp;
-            data.oldLevel = levelupdata.Stats.Level-1;
+            data.oldXp = charBattleData.XpStart;
+            data.oldLevel = 1;
             data.oldXpRequired = levelupdata.XpNeeded;
-
-            //apply xp on profile
-            charaSave.Xp += _xp;
-
+            
             //new values for ui
-            var newLevelupdata = m_charManager.GetNextLevelByXp(charaSave.Job, charaSave.Xp);
-            data.newXp = charaSave.Xp;
+            var newLevelupdata = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+            data.newXp = charBattleData.XpGained;
             if (newLevelupdata != null)
             {
                 data.newLevel = newLevelupdata.Stats.Level;
@@ -141,7 +131,6 @@ public class BattleEndManager : MonoBehaviour {
             }
             data.Process();
         }
-        ProfileManager.instance.SaveProfile();
     }
 
     void SetTotalXp(int _totalXp)
@@ -153,9 +142,9 @@ public class BattleEndManager : MonoBehaviour {
     {
         for (int i = 0; i < m_characters.Count; ++i)
         {
-            CharacterXpInfo chara = m_characters[i];
+            var chara = m_characters[i];
             UIXpScrollerManager.StoredLevelUpStats storedData = m_storedStats[i];
-            chara.xpScroller.Scroll(storedData,3.0f,OnXpScrollerEnded);
+            chara.XpScroller.Scroll(storedData,3.0f,OnXpScrollerEnded);
         }
     }
     #endregion
@@ -164,43 +153,21 @@ public class BattleEndManager : MonoBehaviour {
 
     void ApplyScore()
     {
-        if (m_scoreManager != null)
-        {
-			m_totalScoreText.ScrollTo(m_scoreManager.m_totalScore, m_timeDisplayScore);
+	    m_totalScoreText.ScrollFromTo(0, m_battleData.TotalScore, m_timeDisplayScore);
 
-            foreach (var scoreInfo in m_scoresInfos)
-            {
-                int count = m_scoreManager.m_notesCountByAcc[scoreInfo.Accuracy];
-            }
-            m_state = State.SCORE;
-        }else
+        foreach(var scoreInfo in m_scoresInfos)
         {
-            ProcessXp();
+            int count = m_battleData.NotesCountByAccuracy[scoreInfo.Accuracy];
+            scoreInfo.Scroller.ScrollFromTo(0,count, m_timeDisplayScore);
         }
+        TimerEngine.instance.AddTimer(m_timeDisplayScore + 0.5f, "OnScoreTargetReached", this.gameObject);
+        m_state = State.SCORE;
     }
 
-    void UpdateScore()
+    void OnScoreTargetReached()
     {
-        m_time += Time.deltaTime;
-        if(m_time >= m_scoreTimeByUnits)
-        {
-            m_time = 0;
-            bool end = true;
-            m_count++;
-            foreach (var scoreInfo in m_scoresInfos)
-            {
-                int count = m_scoreManager.m_notesCountByAcc[scoreInfo.Accuracy];
-                if( m_count <= count)
-                {
-                    end = false;
-                    scoreInfo.ScoreText.text = m_count.ToString();
-                }
-            }
-            if (end)
-            {
-                ProcessXp();
-            }
-        }
+        m_state = State.XP;
+        ProcessXp();
     }
 
     void OnXpScrollerEnded(UIXpScrollerManager _scroller)
@@ -216,11 +183,37 @@ public class BattleEndManager : MonoBehaviour {
         SceneManager.LoadScene(mapSceneName);
     }
 
+    /// <summary>
+    /// Used only in debug when launching the scene directly
+    /// </summary>
+    void DebugFillBattleData()
+    {
+        m_battleData = new BattleData();
+        foreach (var chara in ProfileManager.instance.GetCurrentTeam())
+        {
+            m_battleData.AddPlayerData(chara.Id, 10, 50);
+        }
+        m_battleData.TotalXp = 100;
+
+        m_battleData.NotesCountByAccuracy = new Dictionary<HitAccuracy, int>();
+        int totalNotes = 0;
+        for(int i=0; i < Utils.EnumCount(HitAccuracy.GOOD); ++i)
+        {
+            HitAccuracy acc = (HitAccuracy)i;
+            int count = Random.Range(0, 20);
+            m_battleData.NotesCountByAccuracy[acc] = count;
+            totalNotes += count;
+        }
+        m_battleData.NotesCount = totalNotes;
+        m_battleData.TotalScore = Random.Range(0, 1000);
+    }
+
     [System.Serializable]
     class ScoreInfo
     {
         [SerializeField] public GameObject UIObject;
         [SerializeField] public Text ScoreText;
+        [SerializeField] public UITextNumberScroller Scroller;
         [SerializeField] public HitAccuracy Accuracy;
     }
 

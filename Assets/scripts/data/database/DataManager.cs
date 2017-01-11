@@ -62,6 +62,8 @@ public class DataManager : DatabaseLoader {
         var charManager = DataManager.instance.CharacterManager;
         //load prefab
         GameObject go = Instantiate(Resources.Load("prefabs/character/character_parts")) as GameObject;
+        go.name = _charaData.Id;
+
         CharacterBuild build = go.GetComponent<CharacterBuild>();
         
         //compute all around stats from the database
@@ -73,6 +75,7 @@ public class DataManager : DatabaseLoader {
     }
 
     #endregion
+
     #region PROPERTIES
 
     public static DataManager instance {
@@ -126,6 +129,32 @@ public class DataManager : DatabaseLoader {
     {
         get { return GetComponent<DataGameManager>(); }
     }
+
+    #endregion
+
+
+    #region COLORS_DATA
+
+    public class ColorData : GameUtils.WeightableData
+    {
+        public string Name;
+        public Color Color;
+
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+
+            if (_json.GetField("name") != null)
+                Name = _json.GetField("name").str;
+
+            Color.r = _json.GetField("red").f / 255;
+            Color.g = _json.GetField("green").f / 255;
+            Color.b = _json.GetField("blue").f / 255;
+            Color.a = 1.0f;
+        }
+    }
+
+    public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
 
     #endregion
 }

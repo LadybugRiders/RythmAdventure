@@ -10,9 +10,15 @@ public class UITextNumberScroller : MonoBehaviour {
 
     protected int m_targetNumber = 0;
 
-    protected float m_timeByUnit = 1;
-    protected float m_time = 0;
+    protected float m_stepTime = 0.05f;
+    protected float m_unitsByStep = 1;
     protected int m_direction = 1;
+
+    protected float m_time = 0;
+    protected float m_current = 0;
+
+    public delegate void OnTargetReached(UITextNumberScroller scroller);
+    OnTargetReached m_callback;
     
     // Use this for initialization
     void Awake () {
@@ -24,48 +30,55 @@ public class UITextNumberScroller : MonoBehaviour {
 	    if( m_scrolling )
         {
             m_time += Time.deltaTime;
-            if( m_time >= m_timeByUnit)
+            if( m_time >= m_stepTime)
             {
                 m_time = 0;
-                int current = int.Parse( m_text.text );
-                current += m_direction;
-                m_text.text = "" + current;
-                if( current == 0)
+                m_current += m_direction * m_unitsByStep;
+
+                bool targetReached = m_direction > 0 ? m_current >= m_targetNumber : m_current <= m_targetNumber;
+                if (targetReached)
                 {
-                    _ZeroReached();
-                }
-                if (current == m_targetNumber)
-                {
+                    m_current = m_targetNumber;
                     TargetReached();
                 }
+                m_text.text = "" + ((int)Mathf.Round(m_current));
             }
         }
 	}
-
-    protected virtual void _ZeroReached()
-    {
-
-    }
-
+    
     protected virtual void TargetReached()
     {
         m_scrolling = false;
+        if (m_callback != null)
+            m_callback(this);
     }
 
-    public virtual void ScrollTo(int _targetNumber, float _duration)
+    public virtual void ScrollTo(int _targetNumber, float _duration, OnTargetReached del = null)
     {
         m_targetNumber = _targetNumber;
         m_scrolling = true;
 
-        var current = int.Parse(m_text.text);
+        m_current = float.Parse(m_text.text);
+        ScrollFromTo( (int)m_current, _targetNumber, _duration,del);
+    }
+
+    public virtual void ScrollFromTo(int _from, int _targetNumber, float _duration, OnTargetReached del = null)
+    {
+        m_targetNumber = _targetNumber;
+        m_callback = del;
+        m_scrolling = true;
+
+        m_current = _from;
+        m_text.text = "" + ((int)Mathf.Round(m_current));
         //Get direction of the scroll
-        int delta = _targetNumber - current;
+        float delta = _targetNumber - m_current;
         m_direction = delta < 0 ? -1 : 1;
+        float stepsInDuration = _duration / m_stepTime;
         //compute the speed
-        m_timeByUnit = _duration / Mathf.Abs(delta);
+        m_unitsByStep = delta / stepsInDuration;
         m_time = 0;
     }
-    
+
     public bool Scrolling
     {
         get
