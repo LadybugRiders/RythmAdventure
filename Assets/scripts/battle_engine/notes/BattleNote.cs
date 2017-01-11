@@ -25,8 +25,9 @@ public class BattleNote : MonoBehaviour {
 	protected BattleTrack m_track;
 
 	//references to components used in updates
-	protected SpriteRenderer m_renderer;
-	protected Transform m_transform;
+	[SerializeField] protected SpriteRenderer m_renderer;
+    protected Animator m_animator;
+    protected Transform m_transform;
     
     /// <summary>
     /// Distance done by the note from its starting point 
@@ -41,6 +42,8 @@ public class BattleNote : MonoBehaviour {
     [SerializeField] protected float m_alphaDist = 3.0f;
 
 	protected Vector3 m_startPos;
+    protected float m_startTime;
+    protected float m_direction = 1.0f;
 
 	/// <summary>
 	/// The note is on a track that has been disabled
@@ -53,8 +56,8 @@ public class BattleNote : MonoBehaviour {
 
 	// Use this for initialization
 	virtual protected void Start () {
-		m_renderer = GetComponent<SpriteRenderer> ();
 		m_transform = transform;
+        m_animator = GetComponent<Animator>();
 		Die ();
 	}
 	
@@ -75,11 +78,11 @@ public class BattleNote : MonoBehaviour {
 	protected void UpdateSpeed(){
 		Vector3 pos = m_transform.localPosition;
 
-		//make the note advance
-		float stepX = m_speed * Time.deltaTime;
-		pos.x += stepX ;
+		//compute note position
+		pos.x = ComputePosition();
+
 		//compute total distance done
-		m_distanceDone += Mathf.Abs( stepX );
+		m_distanceDone += Mathf.Abs( pos.x - m_transform.localPosition.x );
 
 		m_transform.localPosition = pos;
 
@@ -101,15 +104,29 @@ public class BattleNote : MonoBehaviour {
 		}
 	}
 
+    float ComputePosition()
+    {
+        //time of the music
+        float t = BattleEngine.instance.MusicTimeElapsed;
+        //difference betwen target time and start time
+        float percent = (t - m_startTime) / (Data.Time - m_startTime) ; //(t - ti) / (tf - ti)
+        //total distance to go
+        float d = m_track.Length;
 
+        float x = m_startPos.x + m_direction * ( d * percent );
+        return x;
+    }
+    
 	#endregion
 
-	public bool Launch(float _speed, Vector3 _startPos, BattleTrack _track){	
+	public bool Launch( Vector3 _startPos, Vector3 _targetPos, BattleTrack _track){	
 		m_track = _track;
 		transform.position = _startPos;
 		m_startPos = m_transform.localPosition;
-		m_speed = _speed;
 		m_distanceDone = 0;
+        m_startTime = BattleEngine.instance.MusicTimeElapsed;
+        //direction
+        m_direction = (_targetPos.x - _startPos.x) > 0 ? 1 : -1;
 		return Launch ();
 	}
 
@@ -133,25 +150,31 @@ public class BattleNote : MonoBehaviour {
 	}
 
 	/** Hit the note */
-	virtual public void Hit(BattleSlot _slot){
+	virtual public BattleNote[] Hit(BattleSlot _slot){
 		this.CurrentState = State.HIT;
-	}
+        m_animator.SetTrigger("hit");
+        return new BattleNote[] { this };
+    }
 
     /// <summary>
     /// Makes a note miss. Return the notes affected by this action ( ie head and tail for long notes )
     /// </summary>
 	virtual public BattleNote[] Miss(){
 		this.CurrentState = State.MISS;
-		Die ();
+        m_animator.enabled = true;
+        m_animator.SetTrigger("die");
         //some notes (like long notes) needs to return several notes when then are missed
         return new BattleNote[] { this };
 	}
 
 	/// <summary>
     /// Makes the note die. Return the notes affected by this action ( ie head and tail for long notes )
+    /// Called from animation event
     /// </summary>
 	virtual public BattleNote[] Die(){
+        //Debug.Log("DIE" + ( Data!=null ? Data.TimeBegin.ToString() : "nodata") + Utils.IsAnimationStateRunning(m_animator,"die") );
 		this.CurrentState = State.DEAD;
+        //m_animator.SetTrigger("stop");
         IsFinal = false;
 		Utils.SetLocalPositionY (m_transform,-10000);
 		Utils.SetAlpha (m_renderer, 0.0f);
@@ -173,6 +196,11 @@ public class BattleNote : MonoBehaviour {
 	void EnableMagicEffect(){
 
 	}
+
+    public void PlayHit()
+    {
+        m_animator.SetTrigger("hit");
+    }
 
     public virtual void ChangeHitMethod(HIT_METHOD _method)
     {
@@ -214,7 +242,7 @@ public class BattleNote : MonoBehaviour {
 
 	public bool IsDead{
 		get{
-			return m_state == State.DEAD;
+			return m_state == State.DEAD && Utils.IsAnimationStateRunning(m_animator, "idle",false);
 		}
 	}
 
@@ -269,6 +297,8 @@ public class BattleNote : MonoBehaviour {
         get { return m_offensive; }
         set { m_offensive = value; }
     }
+
+    public Animator Animator { get { return m_animator; } }
 
 	#endregion
 }

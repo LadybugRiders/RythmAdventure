@@ -5,12 +5,16 @@ using System.Collections.Generic;
 public class GameMenuParty : GameMenu {
 
     [SerializeField] List<CharacterInfos> m_characters;
-
+    [SerializeField] Transform m_charUIParent;
+    [SerializeField] float m_itemScale = 10.0f;
+    
     DataCharManager m_charManager;
     ProfileManager.Profile m_profile;
 
+    List<GameObject> m_charactersUI;
+
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         m_profile = ProfileManager.instance.GetProfile();
         m_charManager = DataManager.instance.CharacterManager;
 	}
@@ -24,33 +28,34 @@ public class GameMenuParty : GameMenu {
     {
         m_profile = ProfileManager.instance.GetProfile();
         m_charManager = DataManager.instance.CharacterManager;
+        m_charactersUI = new List<GameObject>();
         base.Activate();
         for(int i=0; i < m_profile.CurrentTeam.Count; i++)
         {
-            string charId = m_profile.CurrentTeam[i];
-            var charaInfo = m_characters[i];
-            if( charId == null)
-            {
-                charaInfo.m_build.gameObject.SetActive(false);
-                continue;
-            }
-            //get data stored in profile
-            var charaData = ProfileManager.instance.GetCharacter(charId);
-            //compute all around stats from the database
-            var stats = m_charManager.ComputeStats(charaData);
-            charaInfo.m_build.gameObject.SetActive(true);
-            charaInfo.m_stats.Load(stats);
-            //load appearance
-            charaInfo.m_build.Load(charaData);
-            Utils.SetLayerRecursively(charaInfo.m_build.gameObject, LayerMask.NameToLayer("SpriteUI"));
+            var container = GameUtils.CreateCharacterUIObject(m_profile.CurrentTeam[i], m_itemScale);
+            container.transform.SetParent(m_charUIParent, false);
+
+            m_charactersUI.Add(container);
         }
     }
 
     protected override void Deactivate()
     {
         base.Deactivate();
+        Clear();
     }
     
+    void Clear()
+    {
+        if (m_charactersUI == null)
+            return;
+        foreach(var chara in m_charactersUI)
+        {
+            Destroy(chara);
+        }
+        m_charactersUI.Clear();
+    }
+
     [System.Serializable]
     public class CharacterInfos
     {

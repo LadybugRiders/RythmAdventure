@@ -44,7 +44,6 @@ public class BattleTrack : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	public void SwitchPhase(){
@@ -60,24 +59,27 @@ public class BattleTrack : MonoBehaviour {
 	}
 
 	/** Launch note on the track */
-	public bool LaunchNote(BattleNote _note, float _speed){
+	public bool LaunchNote(BattleNote _note){
 		if (m_suspended) {
-			if( m_suspendedTimeLimit >= _note.Data.TimeBegin){
+			if( m_suspendedTimeLimit >= _note.Data.Time){
 				return false;
 			}
 		}
-		Vector3 pos = new Vector3 ();
-		//place the note at the right x according to state
-		if (m_manager.IsAttacking) {
-			pos.x = m_slotDefend.transform.position.x;
-		} else {
-			pos.x = m_slotAttack.transform.position.x;
+		Vector3 startPos = new Vector3 ();
+		Vector3 targetPos = new Vector3 ();
+        //place the note at the right x according to state
+        if (m_manager.IsAttacking) {
+			startPos.x = m_slotDefend.transform.position.x;
+            targetPos.x = m_slotAttack.transform.position.x;
+        } else {
+            startPos.x = m_slotAttack.transform.position.x;
+            targetPos.x = m_slotDefend.transform.position.x;
 		}
 		//place y
-		pos.y = this.transform.position.y;
-		pos.z = -1;
+		startPos.y = this.transform.position.y;
+		startPos.z = -1;
 
-		bool success = _note.Launch (_speed, pos, this);
+		bool success = _note.Launch (startPos,targetPos, this);
 		if( success )
 			m_notes.Add (_note);
 		return success;
@@ -94,20 +96,21 @@ public class BattleTrack : MonoBehaviour {
 	/// Hit a note. Use forceRemove to force the removal from the track list
 	/// </summary>
 	public void OnNoteHit(BattleNote _note, BattleSlot _slot, bool _forceRemove = false){
-
-		if (_forceRemove) {
-			OnNoteKill (_note, _slot);
-		}
+        		
         HitAccuracy acc = BattleScoreManager.instance.AddNote(_note.Accuracy);
-		//kill note
-		_note.Hit (_slot);
-		//play text on slot
-		m_currentSlot.PlayTextAccuracy (acc);
-		
-		CheckLongNoteHit (_note);
+		//play anim and get notes to delete
+		var notesToDelete =_note.Hit (_slot);
+        
+        //remove note induced by the hit (in case of a long note, we want to delete notes only when the tail is hit)
+        foreach (var note in notesToDelete)
+            m_notes.Remove(note);
 
-		//Audio
-		PlayAudio (_note);
+        CheckLongNoteHit (_note);
+
+        //play text on slot
+        m_currentSlot.PlayTextAccuracy(acc);
+        //Audio
+        PlayAudio (_note);
 
 		var noteEvent = new BattleTracksManager.NoteEventInfo (_note.Data, true, _note.Offensive, acc, _note.IsFinal);
 		m_manager.RaiseNoteEvent(noteEvent);
@@ -121,41 +124,27 @@ public class BattleTrack : MonoBehaviour {
 
         var noteEvent = new BattleTracksManager.NoteEventInfo(_note.Data, true, _note.Offensive, acc, _note.IsFinal);
 		noteEvent.IsSpecialAction = _isSpecial;		
-		m_manager.RaiseNoteActionEvent (noteEvent);
-
-		OnNoteKill (_note, _slot);
+		m_manager.RaiseNoteActionEvent (noteEvent);        
 	}
-
-	/// <summary>
-	/// Use this to kill a note
-	/// </summary>
-	public void OnNoteKill(BattleNote _note, BattleSlot _slot){
-        //Debug.Log("NOTE KILL");
-		var notesToDelete = _note.Die ();
-        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
-        foreach (var note in notesToDelete)
-            m_notes.Remove(note);
-        //we could check the type of the note, but it's safer like this after all
-        m_currentLongNote = null;
-    }
-		
+    		
 	/// <summary>
 	/// Called directly by BattleSlot if a note is missed ( went past the slot )
 	/// Or from BattleTrack.OnInputError ( before the note hits the slot) 
 	/// </summary>
 	public void OnNoteMiss(BattleNote _note){
-		//miss note and gather notes to delete with it
-		BattleNote[] notesToDelete = _note.Miss ();
 
-        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
-        foreach(var note in notesToDelete)
-            m_notes.Remove (note);
+        //miss note and gather notes to delete with it
+        BattleNote[] notesToDelete = _note.Miss();
         
-		//raise note miss event
-		m_manager.RaiseNoteActionEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false,_note.Offensive, HitAccuracy.MISS,_note.IsFinal));
+        //remove note induced by the miss (in case of a long note, we want to delete its head & tail)
+        foreach (var note in notesToDelete)
+            m_notes.Remove(note);
 
-		//play text on slot
-		m_currentSlot.PlayTextAccuracy (HitAccuracy.MISS);
+        //raise note miss event
+        m_manager.RaiseNoteActionEvent(new BattleTracksManager.NoteEventInfo(_note.Data, false,_note.Offensive, HitAccuracy.MISS,_note.IsFinal));
+
+        //play text on slot
+        m_currentSlot.PlayTextAccuracy (HitAccuracy.MISS);
 		m_currentLongNote = null;
 	}
     
@@ -209,7 +198,9 @@ public class BattleTrack : MonoBehaviour {
 			BattleNoteLong noteLong = (BattleNoteLong)_note;
 			if (noteLong.IsHead)
 				m_currentLongNote = noteLong;
-		} else {
+            else
+                m_currentLongNote = null;
+        } else {
 			m_currentLongNote = null;
 		}
 	}
@@ -261,7 +252,7 @@ public class BattleTrack : MonoBehaviour {
 		m_slotAttack.ResetInput ();
 		m_slotDefend.ResetInput ();
 	}
-
+    
 	/// <summary>
 	/// disable the track by setting all current notes to final mode. Returns true if the track is clear of all notes.
 	/// </summary>
@@ -328,6 +319,9 @@ public class BattleTrack : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// Distance between the slots
+    /// </summary>
 	public float Length {
 		get {
 			return m_length;

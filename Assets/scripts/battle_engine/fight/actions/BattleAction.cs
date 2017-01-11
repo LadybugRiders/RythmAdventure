@@ -9,6 +9,8 @@ public class BattleAction : MonoBehaviour {
     [SerializeField] protected AudioClip m_mainSoundClip;
     protected AudioSource m_audioSource;
 
+    protected DataInventoryManager.ActionData m_actionData;
+
     protected bool m_launched = false;
     protected bool m_dead = false;
 
@@ -19,13 +21,10 @@ public class BattleAction : MonoBehaviour {
     public ActionType m_type = ActionType.ATTACK;
     
     /// <summary>
-    /// If damage < 0, it's a miss
+    /// Damage computed in action phase ( it's not the raw power of the action, but the actual damage computed at launch). If damage < 0, it's a miss
     /// </summary>
     protected int m_damage = -1;
         
-    protected int m_power = 20;
-    protected int m_costByUse = 35;
-
     protected float m_duration = 1.0f;
 
     // Use this for initialization
@@ -147,7 +146,7 @@ public class BattleAction : MonoBehaviour {
     {
         get
         {
-            return m_power;
+            return m_actionData != null ? m_actionData.Power : 0;
         }
     }
 
@@ -167,13 +166,19 @@ public class BattleAction : MonoBehaviour {
     {
         get
         {
-            return m_costByUse;
+            return m_actionData != null ? m_actionData.MpCost : 0;
         }
     }
 
     public ActionType Type
     {
         get { return m_type; }
+    }
+
+    public DataInventoryManager.ActionData ActionData
+    {
+        get { return m_actionData; }
+        set { m_actionData = value; }
     }
     #endregion
 }

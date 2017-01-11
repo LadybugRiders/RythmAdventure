@@ -85,8 +85,11 @@ public class BattleFightManager : MonoBehaviour {
                     Transform parent = m_enemies[i].transform.parent;
                     Vector3 position = m_enemies[i].transform.position;
                     Destroy(m_enemies[i].gameObject);
+                    //Get the corresponding new enemy and instantiate it
+                    var id = battleData.Enemies[i].Id;
+                    var prefabName = DataManager.instance.EnemiesManager.GetEnemy(id).Prefab;
                     //instantiate and place the new one
-                    var prefab = battleData.Enemies[i].Prefab;
+                    var prefab = Resources.Load("prefabs/enemy/"+prefabName);
                     if( prefab != null)
                     {
                         //instantiate enemy
@@ -95,10 +98,10 @@ public class BattleFightManager : MonoBehaviour {
                         go.transform.SetParent(parent, true);
                         go.transform.position = position;
                         //load
-                        m_enemies[i].Load(battleData.Enemies[i].Name, battleData.Enemies[i].Level);
+                        m_enemies[i].Load(id);
                     }else
                     {
-                        Debug.LogError("Enemy Prefab was null");
+                        Debug.LogError("Enemy Prefab was null ("+prefabName+")" );
                     }
                 }
             }
@@ -116,7 +119,7 @@ public class BattleFightManager : MonoBehaviour {
 
     #region DAMAGE_DEALING
 
-    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _multiplier = 1.0f)
+    public int ComputeDamage(BattleAction _action, BattleActor _caster, BattleActor _target, float _accMultiplier = 1.0f)
     {
         if (m_noDeath)
             return 0;
@@ -136,7 +139,10 @@ public class BattleFightManager : MonoBehaviour {
             damage -= _target.CurrentStats.Magic;
         }
         
-        damage =(int) (damage * _multiplier);
+        damage =(int) (damage * _accMultiplier);
+        //randomize a bit
+        int demiVariation = (int) (damage * 0.1f);
+        damage += Random.Range(-demiVariation, demiVariation);
         return damage;
     }
 
@@ -149,13 +155,15 @@ public class BattleFightManager : MonoBehaviour {
 	}
 
 	public void OnReceiveActionEvent(object sender, BattleTracksManager.NoteEventInfo _eventInfo){
-
-        /*if( eventInfo.NoteHit.TimeBegin > 8.0f)
-            Debug.Log("RECEIVE ACTION " + eventInfo.NoteHit.TimeBegin);*/
+        
+        //Debug.Log("RECEIVE ACTION " + _eventInfo.NoteHit.TimeBegin + " " +_eventInfo.Accuracy);
          
 		//no attack for long note's head
 		if (_eventInfo.NoteHit.Type == NoteData.NoteType.LONG && _eventInfo.NoteHit.Head)
 			return;
+        //if a miss when the player attacks : no attack
+        if (_eventInfo.IsPlayerAttack && _eventInfo.Success == false )
+            return;
 
         //Get the duel
         int trackId = _eventInfo.NoteHit.TrackID;
@@ -250,10 +258,7 @@ public class BattleFightManager : MonoBehaviour {
     public void OnActorDead(BattleActor _actor){
 
         int index = FindActorIndex(_actor);
-
-        var chara = m_party[index];
-        var enemy = m_enemies[index];
-        
+                
 		//Check Combat End
 		bool end = true;
 		int repTrack = 0;

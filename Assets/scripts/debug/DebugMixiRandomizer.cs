@@ -10,10 +10,10 @@ public class DebugMixiRandomizer : MonoBehaviour {
         
         for(int i = 0; i < 3; i++)
         {
-            var newchara = charamanager.GenerateCharacter((Job)i);
+            /*var newchara = charamanager.GenerateCharacter((Job)i);
             newchara.Id = "" + i;
             profile.Characters[i] = newchara;
-            profile.CurrentTeam[i] = newchara.Id;
+            profile.CurrentTeam[i] = newchara.Id;*/
         }
 	}
 	

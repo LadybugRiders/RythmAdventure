@@ -2,8 +2,10 @@
 using System.Collections;
 
 public class GameMenu : MonoBehaviour {
-
-    bool m_firstActivated = false;
+    /// <summary>
+    /// 
+    /// </summary>
+    protected bool m_alreadyActivated = false;
 
 	// Use this for initialization
 	void Start () {
@@ -18,7 +20,7 @@ public class GameMenu : MonoBehaviour {
     public void ActivateMenu()
     {
         Activate();
-        m_firstActivated = true;
+        m_alreadyActivated = true;
     }
 
     protected virtual void Activate()

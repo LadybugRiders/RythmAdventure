@@ -6,6 +6,8 @@ public class BattleCharacter : BattleActor {
 	[SerializeField] BattleCharacterAnimator m_charAnimator;
     [SerializeField] CharacterBuild m_build;
 
+    string m_charId = null;
+
 	override protected void Start () {
 		base.Start ();
 		m_type = ActorType.CHARACTER;
@@ -83,4 +85,10 @@ public class BattleCharacter : BattleActor {
 		Utils.SetAlpha(m_sprite,0.0f);
 		return true;
 	}
+
+    public string CharId
+    {
+        get { return m_charId; }
+        set { m_charId = value; }
+    }
 }

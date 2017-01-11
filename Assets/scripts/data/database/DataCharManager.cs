@@ -1,21 +1,94 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 public class DataCharManager : DatabaseLoader
-{    
+{
+    Dictionary<Job, LevelUpDataCollection> m_levelupsDB = new Dictionary<Job, LevelUpDataCollection>();
+    Dictionary<EquipmentType, BuildDataCollection> m_equipmentsDB = new Dictionary<EquipmentType, BuildDataCollection>();
+    Dictionary<LooksType, BuildDataCollection> m_looksDB = new Dictionary<LooksType, BuildDataCollection>();
+    ColorDataCollection m_colorsDB;
+
+    JobEquipCompatibilitiesCollection jobs;
+    Dictionary<Job, SkillGenerationDataCollection> skillsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
+    Dictionary<Job, SkillGenerationDataCollection> talentsGenerations = new Dictionary<Job, SkillGenerationDataCollection>();
+
     protected override void LoadDatabase()
     {
         base.LoadDatabase();
-
-        JSONObject tempJson;
-        //levelup
-        tempJson = LoadDataJSON("characters/characters_levelup_database");
-        m_database.Add("levelup", tempJson);
-        //equipement
-        tempJson = LoadDataJSON("characters/equipement_database");
-        m_database.Add("equipment", tempJson);
+        ReadLevelUp();
+        ReadEquipement();
+        ReadGeneration();        
     }
+
+    #region DATABASE_READING
+    void ReadLevelUp()
+    {
+        var database = LoadDataJSON("characters/characters_levelup_database");
+        //foreach enum value
+        for (int i = 0; i < Utils.EnumCount(Job.THIEF); i++)
+        {
+            Job job = (Job)i;
+            string jobStr = job.ToString().ToLower();
+            //Convert json into classes
+            var coll = JSONLoaderLR.LoadTable<LevelUpDataCollection>(database[jobStr]);
+            m_levelupsDB[job] = coll;
+        }
+    }
+
+    void ReadEquipement()
+    {
+        var database = LoadDataJSON("characters/equipement_database");
+
+        jobs = JSONLoaderLR.LoadTable<JobEquipCompatibilitiesCollection>(database["jobs"]);
+
+        //equipement
+        for (int i = 0; i < Utils.EnumCount(EquipmentType.ACCESSORY); i++)
+        {
+            EquipmentType equEnum = (EquipmentType)i;
+            string equStr = equEnum.ToString().ToLower();
+            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(database[equStr]);
+            m_equipmentsDB[equEnum] = coll;
+        }
+        //looks
+        for (int i = 0; i < Utils.EnumCount(LooksType.EYEBROWS); i++)
+        {
+            LooksType lookEnum = (LooksType)i;
+            string lookStr = lookEnum.ToString().ToLower();
+            var coll = JSONLoaderLR.LoadTable<BuildDataCollection>(database[lookStr]);
+            m_looksDB[lookEnum] = coll;
+        }
+        var ld = database["body_colors"];
+        m_colorsDB = JSONLoaderLR.LoadTable<ColorDataCollection>(database["body_colors"]);
+    }
+
+    void ReadGeneration()
+    {
+        var database = LoadDataJSON("characters/mixi_generation_database");
+        //foreach enum value
+        for (int i = 0; i < Utils.EnumCount(Job.THIEF); i++)
+        {
+            Job job = (Job)i;
+            string jobStr = job.ToString().ToLower();
+            //skills
+            var skillTable = database[jobStr + "_skills"];
+            if (skillTable != null)
+            {
+                var skills = JSONLoaderLR.LoadTable<SkillGenerationDataCollection>(skillTable);
+                skillsGenerations[job] = skills;
+            }
+            //talents
+            var talentsTable = database[jobStr+"_talents"];
+            if (talentsTable != null)
+            {
+                var talents = JSONLoaderLR.LoadTable<SkillGenerationDataCollection>(talentsTable);
+                talentsGenerations[job] = talents;
+            }
+        }
+    }
+    #endregion
 
     public Stats ComputeStats(ProfileManager.CharacterData _charData)
     {
@@ -30,40 +103,22 @@ public class DataCharManager : DatabaseLoader
 
     public LevelUpData GetLevelByXp(Job _job, int _xp)
     {
-        JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
-
-        //Get base stats from leveling (db)
-        LevelUpData levelUpData = null;
-        for (int i = 0; i < levelsForPlayerJSON.Count; ++i)
+        var lvls = m_levelupsDB[_job];
+        if( lvls != null)
         {
-            var lvlUp = levelsForPlayerJSON[i];
-            int xpNeeded = (int)lvlUp.GetField("xp").f;
-            if ( xpNeeded <= _xp )
-            {
-                levelUpData = new LevelUpData(lvlUp);
-            }
+            return lvls.GetByXp(_xp);
         }
-        return levelUpData;
+        return null;
     }
 
     public LevelUpData GetLevel(Job _job, int _level)
     {
-        JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
-
-        //Get base stats from leveling (db)
-        LevelUpData levelUpData = null;
-        for (int i = 0; i < levelsForPlayerJSON.Count; ++i)
+        var lvls = m_levelupsDB[_job];
+        if (lvls != null)
         {
-            var lvlUp = levelsForPlayerJSON[i];
-            int xpNeeded = (int)lvlUp.GetField("level").f;
-            if (xpNeeded <= _level)
-            {
-                levelUpData = new LevelUpData(lvlUp);
-            }
+            return lvls[_level];
         }
-        return levelUpData;
+        return null;
     }
 
     /// <summary>
@@ -71,150 +126,135 @@ public class DataCharManager : DatabaseLoader
     /// </summary>
     public LevelUpData GetNextLevelByXp(Job _job, int _xp)
     {
-        JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_job.ToString().ToLower()];
-
-        //Get base stats from leveling (db)
-        LevelUpData levelUpData = null;
-        for (int i = 0; i < levelsForPlayerJSON.Count; ++i)
+        var lvls = m_levelupsDB[_job];
+        if (lvls != null)
         {
-            var lvlUp = levelsForPlayerJSON[i];
-            int xpNeeded = (int)lvlUp.GetField("xp").f;
-            if (xpNeeded > _xp)
-            {
-                levelUpData = new LevelUpData(lvlUp);
-                break;
-            }
+            return lvls.GetNextLevelByXp(_xp);
         }
-        return levelUpData;
+        return null;
     }
 
     /// <summary>
     /// Returns the level data of the next level
     /// </summary>
-    public LevelUpData GetNextLevel(string _category, int _level)
+    public LevelUpData GetNextLevel(Job _job, int _level)
     {
-        JSONObject levelupDB = LevelUpDatabase;
-        JSONObject levelsForPlayerJSON = levelupDB[_category];
-
-        //Get base stats from leveling (db)
-        LevelUpData levelUpData = null;
-        for (int i = 0; i < levelsForPlayerJSON.Count; ++i)
+        var lvls = m_levelupsDB[_job];
+        if (lvls != null)
         {
-            var lvlUp = levelsForPlayerJSON[i];
-            int xpNeeded = (int)lvlUp.GetField("level").f;
-            if (xpNeeded > _level)
-            {
-                levelUpData = new LevelUpData(lvlUp);
-                break;
-            }
+            return lvls[_level+1];
         }
-        return levelUpData;
+        return null;
     }
     #endregion
 
     #region EQUIPEMENT
-
-    public EquipmentData GetEquipement( EquipmentType _type, string _id)
+    
+    public List<BuildData> GetEquipements(EquipmentType _type, Job _job, int _tiers = -1) 
     {
-        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
-        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
-
-        if (jsonObject != null)
-        {
-            return new EquipmentData(jsonObject, _type);
-        }
-        return null;
+        var equipments = m_equipmentsDB[_type];
+        var compats = jobs[_job.ToString().ToLower()].Compatibilities;
+        return equipments.GetCompatibleBuilds(compats, _tiers);
+    }
+        
+    public BuildData GetEquipement( EquipmentType _type, string _id)
+    {
+        var equipments = m_equipmentsDB[_type];
+        return equipments[_id];
     }
 
-    public EquipmentData GetEquipement(string _type, string _id)
+    public BuildData GetEquipement(string _type, string _id)
     {
         EquipmentType enumType = (EquipmentType) System.Enum.Parse(typeof(EquipmentType), _type);
         return GetEquipement(enumType, _id);
     }
 
-    public LooksData GetLooks( LooksType _type, string _id)
+    public List<BuildData> GetLooks(LooksType _type, Job _job, int _tiers = -1)
     {
-        JSONObject database = EquipementDatabase[_type.ToString().ToLower()];
-        var jsonObject = database.list.Find(x => x.GetField("id").str == _id);
-
-        if (jsonObject != null)
-        {
-            return new LooksData(jsonObject, _type);
-        }
-        return null;
+        var looks = m_looksDB[_type];
+        var compats = jobs[_job.ToString().ToLower()].Compatibilities;
+        return looks.GetCompatibleBuilds(compats, _tiers);
     }
 
-    public LooksData GetLooks(string _type, string _id)
+    public BuildData GetLook( LooksType _type, string _id)
+    {
+        var looks = m_looksDB[_type];
+        return looks[_id];
+    }
+
+    public BuildData GetLook(string _type, string _id)
     {
         LooksType lookType = (LooksType)System.Enum.Parse(typeof(LooksType), _type);
-        return GetLooks(lookType, _id);
+        return GetLook(lookType, _id);
     }
 
     #endregion
 
     #region COLOR
 
-    public Color GetBodyColor(string _colorId)
+    public Color GetColor(string _colorId)
     {
-        Color color = new Color();
-        color.a = 1.0f;
-        JSONObject colorDB = EquipementDatabase["body_colors"];
-        var jsonObject = colorDB.list.Find(x => x.GetField("id").ToString() == _colorId);
-        if( jsonObject != null)
-        {
-            color.r = jsonObject.GetField("red").f / 255;
-            color.g = jsonObject.GetField("green").f / 255;
-            color.b = jsonObject.GetField("blue").f / 255;
-        }
-        return color;
+        return m_colorsDB[_colorId].Color;
+    }
+    
+    public List<ColorData> GetColors(int _tiers)
+    {
+        return GameUtils.SearchByTiers(m_colorsDB.ToList(), _tiers);
     }
 
     #endregion
 
-    JSONObject LevelUpDatabase { get { return m_database["levelup"]; } }
-    JSONObject EquipementDatabase { get { return m_database["equipment"]; } }
+    #region SKILLS
 
-    #region CHARACTER_GENERATION
-
-    public ProfileManager.CharacterData GenerateCharacter(Job _job)
+    public List<SkillGenerationData> GetSkills(Job _job, int _tiers)
     {
-        ProfileManager.CharacterData chara = new ProfileManager.CharacterData(""+ProfileManager.instance.profile.Characters.Count);
-        chara.Job = _job;
-        //Add random equipements
-        for(int i = 0; i< Utils.EnumCount(EquipmentType.ACCESSORY); i++)
+        var skillsColl = skillsGenerations[_job];
+        return GameUtils.SearchByTiers(skillsColl.ToList(), _tiers);
+    }
+    
+    #endregion   
+    
+    /// <summary>
+    /// Used to hold data with job compatibilities ( compat and/or compat2 ). Also a WeightableData.
+    /// </summary>
+    public class EquipCompatibilityData : GameUtils.WeightableData
+    {
+        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
+
+        public override void BuildJSONData(JSONObject _json)
         {
-            EquipmentType type = (EquipmentType)i;
-            var randomEqpmnt = GetRandomEquipment(_job, type );
-            chara.AddEquipement(randomEqpmnt.Id, type);
+            base.BuildJSONData(_json);
+            //Compat
+            Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper()));
+            var compat2 = _json.GetField("compat2");
+            if (compat2 != null)
+            {
+                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
+            }
         }
-        //Add random looks
-        for (int i = 0; i < Utils.EnumCount(LooksType.EYEBROWS); i++)
+
+        public bool IsCompatible(EquipCompatibility _type)
         {
-            LooksType type = (LooksType)i;
-            var randomLooks = GetRandomLooks(_job, type);
-            chara.AddLooks(randomLooks.Id, type);
+            if (_type == EquipCompatibility.ALL)
+                return true;
+            foreach (var comp in Compatibilities)
+                if (comp == EquipCompatibility.ALL || comp == _type)
+                    return true;
+            return false;
         }
-        return chara;
-    }
 
-    public LooksData GetRandomLooks(Job _job, LooksType _type)
-    {
-        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
-        int r = Random.Range(0, listOfLooks.Count - 1);
-        return new LooksData(listOfLooks[r],_type);
-    }
+        public bool IsCompatible(List<EquipCompatibility> _types)
+        {
+            foreach(var t in _types)
+            {
+                if (IsCompatible(t))
+                    return true;
+            }
+            return false;
+        }
+    }     
 
-    public EquipmentData GetRandomEquipment(Job _job, EquipmentType _type)
-    {
-        List<JSONObject> listOfLooks = EquipementDatabase[_type.ToString().ToLower()].list;
-        int r = Random.Range(0, listOfLooks.Count - 1);
-        return new EquipmentData(listOfLooks[r], _type);
-    }
-
-    #endregion
-
-    #region DATA
+    #region LEVEL_DATA
     /// <summary>
     /// Data used to stored levels 
     /// </summary>
@@ -230,58 +270,151 @@ public class DataCharManager : DatabaseLoader
         }
     }
 
-    public class BuildData
+    public class LevelUpDataCollection : IJSONDataCollection
     {
-        public string Id;
-        public string Name = "NoName_Equipment";
-        public string Prefab;
-        public List<EquipCompatibility> Compatibilities = new List<EquipCompatibility>();
-        public int Level = 1;
+        Dictionary<int, LevelUpData> levelups = new Dictionary<int, LevelUpData>();
 
-        public BuildData(JSONObject _json)
+        public void AddElement(JSONObject _element)
         {
-            Id = _json.GetField("id").str;
-            Level = (int)_json.GetField("level").f;
-            Name = _json.GetField("name").str;
-            Prefab = _json.GetField("prefab").str;
+            LevelUpData data = new LevelUpData(_element);
+            levelups.Add(data.Stats.Level, data);
+        }
 
-            //Compat
-            Compatibilities.Add( (EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), _json.GetField("compat").str.ToUpper())) ;
-            var compat2 = _json.GetField("compat2");
-            if( compat2 != null)
+        public IEnumerator<LevelUpData> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        public LevelUpData GetByXp(int _xp)
+        {
+            LevelUpData level = null;
+            foreach(var lvl in levelups)
             {
-                Compatibilities.Add((EquipCompatibility)System.Enum.Parse(typeof(EquipCompatibility), compat2.str.ToUpper()));
+                if (lvl.Value.XpNeeded > _xp)
+                    return level;
+                level = lvl.Value;
             }
+            return level;
         }
 
-        public bool IsCompatible(EquipCompatibility _type)
+        public LevelUpData GetNextLevelByXp(int _xp)
         {
-            foreach (var comp in Compatibilities)
-                if (comp == _type)
-                    return true;
-            return false;
+            foreach (var lvl in levelups)
+            {
+                if (lvl.Value.XpNeeded > _xp)
+                    return lvl.Value;
+            }
+            return null;
         }
-    }
 
-    public class EquipmentData : BuildData
-    {
-        public EquipmentType type;
-
-        public EquipmentData(JSONObject _json, EquipmentType _type) : base(_json)
+        public LevelUpData this[int i]
         {
-            type = _type;
-        }
-    }
-
-    public class LooksData : BuildData
-    {
-        public LooksType type;
-
-        public LooksData(JSONObject _json, LooksType _type) : base(_json)
-        {
-            type = _type;
+            get
+            {
+                if (levelups.ContainsKey(i))
+                    return levelups[i];
+                return null;
+            }
         }
     }
 
     #endregion
+
+    #region BUILD_DATA
+
+    public class BuildData : EquipCompatibilityData
+    {
+        public string Name = "NoName_Equipment";
+        public string Prefab;
+        
+        public Stats Stats = new Stats();
+
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+            Name = _json.GetField("name").str;
+            Prefab = _json.GetField("prefab").str;
+            
+
+            Stats = new Stats(_json);
+        }
+    }
+       
+
+    public class BuildDataCollection : IJSONDataDicoCollection<BuildData>
+    {        
+        public List<BuildData> GetCompatibleBuilds(List<EquipCompatibility> _compat,int _tiers)
+        {
+            var list = new List<BuildData>();
+            foreach (var b in items.Values)
+            {
+                // we want to take tiers that are equals or one tiers down ( ex : for _tiers = 3, we can allow tiers 2 and 3 )
+                bool isTiersCompatible = (b.Tiers <= _tiers && b.Tiers >= _tiers -1 ) || _tiers < 0 ;
+                if (b.IsCompatible(_compat) && isTiersCompatible)
+                {
+                    list.Add(b);
+                }
+            }
+            return list;
+        }
+    }
+
+    #endregion
+
+    #region COLORS_DATA
+
+    public class ColorData : GameUtils.WeightableData
+    {
+        public string Name;
+        public Color Color;
+
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+            Name = _json.GetField("name").str;
+            
+            Color.r = _json.GetField("red").f / 255;
+            Color.g = _json.GetField("green").f / 255;
+            Color.b = _json.GetField("blue").f / 255;
+            Color.a = 1.0f;
+        }
+    }
+
+    public class ColorDataCollection : IJSONDataDicoCollection<ColorData> { }
+
+    #endregion
+
+    #region SKILLS_GENERATION
+    
+
+    public class SkillGenerationData : GameUtils.WeightableData
+    {
+        public Job Job;
+        public string SkillId;
+
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);
+            SkillId = _json.GetField("skillid").str;
+        }
+    }
+
+    public class SkillGenerationDataCollection : IJSONDataDicoCollection<SkillGenerationData> { }
+
+    #endregion
+
+    public class JobEquipCompatibilityData : EquipCompatibilityData
+    {
+        public override void BuildJSONData(JSONObject _json)
+        {
+            base.BuildJSONData(_json);            
+        }        
+    }
+
+    public class JobEquipCompatibilitiesCollection : IJSONDataDicoCollection<JobEquipCompatibilityData> { }
 }
