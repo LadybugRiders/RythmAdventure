@@ -23,12 +23,12 @@ GameObject:
   - 114: {fileID: 114291197359034898}
   - 114: {fileID: 114376959877655694}
   m_Layer: 5
-  m_Name: 
+  m_Name: lvlValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1464398761847352
 GameObject:
   m_ObjectHideFlags: 1
@@ -41,12 +41,12 @@ GameObject:
   - 114: {fileID: 114877975099215072}
   - 114: {fileID: 114969032372544854}
   m_Layer: 5
-  m_Name: 
+  m_Name: xp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1482200789646764
 GameObject:
   m_ObjectHideFlags: 0
@@ -62,7 +62,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1521596059668456
 GameObject:
   m_ObjectHideFlags: 1
@@ -75,12 +75,12 @@ GameObject:
   - 114: {fileID: 114679486535586828}
   - 114: {fileID: 114307927584593244}
   m_Layer: 5
-  m_Name: 
+  m_Name: lvlTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1585181890295876
 GameObject:
   m_ObjectHideFlags: 1
@@ -91,12 +91,12 @@ GameObject:
   - 224: {fileID: 224188533340479354}
   - 114: {fileID: 114216119544392922}
   m_Layer: 5
-  m_Name: 
+  m_Name: lvl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1613812605717228
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,12 +106,12 @@ GameObject:
   m_Component:
   - 224: {fileID: 224421485142510330}
   m_Layer: 5
-  m_Name: 
+  m_Name: CharParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1858907756506514
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,12 +122,12 @@ GameObject:
   - 224: {fileID: 224254178709999672}
   - 114: {fileID: 114148112097066724}
   m_Layer: 5
-  m_Name: 
+  m_Name: infos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &114148112097066724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -425,7 +425,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 80}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224421485142510330
 RectTransform:
@@ -461,7 +461,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 30}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224698727274925238
 RectTransform:
@@ -479,5 +479,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 30}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

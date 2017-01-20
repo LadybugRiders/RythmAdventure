@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class BattleEndCharInfoUI : MonoBehaviour {
     
-    public GameObject GameObject;
     public GameObject CharacterObject;
     public Text LevelText;
     public Text XpText;

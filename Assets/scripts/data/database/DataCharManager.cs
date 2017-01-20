@@ -193,6 +193,8 @@ public class DataCharManager : DatabaseLoader
         BuildDataCollection weaponDB = m_equipmentsDB[EquipmentType.WEAPON];
         BuildData weapon = weaponDB[_weaponId];
         var prefab = Resources.Load( "prefabs/battle/attack/" + weapon.AttackPrefab );
+        if (prefab == null)
+            Debug.LogError("Couldn't Load " + "prefabs/battle/attack/" + weapon.AttackPrefab);
         GameObject go = Instantiate(prefab) as GameObject;
         return go;
     }

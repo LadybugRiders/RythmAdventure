@@ -36,7 +36,7 @@ public class BattleEndManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        m_mapButton.SetActive(false);
+        //m_mapButton.SetActive(false);
         m_charManager = DataManager.instance.CharacterManager;
         m_battleData = ProfileManager.instance.BattleData;
 

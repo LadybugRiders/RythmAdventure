@@ -544,7 +544,7 @@ MonoBehaviour:
   m_scoreManager: {fileID: 983832068}
   m_notesGeneratorObject: {fileID: 1808940313}
   m_ui: {fileID: 973924214}
-  m_battleData: {fileID: 11400000, guid: fbba671e6abe23041b7177600948493b, type: 2}
+  m_battleDataAsset: {fileID: 11400000, guid: fbba671e6abe23041b7177600948493b, type: 2}
 --- !u!4 &136102383
 Transform:
   m_ObjectHideFlags: 0
@@ -2335,8 +2335,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_accuPerfect: 82
   m_accuGreat: 50
-  m_notesCount: 0
-  m_totalScore: 0
 --- !u!4 &983832069
 Transform:
   m_ObjectHideFlags: 0
