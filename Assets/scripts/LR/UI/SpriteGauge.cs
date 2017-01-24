@@ -1,33 +1,25 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 
-public class UIGauge : MonoBehaviour {
+public class SpriteGauge : MonoBehaviour {
 
-
-    [SerializeField]
-    protected float m_currentValue = 1.0f;
+	[SerializeField] protected float m_currentValue = 1.0f;
     
-    [SerializeField]
-    protected LR.UI.ORIENTATION m_orientation;
+	[SerializeField] protected LR.UI.ORIENTATION m_orientation;
     
-    [SerializeField]
-    protected LR.UI.ALIGN m_align;
+	[SerializeField] protected LR.UI.ALIGN m_align;
 
-    [SerializeField]
-    protected Image m_gaugeImage;
+	[SerializeField] protected SpriteRenderer m_gaugeSpr;
 
-    [SerializeField]
-    protected float m_maxScale = 1.0f;
-    [SerializeField]
-    protected bool m_useSprScaleAsMax = true;
-
-    private Vector3 m_initPos;
+	[SerializeField] protected float m_maxScale = 1.0f;
+	[SerializeField] protected bool m_useSprScaleAsMax = true;
+    
+	private Vector3 m_initPos;
 
     private float m_posAtZero = 0;
     private float m_posRange = 0;
 
-    protected Transform m_gaugeTransform;
+	protected Transform m_gaugeTransform;
 
     private float m_time;
 
@@ -43,27 +35,25 @@ public class UIGauge : MonoBehaviour {
     /// <summary>
     /// This means the rate of the filling
     /// </summary>
-    [SerializeField]
-    private float m_scaleFillUnitValue = 0.01f;
+    [SerializeField]  private float m_scaleFillUnitValue = 0.01f; 
 
-    // Use this for initialization
-    virtual protected void Awake()
-    {
+	// Use this for initialization
+	virtual protected void Awake () {
 
-        if (m_gaugeImage != null)
+        if (m_gaugeSpr != null)
         {
-            m_gaugeTransform = m_gaugeImage.transform;
+            m_gaugeTransform = m_gaugeSpr.transform;
 
             //Override max scale if needed
             if (m_useSprScaleAsMax)
             {
                 m_maxScale = m_orientation == LR.UI.ORIENTATION.HORIZONTAL ? m_gaugeTransform.localScale.x : m_gaugeTransform.localScale.y;
             }
-            SetPivot();
+            ComputeEdge();
         }
-
-        SetValue(m_currentValue);
-    }
+        
+		SetValue (m_currentValue);
+	}
 
     protected virtual void Update()
     {
@@ -89,7 +79,7 @@ public class UIGauge : MonoBehaviour {
                 }
 
                 //Fill count 
-                if (m_currentValue >= 1.0f && m_fillCount < m_fillCountTarget)
+                if(m_currentValue >= 1.0f && m_fillCount < m_fillCountTarget)
                 {
                     m_fillCount++;
                     m_currentValue = 0.0f;
@@ -103,7 +93,7 @@ public class UIGauge : MonoBehaviour {
         m_orientation = _orientation;
         m_align = _align;
         m_gaugeTransform.localPosition = m_initPos;
-        SetPivot();
+        ComputeEdge();
     }
 
 
@@ -111,59 +101,46 @@ public class UIGauge : MonoBehaviour {
     /// Scale the sprite to max value, then compute the edge according to the orientation and alignement
     /// The edge is the position of the sprite when the gauge is at 0
     /// </summary>
-    void SetPivot()
+    void ComputeEdge()
     {
-        switch (m_orientation)
+        float posAtMax = 0.0f;
+        //change scale to max to have the entire gauge full
+        if (m_orientation == LR.UI.ORIENTATION.HORIZONTAL)
         {
-            case LR.UI.ORIENTATION.HORIZONTAL:
-                SetHorizontalPivot();
-                break;
-            case LR.UI.ORIENTATION.VERTICAL:
-                SetVerticalPivot();
-                break;
+            Utils.SetLocalScaleX(m_gaugeTransform, m_maxScale);
+            var worldToLocal = m_gaugeTransform.localPosition - m_gaugeTransform.position;
+            if ( m_align == LR.UI.ALIGN.LEFT)
+            {
+                m_posAtZero = m_gaugeSpr.bounds.min.x + worldToLocal.x;
+            }else if(m_align == LR.UI.ALIGN.RIGHT)
+            {
+                m_posAtZero = m_gaugeSpr.bounds.max.x + worldToLocal.x;
+            }
+            posAtMax = m_gaugeSpr.bounds.center.x + worldToLocal.x;
         }
+        else
+        {
+            Utils.SetLocalScaleY(m_gaugeTransform, m_maxScale);
+            var worldToLocal = m_gaugeTransform.localPosition - m_gaugeTransform.position;
+            if (m_align == LR.UI.ALIGN.BOTTOM)
+            {
+                m_posAtZero = m_gaugeSpr.bounds.min.y + worldToLocal.y;
+            }
+            else if (m_align == LR.UI.ALIGN.TOP)
+            {
+                m_posAtZero = m_gaugeSpr.bounds.max.y + worldToLocal.y;
+            }
+            posAtMax = m_gaugeSpr.bounds.center.y + worldToLocal.y;
+        }
+        //Range from minimum position to max ( length of the demi gauge )
+        m_posRange = posAtMax - m_posAtZero;
         m_initPos = m_gaugeTransform.localPosition;
     }
-
-    void SetHorizontalPivot()
-    {
-        RectTransform rT = m_gaugeImage.GetComponent<RectTransform>();
-        switch (m_align)
-        {
-            case LR.UI.ALIGN.LEFT:
-                rT.pivot = new Vector2(1, rT.pivot.y);
-                break;
-            case LR.UI.ALIGN.RIGHT:
-                rT.pivot = new Vector2(0, rT.pivot.y);
-                break;
-            default:
-                rT.pivot = new Vector2(0.5f, 0.5f);
-                break;
-        }
-    }
-
-    void SetVerticalPivot()
-    {
-        RectTransform rT = m_gaugeImage.GetComponent<RectTransform>();
-        switch (m_align)
-        {
-            case LR.UI.ALIGN.TOP:
-                rT.pivot = new Vector2(rT.pivot.x, 0);
-                break;
-            case LR.UI.ALIGN.BOTTOM:
-                rT.pivot = new Vector2(rT.pivot.x, 1);
-                break;
-            default:
-                rT.pivot = new Vector2(0.5f, 0.5f);
-                break;
-        }
-    }
-
+    
     /// <summary>
     /// Set value between 0 and 1
     /// </summary>
-    virtual public void SetValue(float _value, bool _fill = false, float _fillDuration = 1.0f, int _fillCount = 0)
-    {
+	virtual public void SetValue(float _value , bool _fill = false, float _fillDuration = 1.0f, int _fillCount = 0){
 
         if (m_gaugeTransform == null)
         {
@@ -171,12 +148,12 @@ public class UIGauge : MonoBehaviour {
         }
 
         //Cap values
-        if (_value < 0.0f) _value = 0.0f;
-        if (_value > 1.0f) _value = 1.0f;
+		if (_value < 0.0f) _value = 0.0f;
+		if (_value > 1.0f) _value = 1.0f;
 
         m_isFilling = _fill;
 
-        if (_fill)
+        if( _fill)
         {
             //count
             m_fillCount = 0;
@@ -184,7 +161,7 @@ public class UIGauge : MonoBehaviour {
 
             m_targetFillScale = _value;
             //Get direction of the scroll
-            float delta = Mathf.Abs(_value - m_currentValue);
+            float delta = Mathf.Abs( _value - m_currentValue );
             //compute the speed
             m_timeByScaleUnit = _fillDuration * m_scaleFillUnitValue / Mathf.Abs(delta);
         }
@@ -206,10 +183,13 @@ public class UIGauge : MonoBehaviour {
         if (m_orientation == LR.UI.ORIENTATION.HORIZONTAL)
         {
             Utils.SetLocalScaleX(m_gaugeTransform, _scaleValue);
+            Utils.SetLocalPositionX(m_gaugeTransform, _posValue);
         }
         else
         {
             Utils.SetLocalScaleY(m_gaugeTransform, _scaleValue);
+            Utils.SetLocalPositionY(m_gaugeTransform, _posValue);
         }
     }
+    
 }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class UIXpScrollerManager : MonoBehaviour {
 
-    [SerializeField] UIGauge m_gauge;
+    [SerializeField] SpriteGauge m_gauge;
     [SerializeField] Text m_xpText;
 
     [SerializeField] Text m_levelText;

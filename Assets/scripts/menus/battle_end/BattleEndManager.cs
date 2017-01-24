@@ -223,7 +223,7 @@ public class BattleEndManager : MonoBehaviour {
         [SerializeField] public GameObject gameObject;
         [SerializeField] public GameObject characterObject;
         [SerializeField] public Text text;
-        [SerializeField] public UIGauge gauge;
+        [SerializeField] public SpriteGauge gauge;
         [SerializeField] public UIXpScrollerManager xpScroller;
     }
         

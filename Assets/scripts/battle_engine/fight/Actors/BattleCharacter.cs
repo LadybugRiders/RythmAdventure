@@ -12,8 +12,8 @@ public class BattleCharacter : BattleActor {
 		base.Start ();
 		m_type = ActorType.CHARACTER;
 
-        m_lifeGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
-        m_manaGauge.ChangeOrientation(UIGauge.ORIENTATION.HORIZONTAL, UIGauge.ALIGN.LEFT);
+        m_lifeGauge.ChangeOrientation(LR.UI.ORIENTATION.HORIZONTAL, LR.UI.ALIGN.LEFT);
+        m_manaGauge.ChangeOrientation(LR.UI.ORIENTATION.HORIZONTAL, LR.UI.ALIGN.LEFT);
 
     }
 

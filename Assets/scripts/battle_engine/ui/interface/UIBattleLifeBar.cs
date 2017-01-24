@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIBattleLifeBar : UIGauge {
+public class UIBattleLifeBar : SpriteGauge {
 
 	[SerializeField] bool m_isMana = false;
     [SerializeField] SpriteRenderer m_aroundSprite;
@@ -13,7 +13,7 @@ public class UIBattleLifeBar : UIGauge {
 		m_baseColor = m_gaugeSpr.color;
         if( m_aroundSprite)
         {
-            if( m_orientation == ORIENTATION.HORIZONTAL)
+            if( m_orientation == LR.UI.ORIENTATION.HORIZONTAL)
 				m_aroundRatio = m_aroundSprite.transform.localScale.x / m_gaugeSpr.transform.localScale.x;
             else
 				m_aroundRatio = m_aroundSprite.transform.localScale.y / m_gaugeSpr.transform.localScale.y;
@@ -27,7 +27,7 @@ public class UIBattleLifeBar : UIGauge {
         
         if( m_aroundSprite != null)
         {
-            if (m_orientation == ORIENTATION.HORIZONTAL)
+            if (m_orientation == LR.UI.ORIENTATION.HORIZONTAL)
             {
                 Utils.SetLocalScaleX(m_aroundSprite.transform, m_gaugeSpr.transform.localScale.x * m_aroundRatio);
 				Utils.SetLocalPositionX (m_aroundSprite.transform, m_gaugeSpr.transform.localPosition.x);
