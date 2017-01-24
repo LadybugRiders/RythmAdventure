@@ -86,7 +86,7 @@ public class BattleEndManager : MonoBehaviour {
                 if (levelUpData.XpNeeded != 0)
                     prog = (float)battleCharData.XpStart / levelUpData.XpNeeded;
                 if( chara.Gauge != null )
-                    chara.Gauge.SetValue(prog);
+                    chara.SetGaugeValue(prog);
             }
 
             //create UI characters

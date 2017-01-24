@@ -8,7 +8,7 @@ public class BattleEndCharInfoUI : MonoBehaviour {
     public GameObject CharacterObject;
     public Text LevelText;
     public Text XpText;
-    public SpriteGauge Gauge;
+    public UIFilledGauge Gauge;
     public UIXpScrollerManager XpScroller;
 
     // Use this for initialization
@@ -20,4 +20,9 @@ public class BattleEndCharInfoUI : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void SetGaugeValue(float _value)
+    {
+
+    }
 }
