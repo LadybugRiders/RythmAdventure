@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class UITextNumberScroller : MonoBehaviour {
 
+    [SerializeField] float m_defaultScrollTime = 5.0f;
     protected Text m_text;
 
     protected bool m_scrolling = false;
@@ -53,7 +54,7 @@ public class UITextNumberScroller : MonoBehaviour {
             m_callback(this);
     }
 
-    public virtual void ScrollTo(int _targetNumber, float _duration, OnTargetReached del = null)
+    public virtual void ScrollTo(int _targetNumber, float _duration = -1.0f, OnTargetReached del = null)
     {
         m_targetNumber = _targetNumber;
         m_scrolling = true;
@@ -62,7 +63,7 @@ public class UITextNumberScroller : MonoBehaviour {
         ScrollFromTo( (int)m_current, _targetNumber, _duration,del);
     }
 
-    public virtual void ScrollFromTo(int _from, int _targetNumber, float _duration, OnTargetReached del = null)
+    public virtual void ScrollFromTo(int _from, int _targetNumber, float _duration = -1.0f, OnTargetReached del = null)
     {
         m_targetNumber = _targetNumber;
         m_callback = del;
@@ -73,6 +74,8 @@ public class UITextNumberScroller : MonoBehaviour {
         //Get direction of the scroll
         float delta = _targetNumber - m_current;
         m_direction = delta < 0 ? -1 : 1;
+        if (_duration < 0)
+            _duration = m_defaultScrollTime;
         float stepsInDuration = _duration / m_stepTime;
         //compute the speed
         m_unitsByStep = delta / stepsInDuration;

@@ -21,6 +21,9 @@ public class BattleData {
         Characters.Add(new PlayerData(_id, _xpStart,_xpGained) ) ;
     }	
 
+    /// <summary>
+    /// Returns the PlayerData of the character for the battle. It contains character info for this battle
+    /// </summary>
     public PlayerData GetCharacter(string _id)
     {
         return Characters.FirstOrDefault(x => x.Id == _id);

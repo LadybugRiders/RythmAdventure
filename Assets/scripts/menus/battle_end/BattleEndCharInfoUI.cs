@@ -23,6 +23,6 @@ public class BattleEndCharInfoUI : MonoBehaviour {
 
     public void SetGaugeValue(float _value)
     {
-
+        Gauge.SetValue(_value);
     }
 }

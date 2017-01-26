@@ -7,6 +7,8 @@ using System.Linq;
 
 public class BattleEndManager : MonoBehaviour {
 
+    [SerializeField] UIBattleEndScoreScrollSequence m_scoreSequence;
+
     [SerializeField] List<ScoreInfo> m_scoresInfos;
 
     [SerializeField] Text m_totalXpText;
@@ -49,7 +51,8 @@ public class BattleEndManager : MonoBehaviour {
         InitCharacters();
 
         //Get Score and multipliers
-        ApplyScore();
+        //ApplyScore();
+        m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
 	}
 
     void Update()
@@ -100,14 +103,17 @@ public class BattleEndManager : MonoBehaviour {
         var teamMates = ProfileManager.instance.GetCurrentTeam();
         for (int i = 0; i < m_characters.Count; ++i)
         {
+            //get ui objects
             var charaUI = m_characters[i];
-            var mate = teamMates[i];
-            var charBattleData = m_battleData.GetCharacter(mate.Id);
+            //get profile data for the character
+            var charProfileData = teamMates[i];
+            //Get battle data for the character
+            var charBattleData = m_battleData.GetCharacter(charProfileData.Id);
             //old values for ui
-            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(mate.Id);
+            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(charProfileData.Id);
             m_storedStats.Add(data);
 
-            var levelupdata = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+            var levelupdata = m_charManager.GetNextLevelByXp(charProfileData.Job, charProfileData.Xp);
             if( levelupdata == null)
             {
                 data.isMaxLevel = true;
@@ -118,7 +124,7 @@ public class BattleEndManager : MonoBehaviour {
             data.oldXpRequired = levelupdata.XpNeeded;
             
             //new values for ui
-            var newLevelupdata = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+            var newLevelupdata = m_charManager.GetNextLevelByXp(charProfileData.Job, charProfileData.Xp);
             data.newXp = charBattleData.XpGained;
             if (newLevelupdata != null)
             {
@@ -175,6 +181,11 @@ public class BattleEndManager : MonoBehaviour {
         m_mapButton.SetActive(true);
     }
 
+    public void OnAccuraciesScrollingEnd(UISequence sequence)
+    {
+        Debug.Log("SCrOLL END FOR ACCUREACIES");
+    }
+
     #endregion
 
     void OnGoToMap()
@@ -191,7 +202,7 @@ public class BattleEndManager : MonoBehaviour {
         m_battleData = new BattleData();
         foreach (var chara in ProfileManager.instance.GetCurrentTeam())
         {
-            m_battleData.AddPlayerData(chara.Id, 10, 50);
+            m_battleData.AddPlayerData(chara.Id, 2, 50);
         }
         m_battleData.TotalXp = 100;
 
