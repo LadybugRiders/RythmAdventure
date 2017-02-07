@@ -8,6 +8,7 @@ using System.Linq;
 public class BattleEndManager : MonoBehaviour {
 
     [SerializeField] UIBattleEndScoreScrollSequence m_scoreSequence;
+    [SerializeField] UIBattleEndXpSequence m_xpSequence;
 
     [SerializeField] List<ScoreInfo> m_scoresInfos;
 
@@ -27,8 +28,6 @@ public class BattleEndManager : MonoBehaviour {
     BattleData m_battleData;
 
     DataCharManager m_charManager;
-
-    List<UIXpScrollerManager.StoredLevelUpStats> m_storedStats = new List<UIXpScrollerManager.StoredLevelUpStats>();
     
     //UI Value
     float m_time = 0;
@@ -49,28 +48,16 @@ public class BattleEndManager : MonoBehaviour {
         }
 
         InitCharacters();
-
-        //Get Score and multipliers
-        //ApplyScore();
+        
         m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
-	}
+    }
 
     void Update()
     {
     }
 
     #region XP
-
-    void ProcessXp()
-    {
-        m_state = State.XP;
         
-        ApplyXp();
-        SetTotalXp(m_battleData.TotalXp);
-
-        //LaunchXpAnimation();
-    }
-    
     void InitCharacters()
     {
         var teamMates = ProfileManager.instance.GetCurrentTeam();
@@ -97,48 +84,7 @@ public class BattleEndManager : MonoBehaviour {
             go.transform.SetParent(chara.CharacterObject.transform, false);
         }
     }
-
-    void ApplyXp()
-    {
-        var teamMates = ProfileManager.instance.GetCurrentTeam();
-        for (int i = 0; i < m_characters.Count; ++i)
-        {
-            //get ui objects
-            var charaUI = m_characters[i];
-            //get profile data for the character
-            var charProfileData = teamMates[i];
-            //Get battle data for the character
-            var charBattleData = m_battleData.GetCharacter(charProfileData.Id);
-            //old values for ui
-            UIXpScrollerManager.StoredLevelUpStats data = new UIXpScrollerManager.StoredLevelUpStats(charProfileData.Id);
-            m_storedStats.Add(data);
-
-            var levelupdata = m_charManager.GetNextLevelByXp(charProfileData.Job, charProfileData.Xp);
-            if( levelupdata == null)
-            {
-                data.isMaxLevel = true;
-                continue;
-            }
-            data.oldXp = charBattleData.XpStart;
-            data.oldLevel = 1;
-            data.oldXpRequired = levelupdata.XpNeeded;
-            
-            //new values for ui
-            var newLevelupdata = m_charManager.GetNextLevelByXp(charProfileData.Job, charProfileData.Xp);
-            data.newXp = charBattleData.XpGained;
-            if (newLevelupdata != null)
-            {
-                data.newLevel = newLevelupdata.Stats.Level;
-                data.newXpRequired = newLevelupdata.XpNeeded;
-            }else
-            {
-                data.newLevel = levelupdata.Stats.Level;
-                data.isMaxLevel = true;
-            }
-            data.Process();
-        }
-    }
-
+    
     void SetTotalXp(int _totalXp)
     {
         m_totalXpText.text = "" + _totalXp;
@@ -149,8 +95,13 @@ public class BattleEndManager : MonoBehaviour {
         for (int i = 0; i < m_characters.Count; ++i)
         {
             var chara = m_characters[i];
-            UIXpScrollerManager.StoredLevelUpStats storedData = m_storedStats[i];
-            chara.XpScroller.Scroll(storedData,3.0f,OnXpScrollerEnded);
+            var charaProfile = ProfileManager.instance.GetCurrentTeam()[i];
+            var job = charaProfile.Job;
+
+            //Get battle data for the character
+            var charBattleData = m_battleData.GetCharacter(charaProfile.Id);
+            
+            chara.XpScroller.Scroll(charBattleData.XpStart, charaProfile.Xp, job,2.0f,OnXpScrollerEnded);
         }
     }
     #endregion
@@ -170,12 +121,6 @@ public class BattleEndManager : MonoBehaviour {
         m_state = State.SCORE;
     }
 
-    void OnScoreTargetReached()
-    {
-        m_state = State.XP;
-        ProcessXp();
-    }
-
     void OnXpScrollerEnded(UIXpScrollerManager _scroller)
     {
         m_mapButton.SetActive(true);
@@ -184,6 +129,7 @@ public class BattleEndManager : MonoBehaviour {
     public void OnAccuraciesScrollingEnd(UISequence sequence)
     {
         Debug.Log("SCrOLL END FOR ACCUREACIES");
+        LaunchXpAnimation();
     }
 
     #endregion
@@ -202,9 +148,10 @@ public class BattleEndManager : MonoBehaviour {
         m_battleData = new BattleData();
         foreach (var chara in ProfileManager.instance.GetCurrentTeam())
         {
-            m_battleData.AddPlayerData(chara.Id, 2, 50);
+            m_battleData.AddPlayerData(chara.Id, 2, 48);
+            ProfileManager.instance.AddCharacterXp( chara.Id, 50 );
         }
-        m_battleData.TotalXp = 100;
+        m_battleData.TotalXp = 48;
 
         m_battleData.NotesCountByAccuracy = new Dictionary<HitAccuracy, int>();
         int totalNotes = 0;
@@ -220,22 +167,12 @@ public class BattleEndManager : MonoBehaviour {
     }
 
     [System.Serializable]
-    class ScoreInfo
+    public class ScoreInfo
     {
         [SerializeField] public GameObject UIObject;
         [SerializeField] public Text ScoreText;
         [SerializeField] public UITextNumberScroller Scroller;
         [SerializeField] public HitAccuracy Accuracy;
     }
-
-    [System.Serializable]
-    class CharacterXpInfo
-    {
-        [SerializeField] public GameObject gameObject;
-        [SerializeField] public GameObject characterObject;
-        [SerializeField] public Text text;
-        [SerializeField] public SpriteGauge gauge;
-        [SerializeField] public UIXpScrollerManager xpScroller;
-    }
-        
+            
 }

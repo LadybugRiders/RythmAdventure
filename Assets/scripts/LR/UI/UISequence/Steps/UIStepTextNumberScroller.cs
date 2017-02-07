@@ -15,6 +15,12 @@ public class UIStepTextNumberScroller : UIStep {
     public void Launch(OnStepEndDelegate _del, int _target)
     {
         base.Launch(_del);
-        m_text.ScrollTo(_target, m_scrollDuration);
+        m_text.ScrollTo(_target, m_scrollDuration, OnTargetReached);
     }
+
+    public void OnTargetReached(UITextNumberScroller scroller)
+    {
+        Stop();
+    }
+
 }

@@ -3,6 +3,8 @@ using System.Collections;
 
 public abstract class UIStep : MonoBehaviour {
 
+    [SerializeField] protected string m_id;
+
     [SerializeField] protected bool m_blocking = true;
 
     private bool m_started = false;
@@ -42,4 +44,5 @@ public abstract class UIStep : MonoBehaviour {
     }
 
     public bool IsBlocking { get { return m_blocking; } }
+    public string Id { get { return m_id; } set { m_id = value; } }
 }

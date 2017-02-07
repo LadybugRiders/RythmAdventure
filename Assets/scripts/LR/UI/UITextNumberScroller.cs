@@ -54,6 +54,9 @@ public class UITextNumberScroller : MonoBehaviour {
             m_callback(this);
     }
 
+    /// <summary>
+    /// Scroll To the target. Delegate usage : public void OnTargetReached(UITextNumberScroller scroller)
+    /// </summary>
     public virtual void ScrollTo(int _targetNumber, float _duration = -1.0f, OnTargetReached del = null)
     {
         m_targetNumber = _targetNumber;
@@ -63,6 +66,9 @@ public class UITextNumberScroller : MonoBehaviour {
         ScrollFromTo( (int)m_current, _targetNumber, _duration,del);
     }
 
+    /// <summary>
+    /// Scroll from To the target. Delegate usage : public void OnTargetReached(UITextNumberScroller scroller)
+    /// </summary>
     public virtual void ScrollFromTo(int _from, int _targetNumber, float _duration = -1.0f, OnTargetReached del = null)
     {
         m_targetNumber = _targetNumber;

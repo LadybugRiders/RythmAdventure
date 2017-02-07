@@ -22,14 +22,15 @@ public class UIBattleEndScoreScrollSequence : UISequence {
 
     public override void OnStepEnd(UIStep step)
     {
-        if(step.GetType() == typeof(UIBattleEndScoreScrollStep))
+        switch (step.Id)
         {
-            m_currentStepIndex++;
-            (CurrentStep as UIStepTextNumberScroller).Launch(OnStepEnd, m_totalScore);
-        }
-        else
-        {
-            Stop();
+            case "accuracies":
+                m_currentStepIndex++;
+                (CurrentStep as UIStepTextNumberScroller).Launch(OnStepEnd, m_totalScore);
+                break;
+            case "score":
+                Stop();
+                break;
         }
     }
         

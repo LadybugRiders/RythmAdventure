@@ -38,4 +38,5 @@ public class UIBattleEndScoreScrollStep : UIStep {
         public UITextNumberScroller Scroller;
         public HitAccuracy accuracy;
     }
+
 }
