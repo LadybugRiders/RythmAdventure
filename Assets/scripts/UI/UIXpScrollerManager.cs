@@ -45,7 +45,7 @@ public class UIXpScrollerManager : MonoBehaviour {
             if (m_time >= m_timeByUnit)
             {
                 m_time = 0;
-                //increase value
+                //increase value with computed speeds
                 m_currentXp += m_FillUnitValue;
                                 
                 //check if a level is reached

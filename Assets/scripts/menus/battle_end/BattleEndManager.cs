@@ -48,8 +48,9 @@ public class BattleEndManager : MonoBehaviour {
         }
 
         InitCharacters();
-        
-        m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
+
+        //m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
+        m_xpSequence.Launch(OnXpScrollingEnd);
     }
 
     void Update()
@@ -89,21 +90,6 @@ public class BattleEndManager : MonoBehaviour {
     {
         m_totalXpText.text = "" + _totalXp;
     }
-
-    void LaunchXpAnimation()
-    {
-        for (int i = 0; i < m_characters.Count; ++i)
-        {
-            var chara = m_characters[i];
-            var charaProfile = ProfileManager.instance.GetCurrentTeam()[i];
-            var job = charaProfile.Job;
-
-            //Get battle data for the character
-            var charBattleData = m_battleData.GetCharacter(charaProfile.Id);
-            
-            chara.XpScroller.Scroll(charBattleData.XpStart, charaProfile.Xp, job,2.0f,OnXpScrollerEnded);
-        }
-    }
     #endregion
 
     #region SCORE
@@ -129,7 +115,12 @@ public class BattleEndManager : MonoBehaviour {
     public void OnAccuraciesScrollingEnd(UISequence sequence)
     {
         Debug.Log("SCrOLL END FOR ACCUREACIES");
-        LaunchXpAnimation();
+        m_xpSequence.Launch(OnXpScrollingEnd);
+    }
+
+    public void OnXpScrollingEnd(UISequence sequence)
+    {
+        Debug.Log("SCrOLL END FOR XP");
     }
 
     #endregion
@@ -164,6 +155,7 @@ public class BattleEndManager : MonoBehaviour {
         }
         m_battleData.NotesCount = totalNotes;
         m_battleData.TotalScore = Random.Range(0, 1000);
+        ProfileManager.instance.BattleData = m_battleData;
     }
 
     [System.Serializable]

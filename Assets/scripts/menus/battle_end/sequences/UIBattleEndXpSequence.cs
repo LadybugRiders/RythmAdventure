@@ -3,25 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class UIBattleEndXpSequence : UISequence {
-
-    int m_totalXp;
-
-    public void Launch(OnSeqenceEndDelegate del, Dictionary<HitAccuracy, int> _acurracies, int _totalXp)
-    {
-        base.Launch(del, false);
-        (CurrentStep as UIBattleEndScoreScrollStep).Launch(OnStepEnd, _acurracies);
-        m_totalXp = _totalXp;
-    }
-
+        
     public override void Skip()
     {
         base.Skip();
     }
 
-    public override void OnStepEnd(UIStep step)
+    protected override void LaunchStep()
     {
-        switch (step.Id)
+        switch (CurrentStep.Id)
         {
+            case "xp_total":
+                int total = ProfileManager.instance.BattleData.TotalXp ;
+                var step = CurrentStep as UIStepTextNumberScroller;
+                step.Launch(OnStepEnd, total);
+                break;
+            default: base.LaunchStep();
+                break;
         }
     }
+
+    public override void OnStepEnd(UIStep step)
+    {
+        base.OnStepEnd(step);
+    }
+
 }

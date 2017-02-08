@@ -19,27 +19,36 @@ public class UISequence : MonoBehaviour {
     {
         m_steps = GetComponentsInChildren<UIStep>().ToList();
     }
-    
-	public virtual void Launch (OnSeqenceEndDelegate _del, bool _autoLaunch = true) {
+
+    /// <summary>
+    /// If autoLaunch, the first step is launched directly.
+    /// delegate : public void OnSeqenceEndDelegate(UISequence sequence)
+    /// </summary>
+    public virtual void Launch (OnSeqenceEndDelegate _del, bool _autoLaunch = true) {
         if (m_steps.Count <= 0)
             return;
         m_endDelegate = _del;
         m_currentStepIndex = 0;
         m_started = true;
         if(_autoLaunch)
-            LaunchStep();
+            LaunchNextStep();
 	}
 
-    protected virtual void LaunchStep()
+    protected void LaunchNextStep()
     {
         //launch as many consecutive non blocking steps as they are
         for (int i = m_currentStepIndex; i < m_steps.Count; i++)
         {
             m_currentStepIndex = i;
-            CurrentStep.Launch(OnStepEnd);
+            LaunchStep();
             if (CurrentStep.IsBlocking)
                 break;
         }
+    }
+
+    protected virtual void LaunchStep()
+    {
+        CurrentStep.Launch(OnStepEnd);
     }
 
     protected virtual void Update () {
@@ -70,7 +79,7 @@ public class UISequence : MonoBehaviour {
         if( m_currentStepIndex < m_steps.Count - 1)
         {
             m_currentStepIndex++;
-            LaunchStep();
+            LaunchNextStep();
         }else
         {
             Stop();
