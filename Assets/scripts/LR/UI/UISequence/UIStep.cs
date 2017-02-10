@@ -33,6 +33,7 @@ public abstract class UIStep : MonoBehaviour {
 
     public virtual void Skip()
     {
+        Debug.Log("Skip");
         Stop();
     }
     

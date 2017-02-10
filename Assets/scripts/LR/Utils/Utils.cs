@@ -255,4 +255,38 @@ public partial class Utils  {
             uiImage.enabled = true;            
         }
     }
+
+    #region INPUT
+    public static bool MouseJustPressed()
+    {
+    #if UNITY_ANDROID
+        bool b = false;
+        for (int i = 0; i < Input.touches.Length; i++)
+        {
+            b = Input.touches[i].phase == TouchPhase.Began;
+            if (b)
+                break;
+        }
+        return b;
+    #else        
+        return Input.GetMouseButtonDown(0);
+    #endif
+    }
+
+    public static bool MouseJustReleased()
+    {
+    #if UNITY_ANDROID
+        bool b = false;
+        for (int i = 0; i < Input.touches.Length; i++)
+        {
+            b = Input.touches[i].phase == TouchPhase.Ended;
+            if (b)
+                break;
+        }
+        return b;
+    #else        
+        return Input.GetMouseButtonUp(0);
+    #endif
+    }
+    #endregion
 }

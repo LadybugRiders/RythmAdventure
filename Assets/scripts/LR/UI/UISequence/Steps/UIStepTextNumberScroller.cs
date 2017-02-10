@@ -9,7 +9,7 @@ public class UIStepTextNumberScroller : UIStep {
 
     public override void Skip()
     {
-        base.Skip();
+        m_text.Skip();
     }
 
     public void Launch(OnStepEndDelegate _del, int _target)

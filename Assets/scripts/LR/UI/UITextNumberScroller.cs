@@ -88,6 +88,12 @@ public class UITextNumberScroller : MonoBehaviour {
         m_time = 0;
     }
 
+    public void Skip()
+    {
+        m_text.text = m_targetNumber.ToString();
+        TargetReached();
+    }
+
     public bool Scrolling
     {
         get

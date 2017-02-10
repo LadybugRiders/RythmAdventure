@@ -29,7 +29,10 @@ public class UIBattleEndScoreScrollStep : UIStep {
 
     public override void Skip()
     {
-        base.Skip();
+        foreach(var acc in m_accuraciesScrollers)
+        {
+            acc.Scroller.Skip();
+        }
     }
 
     [System.Serializable]

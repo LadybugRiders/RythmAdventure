@@ -19,7 +19,7 @@ public class UISequence : MonoBehaviour {
     {
         m_steps = GetComponentsInChildren<UIStep>().ToList();
     }
-
+    
     /// <summary>
     /// If autoLaunch, the first step is launched directly.
     /// delegate : public void OnSeqenceEndDelegate(UISequence sequence)
@@ -27,6 +27,9 @@ public class UISequence : MonoBehaviour {
     public virtual void Launch (OnSeqenceEndDelegate _del, bool _autoLaunch = true) {
         if (m_steps.Count <= 0)
             return;
+
+        HookSkipOnTouch();
+
         m_endDelegate = _del;
         m_currentStepIndex = 0;
         m_started = true;
@@ -56,16 +59,13 @@ public class UISequence : MonoBehaviour {
 
     public virtual void Skip()
     {
-        for(int i = m_currentStepIndex; i < m_steps.Count; i++)
-        {
-            m_currentStepIndex = i;
+        if(CurrentStep != null)
             CurrentStep.Skip();
-        }
-        Stop();
     }
 
     public virtual void Stop()
     {
+        UnhookSkipOnTouch();
         m_started = false;
         if(m_endDelegate != null)
             m_endDelegate.Invoke(this);
@@ -84,7 +84,6 @@ public class UISequence : MonoBehaviour {
         {
             Stop();
         }
-
     }
 
     public bool IsStarted { get { return m_started; } }
@@ -95,5 +94,21 @@ public class UISequence : MonoBehaviour {
                 return null;
             return m_steps[m_currentStepIndex];
         }
+    }
+
+    protected void HookSkipOnTouch()
+    {
+        InputManager.instance.OnMousePressedDown += OnSkip;
+    }
+
+    protected void UnhookSkipOnTouch()
+    {
+        InputManager.instance.OnMousePressedDown -= OnSkip;
+    }
+
+    protected void OnSkip(object sender, EventArgs args)
+    {
+        if (m_started)
+            Skip();
     }
 }

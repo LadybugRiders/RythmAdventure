@@ -40,6 +40,12 @@ public class UIBattleEndXpStep : UIStep {
     public override void Skip()
     {
         base.Skip();
+
+        for (int i = 0; i < m_characters.Count; ++i)
+        {
+            var chara = m_characters[i];
+            chara.XpScroller.Skip();
+        }
     }
 
     public void OnXpScrollerEnd(UIXpScrollerManager _xpScroller)

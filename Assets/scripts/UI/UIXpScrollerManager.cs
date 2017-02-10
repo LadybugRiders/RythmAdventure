@@ -18,7 +18,7 @@ public class UIXpScrollerManager : MonoBehaviour {
     protected bool m_scrolling = false;
 
     protected float m_currentXp = 0;
-    protected float m_targetValue = 0;
+    protected int m_totalXp = 0;
 
     protected float m_timeByUnit = 1;
     protected float m_time = 0;
@@ -55,9 +55,9 @@ public class UIXpScrollerManager : MonoBehaviour {
                 }
 
                 //check if the total xp has been processed
-                if (m_currentXp >= m_targetValue)
+                if (m_currentXp >= m_totalXp)
                 {
-                    m_currentXp = m_targetValue;
+                    m_currentXp = m_totalXp;
                     m_scrolling = false;
                     TargetReached();
                 }
@@ -113,7 +113,7 @@ public class UIXpScrollerManager : MonoBehaviour {
         m_nextLevelData = DataManager.instance.CharacterManager.GetLevel(m_job, levelUpData.Stats.Level + 1);
 
         m_currentXp = _xpStart - m_previousLevelXpNeeded;
-        m_targetValue = _xpEnd;
+        m_totalXp = _xpEnd;
         
         //Get direction of the scroll
         float delta = Mathf.Abs(_xpEnd - _xpStart);
@@ -122,6 +122,15 @@ public class UIXpScrollerManager : MonoBehaviour {
 
         m_scrollFinishedDelegate = _delegate;
         m_scrolling = true;
+    }
+
+    public void Skip()
+    {
+        m_nextLevelData = DataManager.instance.CharacterManager.GetLevelByXp(m_job, m_totalXp);
+        m_previousLevelXpNeeded = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevelData.Stats.Level - 1).XpNeeded;
+        m_currentXp = m_totalXp;
+        SetValues();
+        TargetReached();
     }
 
     public bool Scrolling
