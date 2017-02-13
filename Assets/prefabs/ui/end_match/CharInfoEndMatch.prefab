@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 222013021330229780}
   - component: {fileID: 114291197359034898}
   - component: {fileID: 114376959877655694}
+  - component: {fileID: 111407386497172834}
   m_Layer: 5
   m_Name: lvlValue
   m_TagString: Untagged
@@ -179,6 +180,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!111 &111407386497172834
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1294957580147508}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 8a1ddbcafc84b594fbc896d59839d5a9, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 8a1ddbcafc84b594fbc896d59839d5a9, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114000010476118510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -297,7 +313,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 3
   m_Spacing: 10
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
@@ -329,15 +345,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 3
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '1
-
-'
+  m_Text: 1
 --- !u!114 &114307927584593244
 MonoBehaviour:
   m_ObjectHideFlags: 1

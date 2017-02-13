@@ -15,6 +15,11 @@ public class UIXpScrollerManager : MonoBehaviour {
 
     [SerializeField] protected float m_FillUnitValue = 0.1f;
 
+    /// <summary>
+    /// Used to accelerate the fill according to the xp range
+    /// </summary>
+    protected float m_fillMultiplier = 1.0f;
+
     protected bool m_scrolling = false;
 
     protected float m_currentXp = 0;
@@ -46,7 +51,7 @@ public class UIXpScrollerManager : MonoBehaviour {
             {
                 m_time = 0;
                 //increase value with computed speeds
-                m_currentXp += m_FillUnitValue;
+                m_currentXp += m_FillUnitValue * m_fillMultiplier;
                                 
                 //check if a level is reached
                 if ( m_currentXp >= m_nextLevelData.XpNeeded)
@@ -89,8 +94,11 @@ public class UIXpScrollerManager : MonoBehaviour {
     void SetNextLevel()
     {
         m_previousLevelXpNeeded = m_nextLevelData.XpNeeded;
+        m_levelText.text = m_nextLevelData.Stats.Level.ToString();
+        m_levelText.GetComponent<Animation>().Play();
         //get next level data
-        m_nextLevelData = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevelData .Stats.Level+ 1);        
+        m_nextLevelData = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevelData .Stats.Level+ 1);
+        SetFillMultiplier();
     }
     
     protected virtual void TargetReached()
@@ -122,6 +130,7 @@ public class UIXpScrollerManager : MonoBehaviour {
 
         m_scrollFinishedDelegate = _delegate;
         m_scrolling = true;
+        SetFillMultiplier();
     }
 
     public void Skip()
@@ -131,6 +140,11 @@ public class UIXpScrollerManager : MonoBehaviour {
         m_currentXp = m_totalXp;
         SetValues();
         TargetReached();
+    }
+
+    void SetFillMultiplier()
+    {
+        m_fillMultiplier = 1.0f + (m_nextLevelData.XpNeeded - m_previousLevelXpNeeded) *0.06f;
     }
 
     public bool Scrolling

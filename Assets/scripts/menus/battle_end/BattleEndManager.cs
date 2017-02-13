@@ -49,8 +49,8 @@ public class BattleEndManager : MonoBehaviour {
 
         InitCharacters();
 
-        //m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
-        m_xpSequence.Launch(OnXpScrollingEnd);
+        m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
+        //m_xpSequence.Launch(OnXpScrollingEnd);
     }
 
     void Update()
@@ -114,7 +114,6 @@ public class BattleEndManager : MonoBehaviour {
 
     public void OnAccuraciesScrollingEnd(UISequence sequence)
     {
-        Debug.Log("SCrOLL END FOR ACCUREACIES");
         m_xpSequence.Launch(OnXpScrollingEnd);
     }
 
