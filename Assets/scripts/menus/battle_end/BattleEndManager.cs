@@ -7,6 +7,9 @@ using System.Linq;
 
 public class BattleEndManager : MonoBehaviour {
 
+    [SerializeField] GameObject m_firstScreen;
+    [SerializeField] GameObject m_secondScreen;
+
     [SerializeField] UIBattleEndScoreScrollSequence m_scoreSequence;
     [SerializeField] UIBattleEndXpSequence m_xpSequence;
 
