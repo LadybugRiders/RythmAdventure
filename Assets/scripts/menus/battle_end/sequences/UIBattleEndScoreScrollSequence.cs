@@ -26,9 +26,9 @@ public class UIBattleEndScoreScrollSequence : UISequence {
         {
             case "accuracies":
                 m_currentStepIndex++;
-                (CurrentStep as UIStepTextNumberScroller).Launch(OnStepEnd, m_totalScore);
+                (CurrentStep as UIBattleEndStarsStep).Launch(OnStepEnd);
                 break;
-            case "score":
+            case "stars":
                 Stop();
                 break;
         }

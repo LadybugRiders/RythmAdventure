@@ -5,17 +5,19 @@ using System.Linq;
 
 public class UIBattleEndScoreScrollStep : UIStep {
 
-    [SerializeField] List<UIInfo> m_accuraciesScrollers;
+    [SerializeField] List<BattleEndManager.ScoreInfo> m_accuraciesScrollers;
 
     int m_count = 0;
 
     public void Launch(OnStepEndDelegate _del, Dictionary<HitAccuracy, int> _accuracies)
     {
         base.Launch(_del);
+        var battleManager = Component.FindObjectOfType(typeof(BattleEndManager)) as BattleEndManager;
+        m_accuraciesScrollers = battleManager.m_scoresInfos;
         foreach( var accData in _accuracies)
         {
             m_count++;
-            var scroller = m_accuraciesScrollers.FirstOrDefault(x => x.accuracy == accData.Key).Scroller;
+            var scroller = m_accuraciesScrollers.FirstOrDefault(x => x.Accuracy == accData.Key).Scroller;
             scroller.ScrollTo(accData.Value, 2.0f,OnTargetReached);
         }
     }

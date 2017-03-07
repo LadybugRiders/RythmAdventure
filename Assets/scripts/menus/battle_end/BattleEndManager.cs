@@ -13,7 +13,7 @@ public class BattleEndManager : MonoBehaviour {
     [SerializeField] UIBattleEndScoreScrollSequence m_scoreSequence;
     [SerializeField] UIBattleEndXpSequence m_xpSequence;
 
-    [SerializeField] List<ScoreInfo> m_scoresInfos;
+    [SerializeField] public List<ScoreInfo> m_scoresInfos;
 
     [SerializeField] Text m_totalXpText;
     [SerializeField] UITextNumberScroller m_totalScoreText;
@@ -26,7 +26,9 @@ public class BattleEndManager : MonoBehaviour {
     enum State { IDLE, SCORE, XP };
     State m_state = State.IDLE;
 
-    [SerializeField]  float m_uiCharaScale = 40;
+    [SerializeField] float m_uiCharaScale = 40;
+
+    [SerializeField] Color m_starColor;
 
     BattleData m_battleData;
 
@@ -53,7 +55,6 @@ public class BattleEndManager : MonoBehaviour {
         InitCharacters();
 
         m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
-        //m_xpSequence.Launch(OnXpScrollingEnd);
     }
 
     void Update()
