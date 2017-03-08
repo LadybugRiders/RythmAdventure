@@ -12,6 +12,7 @@ public class BattleEndManager : MonoBehaviour {
 
     [SerializeField] UIBattleEndScoreScrollSequence m_scoreSequence;
     [SerializeField] UIBattleEndXpSequence m_xpSequence;
+    [SerializeField] UISequence m_itemsSequence;
 
     [SerializeField] public List<ScoreInfo> m_scoresInfos;
 
@@ -52,17 +53,42 @@ public class BattleEndManager : MonoBehaviour {
             DebugFillBattleData();
         }
 
-        InitCharacters();
-
-        m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100); 
+        m_itemsSequence.Launch(OnItemsSequenceEnded);
     }
 
     void Update()
     {
     }
 
+    #region EVENTS
+    
+    void OnItemsSequenceEnded(UISequence _sequence)
+    {
+        m_firstScreen.SetActive(false);
+        m_secondScreen.SetActive(true);
+        InitCharacters();
+        m_scoreSequence.Launch(OnAccuraciesScrollingEnd, m_battleData.NotesCountByAccuracy, 100);
+    }
+
+    void OnXpScrollerEnded(UIXpScrollerManager _scroller)
+    {
+        m_mapButton.SetActive(true);
+    }
+
+    public void OnAccuraciesScrollingEnd(UISequence _sequence)
+    {
+        m_xpSequence.Launch(OnXpScrollingEnd);
+    }
+
+    public void OnXpScrollingEnd(UISequence _sequence)
+    {
+        Debug.Log("SCrOLL END FOR XP");
+    }
+
+    #endregion
+
     #region XP
-        
+
     void InitCharacters()
     {
         var teamMates = ProfileManager.instance.GetCurrentTeam();
@@ -111,21 +137,6 @@ public class BattleEndManager : MonoBehaviour {
         m_state = State.SCORE;
     }
 
-    void OnXpScrollerEnded(UIXpScrollerManager _scroller)
-    {
-        m_mapButton.SetActive(true);
-    }
-
-    public void OnAccuraciesScrollingEnd(UISequence sequence)
-    {
-        m_xpSequence.Launch(OnXpScrollingEnd);
-    }
-
-    public void OnXpScrollingEnd(UISequence sequence)
-    {
-        Debug.Log("SCrOLL END FOR XP");
-    }
-
     #endregion
 
     void OnGoToMap()
@@ -158,6 +169,10 @@ public class BattleEndManager : MonoBehaviour {
         }
         m_battleData.NotesCount = totalNotes;
         m_battleData.TotalScore = Random.Range(0, 1000);
+
+        //shards
+        m_battleData.Shards.Add("min_red", 1);
+
         ProfileManager.instance.BattleData = m_battleData;
     }
 

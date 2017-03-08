@@ -10,7 +10,7 @@ public class BattleData {
 
     public List<PlayerData> Characters = new List<PlayerData>();
 
-    public List<string> Shards = new List<string>();
+    public Dictionary<string,int> Shards = new Dictionary<string,int>();
 
     public int NotesCount = 0;
     public int TotalScore = 0;
