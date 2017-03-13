@@ -22,6 +22,9 @@ public class GameMenuMixiGenerator : GameMenu
     string m_selectedShardId;
     int m_selectedShardCount = 0;
 
+    enum State { SELECT, LAUNCH_GEN, GEN_FINISHED };
+    State m_state = State.SELECT;
+
 	// Use this for initialization
 	void Start () {
         generator = new MixiGenerator();
@@ -65,6 +68,9 @@ public class GameMenuMixiGenerator : GameMenu
     {
         m_buttonGen.SetActive(false);
         m_mixiGO.SetActive(true);
+        m_manager.ToggleBackButton(false);
+
+        m_state = State.GEN_FINISHED;
 
         //generate the data for the mixi
         var chara = generator.Generate(m_selectedShardId);
@@ -91,9 +97,25 @@ public class GameMenuMixiGenerator : GameMenu
         m_selectedShardCount = 1;
         m_shardsPanel.gameObject.SetActive(false);
         m_buttonGen.SetActive(true);
+        m_state = State.LAUNCH_GEN;
     }
 
     public void OnMixiClicked()
+    {
+        DisplayList();
+    }
+
+    public override void OnBackButtonClicked()
+    {
+        switch (m_state)
+        {
+            case State.LAUNCH_GEN:
+                DisplayList();
+                break;
+        }
+    }
+
+    void DisplayList()
     {
         //Delete current Mixi
         if (m_currentMixi != null)
@@ -101,6 +123,8 @@ public class GameMenuMixiGenerator : GameMenu
             Destroy(m_currentMixi);
         }
         m_mixiGO.SetActive(false);
+        m_buttonGen.SetActive(false);
         m_shardsPanel.gameObject.SetActive(true);
+        m_manager.ToggleBackButton(true);
     }
 }

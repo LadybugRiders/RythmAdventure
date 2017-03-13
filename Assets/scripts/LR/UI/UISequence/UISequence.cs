@@ -24,7 +24,7 @@ public class UISequence : MonoBehaviour {
     /// If autoLaunch, the first step is launched directly.
     /// delegate : public void OnSeqenceEndDelegate(UISequence sequence)
     /// </summary>
-    public virtual void Launch (OnSeqenceEndDelegate _del, bool _autoLaunch = true) {
+    public virtual void Launch (OnSeqenceEndDelegate _del = null, bool _autoLaunch = true) {
         if (m_steps.Count <= 0)
             return;
 

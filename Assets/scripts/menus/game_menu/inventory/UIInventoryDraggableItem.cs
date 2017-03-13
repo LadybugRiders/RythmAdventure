@@ -20,7 +20,8 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 
     public void OnPointerClick(PointerEventData _eventData)
     {
-        m_menu.SelectCharacter(this);
+        if( m_menu != null )
+            m_menu.SelectCharacter(this);
     }
 
     public void OnBeginDrag(PointerEventData _eventData)

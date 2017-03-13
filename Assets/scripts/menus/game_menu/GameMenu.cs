@@ -2,9 +2,9 @@
 using System.Collections;
 
 public class GameMenu : MonoBehaviour {
-    /// <summary>
-    /// 
-    /// </summary>
+
+    [SerializeField] protected GameMenuManager m_manager;
+
     protected bool m_alreadyActivated = false;
 
 	// Use this for initialization
@@ -36,5 +36,10 @@ public class GameMenu : MonoBehaviour {
     protected virtual void Deactivate()
     {
         gameObject.SetActive(false);
+    }
+
+    public virtual void OnBackButtonClicked()
+    {
+
     }
 }

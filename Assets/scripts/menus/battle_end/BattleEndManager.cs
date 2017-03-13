@@ -77,14 +77,9 @@ public class BattleEndManager : MonoBehaviour {
 
     public void OnAccuraciesScrollingEnd(UISequence _sequence)
     {
-        m_xpSequence.Launch(OnXpScrollingEnd);
+        m_xpSequence.Launch();
     }
-
-    public void OnXpScrollingEnd(UISequence _sequence)
-    {
-        Debug.Log("SCrOLL END FOR XP");
-    }
-
+    
     #endregion
 
     #region XP

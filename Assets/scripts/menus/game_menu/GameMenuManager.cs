@@ -8,6 +8,8 @@ public class GameMenuManager : MonoBehaviour {
     [SerializeField] List<GameMenu> m_menus;
     [SerializeField] GameMenu m_startMenu;
 
+    [SerializeField] GameObject m_backButton;
+
     GameMenu m_currentMenu;
 
     // Use this for initialization
@@ -18,6 +20,7 @@ public class GameMenuManager : MonoBehaviour {
         {
             if (menu != m_startMenu)
                 menu.DeactivateMenu();
+            
         }
 	}
 	
@@ -39,7 +42,17 @@ public class GameMenuManager : MonoBehaviour {
 
     public void OnBackButtonClicked()
     {
+        m_currentMenu.OnBackButtonClicked();
+    }
+
+    public void OnMapButtonClicked()
+    {
         SceneManager.LoadScene("world1");
     }
-        
+
+    public void ToggleBackButton(bool toggle)
+    {
+        m_backButton.SetActive(toggle);
+    }
+
 }
