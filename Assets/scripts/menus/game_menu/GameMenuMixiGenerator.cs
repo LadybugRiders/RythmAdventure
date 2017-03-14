@@ -100,9 +100,12 @@ public class GameMenuMixiGenerator : GameMenu
         m_state = State.LAUNCH_GEN;
     }
 
-    public void OnMixiClicked()
+    public void OnClicked()
     {
-        DisplayList();
+        if (m_state == State.GEN_FINISHED)
+        {
+            DisplayList();
+        }
     }
 
     public override void OnBackButtonClicked()
