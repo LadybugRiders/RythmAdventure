@@ -67,15 +67,26 @@ public class BattleNote : MonoBehaviour {
 			return;
 		switch (m_state) {
 			case State.LAUNCHED : 
-					UpdateSpeed();
 					UpdateAlpha();
 				break;
 		}
 	}
 
-	#region UPDATES
+    protected void FixedUpdate()
+    {
+        if (m_paused)
+            return;
+        switch (m_state)
+        {
+            case State.LAUNCHED:
+                UpdateSpeed();
+                break;
+        }
+    }
 
-	protected void UpdateSpeed(){
+    #region UPDATES
+
+    /*protected void UpdatePosition(){
 		Vector3 pos = m_transform.localPosition;
 
 		//compute note position
@@ -91,7 +102,20 @@ public class BattleNote : MonoBehaviour {
 			m_magicEffect.transform.position = m_transform.position;
 			Utils.SetPositionZ( m_magicEffect.transform, m_transform.position.z +1);
 		}
-	}
+	}*/
+
+    protected void UpdateSpeed()
+    {
+        Vector3 pos = m_transform.localPosition;
+
+        //make the note advance
+        float stepX = m_speed * Time.deltaTime;
+        pos.x += stepX;
+        //compute total distance done
+        m_distanceDone += Mathf.Abs(stepX);
+
+        m_transform.localPosition = pos;
+    }
 
 	protected void UpdateAlpha(){
 		//compute alpha from the beginning
@@ -127,6 +151,12 @@ public class BattleNote : MonoBehaviour {
         m_startTime = BattleEngine.instance.MusicTimeElapsed;
         //direction
         m_direction = (_targetPos.x - _startPos.x) > 0 ? 1 : -1;
+
+        //Speed 
+        float timeToTarget = Data.Time - m_startTime;
+        float distanceToTarget = _targetPos.x - _startPos.x;
+        m_speed = distanceToTarget / timeToTarget;
+
 		return Launch ();
 	}
 

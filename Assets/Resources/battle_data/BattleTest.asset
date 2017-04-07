@@ -23,7 +23,7 @@ MonoBehaviour:
   AttackNotesCount: 10
   DefenseNotesCount: 5
   Shards:
-  - Id: min_red
+  - Id: min_green
     Weight: 1
   - Id: min_blue
     Weight: 1
