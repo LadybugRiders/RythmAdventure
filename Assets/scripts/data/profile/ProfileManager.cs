@@ -13,7 +13,7 @@ public partial class ProfileManager : MonoBehaviour {
 
     public Profile profile;
 
-    public BattleData BattleData;
+    public BattleData BattleData { get; set; }
 
     [SerializeField] bool m_resetPrefsAtLaunch = false;
     

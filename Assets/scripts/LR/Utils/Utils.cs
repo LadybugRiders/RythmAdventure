@@ -259,7 +259,7 @@ public partial class Utils  {
     #region INPUT
     public static bool MouseJustPressed()
     {
-    #if UNITY_ANDROID
+    #if UNITY_ANDROID && !UNITY_EDITOR
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
         {
@@ -268,14 +268,14 @@ public partial class Utils  {
                 break;
         }
         return b;
-    #else        
+    #else
         return Input.GetMouseButtonDown(0);
     #endif
     }
 
     public static bool MouseJustReleased()
     {
-    #if UNITY_ANDROID
+    #if UNITY_ANDROID && !UNITY_EDITOR
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
         {
@@ -284,7 +284,7 @@ public partial class Utils  {
                 break;
         }
         return b;
-    #else        
+    #else
         return Input.GetMouseButtonUp(0);
     #endif
     }

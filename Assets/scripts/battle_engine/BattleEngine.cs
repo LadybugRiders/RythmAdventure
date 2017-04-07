@@ -82,7 +82,7 @@ public class BattleEngine : MonoBehaviour {
 		m_nextSwitchCount = m_battleDataAsset.AttackNotesCount;        
 	}
 
-    public void OnFightEnded(object sender, BattleFightManager.EndBattleEventInfo eventInfo)
+    protected void OnFightEnded(object sender, BattleFightManager.EndBattleEventInfo eventInfo)
     {
         BattleData battleData = new BattleData();
         ProfileManager.instance.BattleData = battleData;
@@ -104,7 +104,12 @@ public class BattleEngine : MonoBehaviour {
         battleData.NotesCount = m_scoreManager.NotesCount;
         battleData.NotesCountByAccuracy = m_scoreManager.NotesCountByAccuracy;
         battleData.TotalScore = m_scoreManager.TotalScore;
-        //Add Shard
+        ProfileManager.instance.GetMapData("");
+        //Add Shards
+        foreach(var shard in m_battleDataAsset.Shards)
+        {
+            battleData.Shards[shard.Id] = shard.Weight;
+        }
 
         //EndLevel
         string mapName = PlayerPrefs.GetString("current_map");

@@ -25,3 +25,5 @@ MonoBehaviour:
   Shards:
   - Id: min_red
     Weight: 1
+  - Id: min_blue
+    Weight: 1

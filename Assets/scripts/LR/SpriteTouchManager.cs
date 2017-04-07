@@ -112,7 +112,7 @@ public class SpriteTouchManager : MonoBehaviour {
 
     bool IsJustPressed()
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
         {
@@ -128,7 +128,7 @@ public class SpriteTouchManager : MonoBehaviour {
 
     bool IsJustReleased()
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
         {

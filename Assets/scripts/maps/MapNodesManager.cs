@@ -255,7 +255,9 @@ public partial class MapNodesManager : SpriteTouchManager {
             var levelData = mapData.Levels.Find(x => x.Id == node.Id);
             if( levelData != null)
             {
+                //Set Node score
                 node.Score = levelData.Score;
+                //check if the level has been finished
                 if( levelData.Score > 0 )
                 {
                     node.Unlock();
