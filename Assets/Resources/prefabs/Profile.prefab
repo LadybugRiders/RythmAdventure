@@ -47,7 +47,7 @@ MonoBehaviour:
     Characters:
     - Id: 0
       Name: JeanJean
-      Xp: 0
+      Xp: 8
       Job: 0
       Tiers: 1
       Equipments:

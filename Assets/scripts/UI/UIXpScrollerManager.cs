@@ -29,7 +29,7 @@ public class UIXpScrollerManager : MonoBehaviour {
     protected float m_time = 0;
     protected int m_direction = 1;
 
-    DataCharManager.LevelUpData m_nextLevelData;
+    DataCharManager.LevelUpData m_nextLevel;
     protected int m_previousLevelXpNeeded = 0;
     Job m_job;
     
@@ -54,7 +54,7 @@ public class UIXpScrollerManager : MonoBehaviour {
                 m_currentXp += m_FillUnitValue * m_fillMultiplier;
                                 
                 //check if a level is reached
-                if ( m_currentXp >= m_nextLevelData.XpNeeded)
+                if ( m_currentXp >= m_nextLevel.XpNeeded)
                 {
                     SetNextLevel();
                 }
@@ -73,7 +73,7 @@ public class UIXpScrollerManager : MonoBehaviour {
 
     void SetValues()
     {
-        m_xpText.text = Mathf.RoundToInt (m_nextLevelData.XpNeeded - m_currentXp).ToString();
+        m_xpText.text = Mathf.RoundToInt (m_nextLevel.XpNeeded - m_currentXp).ToString();
         SetGaugeValue();
     }
 
@@ -81,7 +81,7 @@ public class UIXpScrollerManager : MonoBehaviour {
     {
         if(m_gauge != null)
         {            
-            int length = Mathf.Abs( m_nextLevelData.XpNeeded - m_previousLevelXpNeeded );
+            int length = Mathf.Abs( m_nextLevel.XpNeeded - m_previousLevelXpNeeded );
             float prog = 0;
             
             prog = Mathf.Abs(m_currentXp - m_previousLevelXpNeeded) / (float)length;
@@ -93,11 +93,11 @@ public class UIXpScrollerManager : MonoBehaviour {
 
     void SetNextLevel()
     {
-        m_previousLevelXpNeeded = m_nextLevelData.XpNeeded;
-        m_levelText.text = m_nextLevelData.Stats.Level.ToString();
+        m_previousLevelXpNeeded = m_nextLevel.XpNeeded;
+        m_levelText.text = m_nextLevel.Stats.Level.ToString();
         m_levelText.GetComponent<Animation>().Play();
         //get next level data
-        m_nextLevelData = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevelData .Stats.Level+ 1);
+        m_nextLevel = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevel .Stats.Level+ 1);
         SetFillMultiplier();
     }
     
@@ -118,7 +118,7 @@ public class UIXpScrollerManager : MonoBehaviour {
         DataCharManager.LevelUpData levelUpData = DataManager.instance.CharacterManager.GetLevelByXp(_job, _xpStart);
         //xp for previous level
         m_previousLevelXpNeeded = levelUpData != null ? levelUpData.XpNeeded : 0;
-        m_nextLevelData = DataManager.instance.CharacterManager.GetLevel(m_job, levelUpData.Stats.Level + 1);
+        m_nextLevel = DataManager.instance.CharacterManager.GetLevel(m_job, levelUpData.Stats.Level + 1);
 
         m_currentXp = _xpStart - m_previousLevelXpNeeded;
         m_totalXp = _xpEnd;
@@ -135,8 +135,10 @@ public class UIXpScrollerManager : MonoBehaviour {
 
     public void Skip()
     {
-        m_nextLevelData = DataManager.instance.CharacterManager.GetLevelByXp(m_job, m_totalXp);
-        m_previousLevelXpNeeded = DataManager.instance.CharacterManager.GetLevel(m_job, m_nextLevelData.Stats.Level - 1).XpNeeded;
+        //get level for total xp
+        var endLevel = DataManager.instance.CharacterManager.GetLevelByXp(m_job, m_totalXp);
+        m_nextLevel = DataManager.instance.CharacterManager.GetLevel(m_job, endLevel.Stats.Level + 1);
+        m_previousLevelXpNeeded = endLevel.XpNeeded;
         m_currentXp = m_totalXp;
         SetValues();
         TargetReached();
@@ -144,7 +146,7 @@ public class UIXpScrollerManager : MonoBehaviour {
 
     void SetFillMultiplier()
     {
-        m_fillMultiplier = 1.0f + (m_nextLevelData.XpNeeded - m_previousLevelXpNeeded) *0.06f;
+        m_fillMultiplier = 1.0f + (m_nextLevel.XpNeeded - m_previousLevelXpNeeded) *0.06f;
     }
 
     public bool Scrolling

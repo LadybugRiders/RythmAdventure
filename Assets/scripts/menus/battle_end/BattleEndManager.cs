@@ -90,9 +90,9 @@ public class BattleEndManager : MonoBehaviour {
         for (int i = 0; i < m_characters.Count; ++i)
         {
             var chara = m_characters[i];
-            var mate = teamMates[i];            
-            var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+            var mate = teamMates[i];
             var battleCharData = m_battleData.Characters[i];
+            var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp - battleCharData.XpGained);
 
             if (mate != null)
             {
