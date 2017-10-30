@@ -256,14 +256,16 @@ public partial class MapNodesManager : SpriteTouchManager {
             if( levelData != null)
             {
                 node.Score = levelData.Score;
-                if( levelData.Score > 0 )
+                if( levelData.WinCount > 0 )
                 {
                     node.Unlock();
                     node.Score = levelData.Score;
                 }
+
+                if (node.Children.Count > 0)
+                    foreach (var child in node.Children)
+                        child.Unlock();
             }
-            if (node.Parents.Count == 0)
-                node.Unlock();
         }
     }
 }

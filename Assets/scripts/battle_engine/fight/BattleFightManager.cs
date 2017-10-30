@@ -114,7 +114,10 @@ public class BattleFightManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            EndBattle(true);
+        }
 	}
 
     #region DAMAGE_DEALING

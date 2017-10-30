@@ -23,6 +23,7 @@ public partial class ProfileManager : MonoBehaviour {
             {
                 GameObject go = Instantiate(Resources.Load("prefabs/Profile") as GameObject);
                 _instance = go.GetComponent<ProfileManager>();
+                _instance.Init();
             }
             return _instance;
         }
@@ -31,8 +32,12 @@ public partial class ProfileManager : MonoBehaviour {
     void Awake()
     {
         _instance = this;
+        Init();
+    }
 
-        if( m_resetPrefsAtLaunch)
+    public void Init()
+    {
+        if (m_resetPrefsAtLaunch)
             PlayerPrefs.DeleteAll();
 
         LoadProfile();
@@ -56,12 +61,14 @@ public partial class ProfileManager : MonoBehaviour {
         }
         //PArse JSON
         profile = JsonUtility.FromJson<Profile>(json);
+        Debug.Log("[ProfileLoaded]");
     }
 
     public void SaveProfile()
     {
         string json = JsonUtility.ToJson(profile);
         PlayerPrefs.SetString("profile", json);
+        PlayerPrefs.Save();
         Debug.Log("[Saved Profile] " + json);
     }
 
