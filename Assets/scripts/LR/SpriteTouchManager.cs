@@ -112,6 +112,9 @@ public class SpriteTouchManager : MonoBehaviour {
 
     bool IsJustPressed()
     {
+#if UNITY_EDITOR 
+        return Input.GetMouseButtonDown(0);
+#endif
 #if UNITY_ANDROID
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
@@ -121,13 +124,14 @@ public class SpriteTouchManager : MonoBehaviour {
                 break;
         }
         return b;
-#else        
-        return Input.GetMouseButtonDown(0);
 #endif
     }
 
     bool IsJustReleased()
     {
+#if UNITY_EDITOR
+        return Input.GetMouseButtonUp(0);
+#endif
 #if UNITY_ANDROID
         bool b = false;
         for (int i = 0; i < Input.touches.Length; i++)
@@ -136,9 +140,7 @@ public class SpriteTouchManager : MonoBehaviour {
             if (b)
                 break;
         }
-        return b;
-#else        
-        return Input.GetMouseButtonUp(0);
+        return b;        
 #endif
     }
 
