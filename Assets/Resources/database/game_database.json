@@ -1,11 +1,54 @@
 {
     "accuracy_scoring": [
         {
-        	"id" : 0,
+            "id": 0,
             "miss": 0,
             "good": 10,
             "great": 18,
             "perfect": 25
+        }
+    ],
+    "elements": [
+        {
+            "id": "fire",
+            "name": "fire",
+            "weakness": "water",
+            "prefab": "fire_icon"
+        },
+        {
+            "id": "wind",
+            "name": "wind",
+            "weakness": "fire",
+            "prefab": "wind_icon"
+        },
+        {
+            "id": "earth",
+            "name": "earth",
+            "weakness": "wind",
+            "prefab": "earth_icon"
+        },
+        {
+            "id": "water",
+            "name": "water",
+            "weakness": "earth",
+            "prefab": "water_icon"
+        }
+    ],
+    "attack_type": [
+        {
+            "id": "blunt",
+            "name": "blunt",
+            "prefab": "blunt_icon"
+        },
+        {
+            "id": "slash",
+            "name": "slash",
+            "prefab": "slahs_icon"
+        },
+        {
+            "id": "pierce",
+            "name": "pierce",
+            "prefab": "pierce_icon"
         }
     ]
 }
