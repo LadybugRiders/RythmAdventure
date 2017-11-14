@@ -1,10 +1,11 @@
-﻿<Properties StartupItem="RythmAdventure.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\battle_engine\fight\Actors\BattleCharacterAnimator.cs">
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\LR\Utils\JSON\JSONLoaderLR.cs">
     <Files>
       <File FileName="Assets\scripts\cameras\AdaptiveCamera.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\menus\game_menu\GameMenuManager.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\battle_engine\fight\Actors\BattleCharacterAnimator.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\LR\Utils\JSON\JSONLoaderLR.cs" Line="32" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

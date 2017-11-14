@@ -90,7 +90,7 @@ public class BattleEngine : MonoBehaviour {
         int totalXp = 0;
         foreach(var enemy in m_battleDataAsset.Enemies)
         {
-            totalXp += DataManager.instance.EnemiesManager.GetEnemy(enemy.Id).XpGranted; 
+            totalXp += DataManager.instance.EnemiesManager.GetEnemy(enemy.Id).Xp; 
         }
         battleData.TotalXp = totalXp;
         //add xp and store it in BattleData

@@ -27,13 +27,13 @@ public class DataEnemiesManager : DatabaseLoader {
 
     public class EnemyData : JSONData
     {
-        public string Name;
-        public string Prefab;
-        public string Description;
+        public string Name { get; set; }
+        public string Prefab { get; set; }
+        public string Description { get; set; }
 
         public Stats Stats;
 
-        public int XpGranted;
+        public int Xp { get; set; }
 
         public EnemyData() { }
         public EnemyData(JSONObject _json) : base(_json) { }
@@ -41,11 +41,6 @@ public class DataEnemiesManager : DatabaseLoader {
         public override void BuildJSONData(JSONObject _json)
         {
             base.BuildJSONData(_json);
-            Name = _json.GetField("name").str;
-            Prefab = _json.GetField("prefab").str;
-            Description = _json.GetField("description").str;
-            XpGranted = (int)_json.GetField("xp").f;
-
             Stats = new Stats(_json);
         }
     }

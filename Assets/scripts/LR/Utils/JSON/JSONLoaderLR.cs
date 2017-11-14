@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 public class JSONData
 {
-    public string Id;
+    public string Id { get; protected set; }
 
     public JSONData() {}
 
@@ -17,15 +18,51 @@ public class JSONData
     public virtual void BuildJSONData(JSONObject _json)
     {
         var idObj = _json.GetField("id");
-        if (idObj == null)
-            return;
-        Id = idObj.str;
-        if( Id == null )
-            Id = idObj.ToString();
-        if( Id == null)
+        if( idObj == null)
         {
             UnityEngine.Debug.Log("An id column is missing in your table");
         }
+
+        var props = GetType().GetProperties();
+        var dic = _json.ToDictionary();
+        var dbFields = dic.Select(x => x.Key).ToList(); //list of fields of the table
+
+        foreach ( var dbItem in dic)
+        {
+            //check value first
+            if( dbItem.Value == null ||  string.IsNullOrEmpty( dbItem.Value.ToString()) )
+            {
+                continue;
+            }
+
+            //try getting the property corresponding to the db field
+            var prop = props.FirstOrDefault(x=> x.Name.ToLower() == dbItem.Key.ToLower());
+            if( prop != null)
+            {
+                //We'll convert a la mano (.NET 3.5)
+                var valueStr = dbItem.Value.ToString();
+                if (prop.PropertyType == typeof(string))
+                {
+                    prop.SetValue(this, valueStr , null);
+                }
+                else if(prop.PropertyType == typeof(int))
+                {
+                    int i = -1;
+                    bool success = int.TryParse(valueStr, out i);
+                    prop.SetValue(this, i, null);
+                }else if(prop.PropertyType == typeof(float))
+                {
+                    float i = -1;
+                    bool success = float.TryParse(valueStr, out i);
+                    prop.SetValue(this, i, null);
+                } else if (prop.PropertyType == typeof(double))
+                {
+                    double i = -1;
+                    bool success = double.TryParse(valueStr, out i);
+                    prop.SetValue(this, i, null);
+                }
+            }
+        }                
     }
 }
 

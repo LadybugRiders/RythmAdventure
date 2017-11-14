@@ -139,6 +139,7 @@ public class DataManager : DatabaseLoader {
     {
         public string Name;
         public Color Color;
+        public string ElementId;
 
         public override void BuildJSONData(JSONObject _json)
         {
@@ -151,6 +152,8 @@ public class DataManager : DatabaseLoader {
             Color.g = _json.GetField("green").f / 255;
             Color.b = _json.GetField("blue").f / 255;
             Color.a = 1.0f;
+            if(_json.GetField("element") != null)
+                ElementId = _json.GetField("element").str;
         }
     }
 

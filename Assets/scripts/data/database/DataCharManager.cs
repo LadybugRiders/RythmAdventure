@@ -350,8 +350,9 @@ public class DataCharManager : DatabaseLoader
     public class BuildData : EquipCompatibilityData
     {
         public string Name = "NoName_Equipment";
-        public string Prefab;
-        public string AttackPrefab;
+        public string Prefab { get; set; }
+        public string AttackPrefab { get; set; }
+        public string AttackType { get; set; }
 
         public Stats Stats = new Stats();
 
@@ -362,6 +363,8 @@ public class DataCharManager : DatabaseLoader
             Prefab = _json.GetField("prefab").str;
             if(_json.GetField("attackprefab"))
                 AttackPrefab = _json.GetField("attackprefab").str;
+            if (_json.GetField("type"))
+                AttackType = _json.GetField("type").str;
 
             Stats = new Stats(_json);
         }
