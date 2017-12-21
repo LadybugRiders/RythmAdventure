@@ -380,8 +380,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1e7f87786828b45b9c7ff67a62df74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_autoLoad: 1
   m_characterIndexInProfile: 0
   m_uiCharaScale: 5
+  m_metaValue: {fileID: 0}
+  m_elementAttribute: {fileID: 0}
+  m_attackAttribute: {fileID: 0}
+  m_attribute: {fileID: 0}
   CharacterObject: {fileID: 1849019797444256}
   LevelText: {fileID: 114731826693098036}
 --- !u!222 &222567400385093908

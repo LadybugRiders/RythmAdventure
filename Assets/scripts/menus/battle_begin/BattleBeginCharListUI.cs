@@ -5,6 +5,7 @@ using UnityEngine;
 public class BattleBeginCharListUI : MonoBehaviour {
 
     [SerializeField] protected Transform m_panel;
+    [SerializeField] protected GameObject m_charaPrefab;
 
 	// Use this for initialization
 	void Start () {
@@ -15,4 +16,9 @@ public class BattleBeginCharListUI : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void Load()
+    {
+      
+    }
 }

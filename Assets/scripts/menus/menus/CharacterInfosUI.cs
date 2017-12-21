@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class CharacterInfosUI : MonoBehaviour {
 
+    [SerializeField] protected bool m_autoLoad = true;
+
     [SerializeField] protected int m_characterIndexInProfile;
     [SerializeField] protected float m_uiCharaScale;
 
@@ -18,7 +20,8 @@ public class CharacterInfosUI : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        LoadData();
+        if(m_autoLoad)
+            LoadData();
 	}
 	
 	// Update is called once per frame
@@ -26,18 +29,26 @@ public class CharacterInfosUI : MonoBehaviour {
 		
 	}
 
-    public void LoadData()
+    /// <summary>
+    /// Loads the Character located at in m_characterIndexInProfile in the party
+    /// </summary>
+    public GameObject LoadData()
     {
+        var teamMates = ProfileManager.instance.GetCurrentTeam();
+        return Load(teamMates[m_characterIndexInProfile].Id);
+    }
+
+    public GameObject Load(string _id) {  
         var m_charManager = DataManager.instance.CharacterManager;
 
         //get infos for the character
-        var teamMates = ProfileManager.instance.GetCurrentTeam();
-        var mate = teamMates[m_characterIndexInProfile];
+        var mate = ProfileManager.instance.GetCharacter(_id);
         var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
 
         var go = GameUtils.CreateCharacterUIObject(mate, m_uiCharaScale);
         go.transform.SetParent( CharacterObject.transform, false);
 
-        LevelText.text = "" + levelUpData.Stats.Level; 
+        LevelText.text = "" + levelUpData.Stats.Level;
+        return go;
     }
 }
