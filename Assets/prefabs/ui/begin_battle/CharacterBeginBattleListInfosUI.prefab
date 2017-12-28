@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1e7f87786828b45b9c7ff67a62df74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_autoLoad: 1
+  m_autoLoad: 0
   m_characterIndexInProfile: 0
   m_uiCharaScale: 40
   m_metaValue: {fileID: 114413058287714916}
@@ -611,6 +611,17 @@ MonoBehaviour:
   m_attribute: {fileID: 1800611319887316}
   CharacterObject: {fileID: 1864182563500916}
   LevelText: {fileID: 114589128646858748}
+  m_charData:
+    Id: 
+    Name: 
+    Xp: 0
+    Job: 0
+    Tiers: 0
+    Equipments: []
+    Looks: []
+    Skills: []
+    Talent: 
+    ColorId: 
 --- !u!114 &114832121580015786
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -69,6 +69,7 @@ public class GameMenuMixiGenerator : GameMenu
         //generate the data for the mixi
         var chara = generator.Generate(m_selectedShardId);
         ProfileManager.instance.AddCharacter(chara);
+        ProfileManager.instance.SaveProfile();
         
         //Create the ui object to display
         m_currentMixi = GameUtils.CreateCharacterUIObject(chara, m_mixiScale, false);

@@ -8,9 +8,11 @@ public class BattleBeginMenuManager : MonoBehaviour {
     [SerializeField] GameObject m_root;
     [SerializeField] List<CharacterInfosUI> m_charactersInfos;
 
+    [SerializeField] BattleBeginCharListUI m_charaList; 
+
 	// Use this for initialization
 	void Start () {
-		
+        Activate();
 	}
 	
 	// Update is called once per frame
@@ -22,6 +24,8 @@ public class BattleBeginMenuManager : MonoBehaviour {
     {
         m_root.SetActive(true);
         m_charactersInfos.ForEach(x => x.LoadData());
+
+        m_charaList.Load();
     }
 
     public void Deactivate()

@@ -18,6 +18,8 @@ public class CharacterInfosUI : MonoBehaviour {
     public GameObject CharacterObject;
     public Text LevelText;
 
+    public ProfileManager.CharacterData m_charData;
+
     // Use this for initialization
     void Start () {
         if(m_autoLoad)
@@ -42,10 +44,10 @@ public class CharacterInfosUI : MonoBehaviour {
         var m_charManager = DataManager.instance.CharacterManager;
 
         //get infos for the character
-        var mate = ProfileManager.instance.GetCharacter(_id);
-        var levelUpData = m_charManager.GetNextLevelByXp(mate.Job, mate.Xp);
+        m_charData = ProfileManager.instance.GetCharacter(_id);
+        var levelUpData = m_charManager.GetNextLevelByXp(m_charData.Job, m_charData.Xp);
 
-        var go = GameUtils.CreateCharacterUIObject(mate, m_uiCharaScale);
+        var go = GameUtils.CreateCharacterUIObject(m_charData, m_uiCharaScale);
         go.transform.SetParent( CharacterObject.transform, false);
 
         LevelText.text = "" + levelUpData.Stats.Level;
