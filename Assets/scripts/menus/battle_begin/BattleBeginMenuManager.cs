@@ -7,12 +7,12 @@ public class BattleBeginMenuManager : MonoBehaviour {
 
     [SerializeField] GameObject m_root;
     [SerializeField] List<CharacterInfosUI> m_charactersInfos;
+    [SerializeField] List<EnemyInfosUI> m_enemiesInfos;
 
-    [SerializeField] BattleBeginCharListUI m_charaList; 
+    [SerializeField] BattleBeginCharListUI m_charaList;
 
 	// Use this for initialization
 	void Start () {
-        Activate();
 	}
 	
 	// Update is called once per frame
@@ -20,7 +20,7 @@ public class BattleBeginMenuManager : MonoBehaviour {
 		
 	}
 
-    public void Activate()
+    public void Activate(BattleDataAsset _battleDataAsset)
     {
         m_root.SetActive(true);
         m_charactersInfos.ForEach(x => x.LoadData());

@@ -17,6 +17,7 @@ public class CharacterInfosUI : MonoBehaviour {
 
     public GameObject CharacterObject;
     public Text LevelText;
+    public Text Name;
 
     public ProfileManager.CharacterData m_charData;
 
@@ -51,6 +52,10 @@ public class CharacterInfosUI : MonoBehaviour {
         go.transform.SetParent( CharacterObject.transform, false);
 
         LevelText.text = "" + levelUpData.Stats.Level;
+
+        if(Name !=null)
+            Name.text = m_charData.Name;
+        
         return go;
     }
 }

@@ -557,7 +557,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -611,6 +611,7 @@ MonoBehaviour:
   m_attribute: {fileID: 1800611319887316}
   CharacterObject: {fileID: 1864182563500916}
   LevelText: {fileID: 114589128646858748}
+  Name: {fileID: 114615269897641322}
   m_charData:
     Id: 
     Name: 
@@ -960,7 +961,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 192, y: 0.0000085831}
+  m_AnchoredPosition: {x: 229.4, y: -2.6}
   m_SizeDelta: {x: 139, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224963907418888724

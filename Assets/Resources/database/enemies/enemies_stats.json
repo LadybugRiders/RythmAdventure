@@ -5,7 +5,7 @@
             "name": "drowsy bat",
             "prefab": "bat_red",
             "level": 1,
-            "hp": 100,
+            "hp": 5050,
             "mp": 10,
             "attack": 1,
             "defense": 10,

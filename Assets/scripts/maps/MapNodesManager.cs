@@ -21,6 +21,8 @@ public partial class MapNodesManager : SpriteTouchManager {
 
     [SerializeField] MapCharacter m_player;
 
+    [SerializeField] BattleBeginMenuManager m_battleBeginManager;
+
     public enum State { IDLE, MOVING }
     private State m_state;
 
@@ -125,14 +127,19 @@ public partial class MapNodesManager : SpriteTouchManager {
         {
             m_state = State.IDLE;
             var uiPopup = UIManager.instance.Popup();
-            uiPopup.GetButton("ConfirmButton").Set("Fight", "OnBeginFight", gameObject, false);
+            uiPopup.GetButton("ConfirmButton").Set("Fight", "OnShowBeginBattleScreen", gameObject, true);
             uiPopup.Open();
         }
     }
 
+    public void OnShowBeginBattleScreen()
+    {
+        BattleDataAsset data = m_targetNode.BattleData;
+        m_battleBeginManager.Activate(data);
+    }
+
     public void OnBeginFight()
     {
-        Debug.Log("FIGHT");
         BattleDataAsset data = m_targetNode.BattleData;
         DataManager.instance.BattleData = data;
         //Save map
