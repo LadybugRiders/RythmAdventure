@@ -32,4 +32,14 @@ public class BattleBeginMenuManager : MonoBehaviour {
     {
         m_root.SetActive(false);
     }
+
+    public void OnBackButtonClicked()
+    {
+        Deactivate();
+    }
+
+    public void OnFightButtonClicked()
+    {
+        Component.FindObjectOfType<MapNodesManager>().OnBeginFight();
+    }
 }
