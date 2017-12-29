@@ -39,20 +39,13 @@ public class DataGameManager : DatabaseLoader
     #region ELEMENTS
     public class ElementData : JSONData
     {
-        public string Name;
-        public string Weakness;
-        public string Prefab;
+        public string Name { get; set; }
+        public string Weakness { get; set; }
+        public string Element { get; set; }
+        public string Prefab { get; set; }
 
         public ElementData() { }
-        public ElementData(JSONObject _json) : base(_json) { }
-
-        public override void BuildJSONData(JSONObject _json)
-        {
-            base.BuildJSONData(_json);
-            Name = _json.GetField("name").str;
-            Prefab = _json.GetField("prefab").str;
-            Weakness = _json.GetField("weakness").str;
-        }
+        public ElementData(JSONObject _json) : base(_json) { }        
     }
 
     public class ElementsDataCollection : IJSONDataDicoCollection<ElementData> { }
@@ -62,18 +55,12 @@ public class DataGameManager : DatabaseLoader
     #region ATTACK_TYPE
     public class AttackTypeData : JSONData
     {
-        public string Name;
-        public string Prefab;
+        public string Name { get; set; }
+        public string Prefab { get; set; }
 
         public AttackTypeData() { }
         public AttackTypeData(JSONObject _json) : base(_json) { }
-
-        public override void BuildJSONData(JSONObject _json)
-        {
-            base.BuildJSONData(_json);
-            Name = _json.GetField("name").str;
-            Prefab = _json.GetField("prefab").str;
-        }
+        
     }
 
     public class AttackTypeDataCollection : IJSONDataDicoCollection<AttackTypeData> { }
