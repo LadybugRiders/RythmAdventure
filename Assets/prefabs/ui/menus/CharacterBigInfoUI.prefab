@@ -515,7 +515,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_autoLoad: 1
-  m_characterIndexInProfile: 1
+  m_characterIndexInProfile: 0
   m_uiCharaScale: 50
   m_metaValue: {fileID: 114401104401145464}
   m_elementAttribute: {fileID: 1221795827931652}
@@ -808,8 +808,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 21.515892}
+  m_AnchoredPosition: {x: 0.15, y: -0.37}
+  m_SizeDelta: {x: 43.02, y: 39.14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224373086683084484
 RectTransform:

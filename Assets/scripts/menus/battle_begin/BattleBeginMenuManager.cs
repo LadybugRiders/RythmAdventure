@@ -11,8 +11,10 @@ public class BattleBeginMenuManager : MonoBehaviour {
 
     [SerializeField] BattleBeginCharListUI m_charaList;
 
-	// Use this for initialization
-	void Start () {
+    BattleDataAsset m_battleDataAsset;
+
+    // Use this for initialization
+    void Start () {
 	}
 	
 	// Update is called once per frame
@@ -22,10 +24,13 @@ public class BattleBeginMenuManager : MonoBehaviour {
 
     public void Activate(BattleDataAsset _battleDataAsset)
     {
+        m_battleDataAsset = _battleDataAsset;
+
         m_root.SetActive(true);
         m_charactersInfos.ForEach(x => x.LoadData());
 
         m_charaList.Load();
+        LoadEnemies();
     }
 
     public void Deactivate()
@@ -41,5 +46,14 @@ public class BattleBeginMenuManager : MonoBehaviour {
     public void OnFightButtonClicked()
     {
         Component.FindObjectOfType<MapNodesManager>().OnBeginFight();
+    }
+
+    void LoadEnemies()
+    {
+        for(int i = 0; i < m_battleDataAsset.Enemies.Count; i++)
+        {
+            var enemy = m_battleDataAsset.Enemies[i];
+            m_enemiesInfos[i].Load(enemy.Id);
+        }
     }
 }

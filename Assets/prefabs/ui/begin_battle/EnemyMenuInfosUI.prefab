@@ -69,7 +69,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224548644077870458}
   - component: {fileID: 114665961757451192}
-  - component: {fileID: 114964167030493618}
   - component: {fileID: 114162115723839498}
   m_Layer: 5
   m_Name: EnemyMenuInfosUI
@@ -340,11 +339,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_autoLoad: 1
-  m_uiCharaScale: 50
+  m_uiEnemyScale: 50
   m_elementAttribute: {fileID: 1034878928479488}
   m_attackAttribute: {fileID: 1362571223020206}
-  CharacterObject: {fileID: 1303489228247486}
+  EnemyRoot: {fileID: 224840386798229126}
   LevelText: {fileID: 114094520094298152}
+  NameText: {fileID: 114970217583467902}
 --- !u!114 &114537530480748284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -578,26 +578,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &114964167030493618
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1260961666009772}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce1e7f87786828b45b9c7ff67a62df74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_autoLoad: 1
-  m_characterIndexInProfile: 0
-  m_uiCharaScale: 50
-  m_metaValue: {fileID: 114537530480748284}
-  m_elementAttribute: {fileID: 1034878928479488}
-  m_attackAttribute: {fileID: 1362571223020206}
-  m_attribute: {fileID: 0}
-  CharacterObject: {fileID: 1303489228247486}
-  LevelText: {fileID: 114094520094298152}
 --- !u!114 &114970217583467902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -800,7 +780,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 91, y: -0.0000047684}
+  m_AnchoredPosition: {x: 203.79, y: -22.8}
   m_SizeDelta: {x: 101, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224316965432637466
@@ -833,7 +813,7 @@ RectTransform:
   m_GameObject: {fileID: 1260961666009772}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 3.3750005}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0.51124996}
   m_Children:
   - {fileID: 224840386798229126}
   - {fileID: 224316965432637466}
@@ -916,6 +896,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 21.515892}
+  m_AnchoredPosition: {x: 0.36, y: -0.14}
+  m_SizeDelta: {x: 37.55, y: 36.32}
   m_Pivot: {x: 0.5, y: 0.5}
