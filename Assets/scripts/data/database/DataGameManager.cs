@@ -36,12 +36,21 @@ public class DataGameManager : DatabaseLoader
         }
     }
 
+    public ElementData GetElementData(string _elementId)
+    {
+        return m_elements[_elementId];
+    }
+
+    public AttackTypeData GetAttackTypeData(string _elementId)
+    {
+        return m_attackTypes[_elementId];
+    }
+
     #region ELEMENTS
     public class ElementData : JSONData
     {
         public string Name { get; set; }
         public string Weakness { get; set; }
-        public string Element { get; set; }
         public string Prefab { get; set; }
 
         public ElementData() { }

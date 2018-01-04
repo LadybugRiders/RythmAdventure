@@ -137,23 +137,18 @@ public class DataManager : DatabaseLoader {
 
     public class ColorData : GameUtils.WeightableData
     {
-        public string Name;
+        public string Name { get; set; }
         public Color Color;
-        public string ElementId;
+        public string Element { get; set; }
 
         public override void BuildJSONData(JSONObject _json)
         {
             base.BuildJSONData(_json);
-
-            if (_json.GetField("name") != null)
-                Name = _json.GetField("name").str;
-
+            
             Color.r = _json.GetField("red").f / 255;
             Color.g = _json.GetField("green").f / 255;
             Color.b = _json.GetField("blue").f / 255;
             Color.a = 1.0f;
-            if(_json.GetField("element") != null)
-                ElementId = _json.GetField("element").str;
         }
     }
 

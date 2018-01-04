@@ -55,6 +55,13 @@ public class CharacterInfosUI : MonoBehaviour {
 
         if(Name !=null)
             Name.text = m_charData.Name;
+
+        //display element
+        var color = m_charManager.GetColorData(m_charData.ColorId);
+        var element = DataManager.instance.GameDataManager.GetElementData(color.Element);
+
+        var sprite = (Sprite) Resources.Load("images/game/" + element.Prefab, typeof(Sprite));
+        m_elementAttribute.GetComponent<Image>().sprite = sprite;
         
         return go;
     }

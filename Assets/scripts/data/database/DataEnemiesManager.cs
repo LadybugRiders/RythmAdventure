@@ -31,6 +31,9 @@ public class DataEnemiesManager : DatabaseLoader {
         public string Prefab { get; set; }
         public string Description { get; set; }
 
+        public string Weakness { get; set; }
+        public string Element { get; set; }
+
         public Stats Stats;
 
         public int Xp { get; set; }

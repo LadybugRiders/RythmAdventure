@@ -207,6 +207,11 @@ public class DataCharManager : DatabaseLoader
     {
         return m_colorsDB[_colorId].Color;
     }
+
+    public DataManager.ColorData GetColorData(string _colorId)
+    {
+        return m_colorsDB[_colorId];
+    }
     
     public List<DataManager.ColorData> GetColors(int _tiers)
     {
