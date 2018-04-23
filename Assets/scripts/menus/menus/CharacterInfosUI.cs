@@ -44,6 +44,10 @@ public class CharacterInfosUI : MonoBehaviour {
     public GameObject Load(string _id) {  
         var m_charManager = DataManager.instance.CharacterManager;
 
+		foreach (Transform child in CharacterObject.transform) {
+			GameObject.Destroy(child.gameObject);
+		}
+
         //get infos for the character
         m_charData = ProfileManager.instance.GetCharacter(_id);
         var levelUpData = m_charManager.GetNextLevelByXp(m_charData.Job, m_charData.Xp);

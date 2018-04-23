@@ -8,6 +8,7 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
     Vector3 m_initialPosition;
 
     GameMenuMixisInventory m_menu;
+	GameObject m_listener;
 
     Transform m_itemParentTransform;
 
@@ -20,7 +21,9 @@ public class UIInventoryDraggableItem : MonoBehaviour, IBeginDragHandler, IDragH
 
     public void OnPointerClick(PointerEventData _eventData)
     {
-        m_menu.SelectCharacter(this);
+		if( m_menu != null )
+        	m_menu.SelectCharacter(this);
+		gameObject.SendMessageUpwards ("OnUIInventoryDraggableItemClicked");
     }
 
     public void OnBeginDrag(PointerEventData _eventData)
